@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation(project(":challa-core"))
-    implementation(project(":contracts"))
 
     implementation("org.springframework.boot:spring-boot-starter")
 }
