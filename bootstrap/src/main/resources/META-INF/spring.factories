@@ -1,0 +1,2 @@
+org.springframework.boot.EnvironmentPostProcessor=\
+com.challa.bootstrap.secret.SecretEnvironmentPostProcessor
