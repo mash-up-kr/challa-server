@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://<RDS_ENDPOINT>:5432/challa
+    username: postgres
+    password: 비밀번호
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
