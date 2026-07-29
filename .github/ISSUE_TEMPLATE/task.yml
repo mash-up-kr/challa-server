@@ -1,0 +1,51 @@
+name: "작업 이슈"
+description: "리팩터링, 테스트, 문서, 배포 등의 작업을 등록합니다."
+title: "[Task]: "
+labels:
+  - "Task"
+
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: "작업 유형"
+      description: "진행하려는 작업 유형을 선택해주세요."
+      options:
+        - "Refactor"
+        - "Test"
+        - "Docs"
+        - "Chore"
+        - "Deploy"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "작업 설명"
+      description: "진행하려는 작업과 목적을 간단하게 설명해주세요."
+      placeholder: |
+        방 생성 서비스의 초대 코드 재시도 로직을 정리합니다.
+        트랜잭션과 재시도 책임을 명확하게 분리하기 위한 작업입니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: "작업 내용"
+      description: "진행할 작업을 체크리스트로 작성해주세요."
+      placeholder: |
+        - [ ] 재시도 책임을 애플리케이션 서비스로 이동
+        - [ ] 예외 처리 구조 정리
+        - [ ] 기존 테스트 수정
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: "기타"
+      description: "관련 이슈, 참고 자료, 주의사항 등이 있다면 작성해주세요."
+    validations:
+      required: false

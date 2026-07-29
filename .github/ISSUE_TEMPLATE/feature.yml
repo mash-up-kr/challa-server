@@ -1,0 +1,38 @@
+name: "기능 이슈"
+description: "새로운 기능 구현 작업을 등록합니다."
+title: "[Feature]: "
+labels:
+  - "Feature"
+
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: "기능 설명"
+      description: "구현하려는 기능과 필요한 이유를 간단하게 작성해주세요."
+      placeholder: |
+        초대 코드를 이용해 방에 참여하는 기능을 구현합니다.
+        생성된 방에 다른 사용자를 초대하기 위해 필요합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: "작업 내용"
+      description: "진행할 작업을 체크리스트로 작성해주세요."
+      placeholder: |
+        - [ ] 초대 코드 검증 로직 구현
+        - [ ] 방 참여 API 구현
+        - [ ] 예외 처리
+        - [ ] 테스트 코드 작성
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: "기타"
+      description: "관련 이슈, API 명세, 디자인, 참고 자료 등이 있다면 작성해주세요."
+    validations:
+      required: false

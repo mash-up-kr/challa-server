@@ -1,0 +1,72 @@
+name: "버그 이슈"
+description: "발견한 버그를 제보합니다."
+title: "[Bug]: "
+labels:
+  - "Bug"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그를 확인할 수 있도록 발생 상황과 재현 방법을 작성해주세요.
+
+        로그를 첨부할 때는 토큰, 비밀번호, 개인정보 등의 민감정보를 제거해주세요.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: "버그 요약"
+      description: "어떤 문제가 발생했는지 간단하게 설명해주세요."
+      placeholder: "예: 방 생성 요청 시 서버 오류가 발생합니다."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "발생 환경"
+      description: "버그가 발생한 환경을 선택해주세요."
+      options:
+        - "Local"
+        - "Cloud"
+        - "확인하지 못함"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "재현 방법 및 결과"
+      description: "문제가 발생하는 과정과 실제 결과를 순서대로 작성해주세요."
+      placeholder: |
+        1. 방 생성 API를 호출합니다.
+        2. 요청 본문에 특정 값을 전달합니다.
+        3. 방이 생성되지 않고 500 응답이 반환됩니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "기대 동작"
+      description: "정상적으로는 어떻게 동작해야 하나요?"
+      placeholder: "예: 방이 정상적으로 생성되고 201 응답이 반환되어야 합니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "관련 로그"
+      description: "관련된 서버 로그나 스택 트레이스가 있다면 첨부해주세요."
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: "기타"
+      description: "스크린샷, 관련 이슈, 추가로 공유할 내용이 있다면 작성해주세요."
+    validations:
+      required: false
