@@ -1,0 +1,18 @@
+spring:
+  datasource: #TODO. infisical 로 이동 (현재 임시 .env 내부에 설정)
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.tool.schema: DEBUG
