@@ -13,9 +13,7 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.OK)
     fun handleBusinessException(
         ex: BusinessException
-    ): ApiResponse<Nothing> {
-        return ApiResponse.error(
-            message = ex.message
-        )
-    }
+    ): ApiResponse<Nothing> = ApiResponse.error(
+        message = ex.message
+    )
 }

@@ -18,7 +18,7 @@ class InfisicalClient(
     fun loadSecrets(
         projectId: String,
         environment: String,
-        secretPath: String = "/",
+        secretPath: String = "/"
     ): Map<String, String> {
         val secrets = sdk.Secrets().ListSecrets(
             projectId,
