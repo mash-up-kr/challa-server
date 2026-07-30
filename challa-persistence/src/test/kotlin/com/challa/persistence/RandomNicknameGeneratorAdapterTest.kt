@@ -1,8 +1,8 @@
 package com.challa.persistence
 
-import com.challa.persistence.adapter.RandomNicknameGeneratorAdapter
-import com.challa.persistence.entity.RandomNicknameSourceEntity
-import com.challa.persistence.repository.RandomNicknameSourceJpaRepository
+import com.challa.persistence.user.RandomNicknameGeneratorAdapter
+import com.challa.persistence.user.RandomNicknameSourceEntity
+import com.challa.persistence.user.RandomNicknameSourceJpaRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue

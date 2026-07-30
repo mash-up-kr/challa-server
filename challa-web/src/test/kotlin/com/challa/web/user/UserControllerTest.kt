@@ -1,15 +1,15 @@
 package com.challa.web.user
 
-import com.challa.core.domain.Provider
-import com.challa.core.domain.User
-import com.challa.core.exception.InvalidNicknameException
-import com.challa.core.exception.NicknameSuggestionUnavailableException
-import com.challa.core.exception.UserNotFoundException
-import com.challa.core.port.inbound.DeleteAccountUseCase
-import com.challa.core.port.inbound.GetProfileUseCase
-import com.challa.core.port.inbound.SuggestNicknameUseCase
-import com.challa.core.port.inbound.UpdateProfileCommand
-import com.challa.core.port.inbound.UpdateProfileUseCase
+import com.challa.core.auth.Provider
+import com.challa.core.user.DeleteAccountUseCase
+import com.challa.core.user.GetProfileUseCase
+import com.challa.core.user.InvalidNicknameException
+import com.challa.core.user.NicknameSuggestionUnavailableException
+import com.challa.core.user.SuggestNicknameUseCase
+import com.challa.core.user.UpdateProfileCommand
+import com.challa.core.user.UpdateProfileUseCase
+import com.challa.core.user.User
+import com.challa.core.user.UserNotFoundException
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
 import com.challa.web.security.AuthenticationInterceptor

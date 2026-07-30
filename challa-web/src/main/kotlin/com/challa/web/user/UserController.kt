@@ -1,9 +1,9 @@
 package com.challa.web.user
 
-import com.challa.core.port.inbound.DeleteAccountUseCase
-import com.challa.core.port.inbound.GetProfileUseCase
-import com.challa.core.port.inbound.SuggestNicknameUseCase
-import com.challa.core.port.inbound.UpdateProfileUseCase
+import com.challa.core.user.DeleteAccountUseCase
+import com.challa.core.user.GetProfileUseCase
+import com.challa.core.user.SuggestNicknameUseCase
+import com.challa.core.user.UpdateProfileUseCase
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.AuthUserId
 import com.challa.web.security.PublicEndpoint
@@ -23,19 +23,15 @@ class UserController(
     private val deleteAccountUseCase: DeleteAccountUseCase
 ) {
     @GetMapping("/me")
-    fun me(@AuthUserId userId: Long): ApiResponse<UserProfileResponse> {
-        val user = getProfileUseCase.getProfile(userId)
-        return ApiResponse.ok(UserProfileResponse.from(user))
-    }
+    fun me(@AuthUserId userId: Long): ApiResponse<UserProfileResponse> =
+        ApiResponse.ok(UserProfileResponse.from(getProfileUseCase.getProfile(userId)))
 
     @PutMapping("/me")
     fun updateMe(
         @AuthUserId userId: Long,
         @RequestBody request: UpdateProfileRequest
-    ): ApiResponse<UserProfileResponse> {
-        val user = updateProfileUseCase.update(userId, request.toCommand())
-        return ApiResponse.ok(UserProfileResponse.from(user), message = "Profile updated")
-    }
+    ): ApiResponse<UserProfileResponse> =
+        ApiResponse.ok(UserProfileResponse.from(updateProfileUseCase.update(userId, request.toCommand())))
 
     @PublicEndpoint
     @GetMapping("/nickname/random")
@@ -45,6 +41,6 @@ class UserController(
     @DeleteMapping("/me")
     fun deleteMe(@AuthUserId userId: Long): ApiResponse<Unit?> {
         deleteAccountUseCase.delete(userId)
-        return ApiResponse.empty("Account deleted")
+        return ApiResponse.empty()
     }
 }

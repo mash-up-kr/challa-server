@@ -1,7 +1,7 @@
 package com.challa.persistence
 
-import com.challa.persistence.entity.RefreshTokenEntity
-import com.challa.persistence.repository.RefreshTokenJpaRepository
+import com.challa.persistence.auth.RefreshTokenEntity
+import com.challa.persistence.auth.RefreshTokenJpaRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull

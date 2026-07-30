@@ -1,8 +1,8 @@
 package com.challa.web.security
 
-import com.challa.core.domain.Provider
-import com.challa.core.exception.InvalidTokenException
-import com.challa.core.port.outbound.AccessTokenIssuer
+import com.challa.core.auth.AccessTokenIssuer
+import com.challa.core.auth.InvalidTokenException
+import com.challa.core.auth.Provider
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys

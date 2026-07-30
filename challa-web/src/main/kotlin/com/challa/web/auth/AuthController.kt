@@ -1,8 +1,8 @@
 package com.challa.web.auth
 
-import com.challa.core.port.inbound.LoginUseCase
-import com.challa.core.port.inbound.LogoutUseCase
-import com.challa.core.port.inbound.RefreshTokenUseCase
+import com.challa.core.auth.LoginUseCase
+import com.challa.core.auth.LogoutUseCase
+import com.challa.core.auth.RefreshTokenUseCase
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.AuthUserId
 import com.challa.web.security.PublicEndpoint
@@ -18,30 +18,19 @@ class AuthController(
     private val refreshTokenUseCase: RefreshTokenUseCase,
     private val logoutUseCase: LogoutUseCase
 ) {
-
     @PublicEndpoint
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest): ApiResponse<LoginResponse> {
-        val result = loginUseCase.login(request.toCommand())
-        return ApiResponse.ok(
-            data = LoginResponse(result.accessToken, result.refreshToken, result.isNew),
-            message = "Login successful"
-        )
-    }
+    fun login(@RequestBody request: LoginRequest): ApiResponse<LoginResponse> =
+        ApiResponse.ok(LoginResponse.from(loginUseCase.login(request.toCommand())))
 
     @PublicEndpoint
     @PostMapping("/refresh")
-    fun refresh(@RequestBody request: RefreshRequest): ApiResponse<TokenPairResponse> {
-        val pair = refreshTokenUseCase.refresh(request.refreshToken)
-        return ApiResponse.ok(
-            data = TokenPairResponse(pair.accessToken, pair.refreshToken),
-            message = "Token refreshed"
-        )
-    }
+    fun refresh(@RequestBody request: RefreshRequest): ApiResponse<TokenPairResponse> =
+        ApiResponse.ok(TokenPairResponse.from(refreshTokenUseCase.refresh(request.refreshToken)))
 
     @PostMapping("/logout")
     fun logout(@AuthUserId userId: Long, @RequestBody request: LogoutRequest): ApiResponse<Unit?> {
         logoutUseCase.logout(userId, request.refreshToken)
-        return ApiResponse.empty("Logged out")
+        return ApiResponse.empty()
     }
 }

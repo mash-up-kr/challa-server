@@ -1,8 +1,8 @@
 package com.challa.bootstrap
 
-import com.challa.core.port.inbound.DeleteAccountUseCase
-import com.challa.core.port.inbound.LoginUseCase
-import com.challa.core.port.inbound.RefreshTokenUseCase
+import com.challa.core.auth.LoginUseCase
+import com.challa.core.auth.RefreshTokenUseCase
+import com.challa.core.user.DeleteAccountUseCase
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

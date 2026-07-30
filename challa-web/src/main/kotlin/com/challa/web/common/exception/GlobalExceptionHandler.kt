@@ -1,11 +1,10 @@
 package com.challa.web.common.exception
 
-import com.challa.core.exception.BusinessException
-import com.challa.core.exception.InvalidProfileException
-import com.challa.core.exception.InvalidTokenException
-import com.challa.core.exception.NicknameSuggestionUnavailableException
-import com.challa.core.exception.TokenReuseDetectedException
-import com.challa.core.exception.UserNotFoundException
+import com.challa.core.auth.InvalidTokenException
+import com.challa.core.auth.TokenReuseDetectedException
+import com.challa.core.user.InvalidProfileException
+import com.challa.core.user.NicknameSuggestionUnavailableException
+import com.challa.core.user.UserNotFoundException
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.UnauthenticatedException
 import org.slf4j.LoggerFactory
@@ -16,20 +15,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
     private val log = LoggerFactory.getLogger(javaClass)
-
-    @ExceptionHandler(BusinessException::class)
-    @ResponseStatus(HttpStatus.OK)
-    fun handleBusinessException(ex: BusinessException): ApiResponse<Unit?> = ApiResponse.error(
-        message =
-        ex.message ?: "Business rule violated"
-    )
 
     @ExceptionHandler(InvalidTokenException::class, TokenReuseDetectedException::class)
     fun handleInvalidToken(ex: RuntimeException): ResponseEntity<ApiResponse<Unit?>> {
@@ -46,10 +37,8 @@ class GlobalExceptionHandler {
         respond(HttpStatus.NOT_FOUND, "User not found")
 
     @ExceptionHandler(InvalidProfileException::class)
-    fun handleInvalidProfile(ex: InvalidProfileException): ResponseEntity<ApiResponse<Unit?>> = respond(
-        HttpStatus.BAD_REQUEST,
-        ex.message ?: "Invalid profile"
-    )
+    fun handleInvalidProfile(ex: InvalidProfileException): ResponseEntity<ApiResponse<Unit?>> =
+        respond(HttpStatus.BAD_REQUEST, ex.message ?: "Invalid profile")
 
     @ExceptionHandler(NicknameSuggestionUnavailableException::class)
     fun handleNicknameSuggestionUnavailable(

@@ -1,7 +1,7 @@
 package com.challa.web.security
 
-import com.challa.core.domain.Provider
-import com.challa.core.exception.InvalidTokenException
+import com.challa.core.auth.InvalidTokenException
+import com.challa.core.auth.Provider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
