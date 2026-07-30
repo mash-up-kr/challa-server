@@ -1,22 +1,15 @@
 ---
-name: writing-commits-and-prs
-description: Use when committing changes or opening a pull request in this repository
+name: writing-pull-requests
+description: Use when opening a pull request or writing a PR description in this repository
 ---
 
-# 커밋 / PR 작성
+# PR 작성
 
-커밋 메시지와 PR 본문은 diff에 있는 사실만 담는다.
+PR 본문은 diff에 있는 사실만 담는다.
 
-## 컨벤션
+제목은 커밋 제목과 같은 `[TYPE] 한국어 요약` 형식이고, base는 `develop`이다. 형식 상세는 `writing-commits`를 쓴다.
 
-- 커밋 제목 = PR 제목 = `[TYPE] 한국어 요약` (예: `[FEAT] 공통 API 응답 및 비즈니스 예외 처리 추가`)
-- TYPE: `FEAT` `FIX` `REFACTOR` `TEST` `DOCS` `CHORE` `DEPLOY`
-- 브랜치는 `feature/<slug>` `fix/<slug>` `chore/<slug>`, base는 `develop`
-- 제목으로 설명되면 커밋 본문은 비운다
-
-확실하지 않으면 `git log --oneline -20`의 히스토리를 따른다.
-
-## PR 본문
+## 본문
 
 `.github/PULL_REQUEST_TEMPLATE.md`의 섹션을 그대로 채운다.
 
@@ -40,7 +33,7 @@ Red flags — 멈추고 다시 쓴다:
 - 실행한 적 없는 항목이 `[x]`
 - 본문에 diff에 없는 클래스·필드·계획이 등장
 
-## PR 생성
+## 생성
 
 본문은 파일에 쓰고 넘긴다.
 
