@@ -1,4 +1,55 @@
+spring:
+  application:
+    name: challa-server
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
 infisical:
   client-id: ${INFISICAL_CLIENT_ID}
   client-secret: ${INFISICAL_CLIENT_SECRET}
   project-id: ${INFISICAL_PROJECT_ID}
+
+jwt:
+  secret: ${JWT_SECRET}
+  issuer: challa
+  access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:30m}
+  refresh-token-ttl: ${JWT_REFRESH_TOKEN_TTL:30d}
+
+oidc:
+  kakao:
+    issuer: https://kauth.kakao.com
+    jwks-uri: https://kauth.kakao.com/.well-known/jwks.json
+    client-id: ${KAKAO_REST_API_KEY}
+    native-client-id: ${KAKAO_NATIVE_APP_KEY}
+  apple:
+    issuer: https://appleid.apple.com
+    jwks-uri: https://appleid.apple.com/auth/keys
+    client-id: ${APPLE_CLIENT_ID}
+
+social-revoke:
+  kakao:
+    admin-key: ${KAKAO_ADMIN_KEY}
+  apple:
+    client-id: ${APPLE_CLIENT_ID}
+    team-id: ${APPLE_TEAM_ID}
+    key-id: ${APPLE_KEY_ID}
+    private-key: ${APPLE_PRIVATE_KEY}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+jwt:
+  secret: ${JWT_SECRET:dev-only-insecure-secret-change-me-challa-0123456789}

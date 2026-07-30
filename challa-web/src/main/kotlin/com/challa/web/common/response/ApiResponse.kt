@@ -1,19 +1,13 @@
 package com.challa.web.common.response
 
-data class ApiResponse<T>(
-    val success: Boolean,
-    val data: T? = null,
-    val message: String? = null
-) {
+data class ApiResponse<T>(val success: Boolean, val message: String, val data: T? = null) {
     companion object {
-        fun <T> ok(data: T?): ApiResponse<T> = ApiResponse(
-            success = true,
-            data = data
-        )
+        fun <T> ok(data: T?, message: String = "OK"): ApiResponse<T> =
+            ApiResponse(success = true, message = message, data = data)
 
-        fun error(message: String?): ApiResponse<Nothing> = ApiResponse(
-            success = false,
-            message = message
-        )
+        fun empty(message: String = "OK"): ApiResponse<Unit?> =
+            ApiResponse(success = true, message = message, data = null)
+
+        fun error(message: String): ApiResponse<Unit?> = ApiResponse(success = false, message = message, data = null)
     }
 }

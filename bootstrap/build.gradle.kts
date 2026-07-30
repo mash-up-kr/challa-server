@@ -12,8 +12,10 @@ dependencies {
     implementation(project(":challa-persistence"))
 
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("com.infisical:sdk:3.0.7") // Infisical
+    implementation("com.infisical:sdk:3.0.7")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testRuntimeOnly("com.h2database:h2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

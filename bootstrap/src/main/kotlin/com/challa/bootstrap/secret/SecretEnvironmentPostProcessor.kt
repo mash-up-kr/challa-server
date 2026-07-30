@@ -6,10 +6,9 @@ import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 
 class SecretEnvironmentPostProcessor : EnvironmentPostProcessor {
-    override fun postProcessEnvironment(
-        environment: ConfigurableEnvironment,
-        application: SpringApplication
-    ) {
+    override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
+        if (environment.activeProfiles.any { it == "test" }) return
+
         val clientId = environment.getRequiredProperty("infisical.client-id")
         val clientSecret = environment.getRequiredProperty("infisical.client-secret")
         val projectId = environment.getRequiredProperty("infisical.project-id")

@@ -10,6 +10,7 @@ trim_trailing_whitespace = true
 
 [*.{kt,kts}]
 ktlint_code_style = intellij_idea
+max_line_length = 120
 
 # 선언부·호출부 모두 마지막 인자와 enum 상수 뒤에 트레일링 콤마를 쓰지 않는다.
 ij_kotlin_allow_trailing_comma = false
