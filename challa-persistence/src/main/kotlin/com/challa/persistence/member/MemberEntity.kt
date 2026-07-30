@@ -9,7 +9,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "members")
-class MemberEntity( //todo. 스키마 확정 후 변경 불가능한 필드에 대해서는 val 처리
+class MemberEntity( // todo. 스키마 확정 후 변경 불가능한 필드에 대해서는 val 처리
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +19,5 @@ class MemberEntity( //todo. 스키마 확정 후 변경 불가능한 필드에 �
     var email: String,
 
     @Column(nullable = false)
-    var name: String,
+    var name: String
 )

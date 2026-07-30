@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @Configuration
 @EntityScan(basePackages = ["com.challa.persistence"])
 @EnableJpaRepositories(basePackages = ["com.challa.persistence"])
-class PersistenceConfig {
-}
+class PersistenceConfig
