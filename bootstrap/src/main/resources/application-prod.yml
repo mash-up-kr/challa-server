@@ -1,0 +1,5 @@
+spring:
+  config:
+    import:
+      - classpath:persistence-config/application-prod.yml
+
