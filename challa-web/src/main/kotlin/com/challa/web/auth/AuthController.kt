@@ -5,6 +5,7 @@ import com.challa.core.port.inbound.LogoutUseCase
 import com.challa.core.port.inbound.RefreshTokenUseCase
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.AuthUserId
+import com.challa.web.security.PublicEndpoint
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,6 +19,7 @@ class AuthController(
     private val logoutUseCase: LogoutUseCase
 ) {
 
+    @PublicEndpoint
     @PostMapping("/login")
     fun login(@RequestBody request: LoginRequest): ApiResponse<LoginResponse> {
         val result = loginUseCase.login(request.toCommand())
@@ -27,6 +29,7 @@ class AuthController(
         )
     }
 
+    @PublicEndpoint
     @PostMapping("/refresh")
     fun refresh(@RequestBody request: RefreshRequest): ApiResponse<TokenPairResponse> {
         val pair = refreshTokenUseCase.refresh(request.refreshToken)

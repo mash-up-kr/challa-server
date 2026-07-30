@@ -6,6 +6,7 @@ import com.challa.core.port.inbound.SuggestNicknameUseCase
 import com.challa.core.port.inbound.UpdateProfileUseCase
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.AuthUserId
+import com.challa.web.security.PublicEndpoint
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -36,8 +37,9 @@ class UserController(
         return ApiResponse.ok(UserProfileResponse.from(user), message = "Profile updated")
     }
 
+    @PublicEndpoint
     @GetMapping("/nickname/random")
-    fun randomNickname(@Suppress("UNUSED_PARAMETER") @AuthUserId userId: Long): ApiResponse<RandomNicknameResponse> =
+    fun randomNickname(): ApiResponse<RandomNicknameResponse> =
         ApiResponse.ok(RandomNicknameResponse(suggestNicknameUseCase.suggest()))
 
     @DeleteMapping("/me")

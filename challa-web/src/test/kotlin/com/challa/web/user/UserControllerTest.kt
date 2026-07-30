@@ -12,6 +12,7 @@ import com.challa.core.port.inbound.UpdateProfileCommand
 import com.challa.core.port.inbound.UpdateProfileUseCase
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
+import com.challa.web.security.AuthenticationInterceptor
 import com.challa.web.security.JwtAuthenticationFilter
 import io.mockk.every
 import io.mockk.mockk
@@ -38,6 +39,7 @@ class UserControllerTest {
     private val mockMvc: MockMvc = MockMvcBuilders
         .standaloneSetup(UserController(getProfile, updateProfile, suggestNickname, deleteAccount))
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
+        .addInterceptors(AuthenticationInterceptor())
         .setControllerAdvice(GlobalExceptionHandler())
         .setMessageConverters(JacksonJsonHttpMessageConverter())
         .build()
@@ -139,9 +141,12 @@ class UserControllerTest {
     }
 
     @Test
-    fun `GET random nickname requires authentication`() {
+    fun `GET random nickname works without authentication`() {
+        every { suggestNickname.suggest() } returns "용감한 호랑이"
+
         mockMvc.perform(get("/api/v1/users/nickname/random"))
-            .andExpect(status().isUnauthorized)
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.nickname").value("용감한 호랑이"))
     }
 
     @Test

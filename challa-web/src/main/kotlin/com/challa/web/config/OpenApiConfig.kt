@@ -1,6 +1,7 @@
 package com.challa.web.config
 
 import com.challa.web.security.AuthUserId
+import com.challa.web.security.AuthenticationInterceptor
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -32,10 +33,7 @@ class OpenApiConfig {
 
     @Bean
     fun bearerSecurityCustomizer(): OperationCustomizer = OperationCustomizer { operation, handlerMethod ->
-        val requiresAuth = handlerMethod.methodParameters.any {
-            it.hasParameterAnnotation(AuthUserId::class.java)
-        }
-        if (requiresAuth) {
+        if (!AuthenticationInterceptor.isPublic(handlerMethod)) {
             operation.addSecurityItem(SecurityRequirement().addList(BEARER_SCHEME))
         }
         operation
