@@ -4,8 +4,9 @@ spring:
       - classpath:persistence-config/application-prod.yml
 
 # 인증 계층이 없으므로 prod에서는 API 문서를 노출하지 않는다.
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    enabled: false
+# TODO. 내일 논의: 우리는 dev/prod 서버가 따로 나뉘어 있지 않으므로.
+#springdoc:
+#  api-docs:
+#    enabled: false
+#  swagger-ui:
+#    enabled: false
