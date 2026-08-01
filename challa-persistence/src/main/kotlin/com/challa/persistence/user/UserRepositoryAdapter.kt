@@ -51,4 +51,9 @@ class UserRepositoryAdapter(private val jpa: UserJpaRepository) : UserRepository
     override fun deleteById(id: Long) {
         jpa.deleteById(id)
     }
+
+    override fun findAllByIds(userIds: List<Long>): List<User> {
+        return jpa.findAllById(userIds)
+            .map(UserEntity::toDomain)
+    }
 }
