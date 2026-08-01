@@ -80,7 +80,11 @@ class RoomControllerTest {
 
     @Test
     fun `GET rooms uses the authenticated user ID`() {
-        every { listRoomsUsecase.listRooms(ListRoomsCommand(AUTH_USER_ID)) } returns ListRoomsResult(
+        every {
+            listRoomsUsecase.listRooms(
+                ListRoomsCommand(userId = AUTH_USER_ID, status = listOf(RoomStatus.SHOOTING))
+            )
+        } returns ListRoomsResult(
             roomProjections = listOf(
                 ListRoomsResult.RoomProjection(
                     roomId = 11L,
@@ -89,18 +93,22 @@ class RoomControllerTest {
             )
         )
 
-        mockMvc.perform(get("/api/v1/rooms").authenticated())
+        mockMvc.perform(get("/api/v1/rooms").param("status", "SHOOTING").authenticated())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.roomProjection[0].roomId").value(11))
             .andExpect(jsonPath("$.data.roomProjection[0].roomStatus").value("SHOOTING"))
 
-        verify { listRoomsUsecase.listRooms(ListRoomsCommand(AUTH_USER_ID)) }
+        verify {
+            listRoomsUsecase.listRooms(
+                ListRoomsCommand(userId = AUTH_USER_ID, status = listOf(RoomStatus.SHOOTING))
+            )
+        }
     }
 
     @Test
     fun `GET room uses the authenticated user ID`() {
         val room = Room(
-            roomId = 11L,
+            id = 11L,
             title = "Trip",
             filmLimit = 24L,
             remainingFilmCount = 24L,
@@ -115,7 +123,7 @@ class RoomControllerTest {
 
         mockMvc.perform(get("/api/v1/rooms/11").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.room.roomId").value(11))
+            .andExpect(jsonPath("$.data.room.id").value(11))
             .andExpect(jsonPath("$.data.room.title").value("Trip"))
 
         verify { getRoomUsecase.getRoom(GetRoomCommand(userId = AUTH_USER_ID, roomId = 11L)) }
