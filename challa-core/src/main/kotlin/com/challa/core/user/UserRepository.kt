@@ -12,4 +12,6 @@ interface UserRepository {
     fun updateAppleAuthorizationCode(id: Long, authorizationCode: String): User
 
     fun deleteById(id: Long)
+
+    fun findAllByIds(userIds: List<Long>): List<User>
 }

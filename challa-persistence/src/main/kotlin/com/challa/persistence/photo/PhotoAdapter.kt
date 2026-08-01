@@ -1,0 +1,17 @@
+package com.challa.persistence.photo
+
+import com.challa.core.photo.Photo
+import com.challa.core.photo.PhotoRepository
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
+
+@Component
+@Transactional(readOnly = true)
+class PhotoAdapter(private val repository: PhotoJpaRepository) : PhotoRepository {
+
+    override fun findById(photoId: Long): Photo? = repository.findById(photoId).orElse(null)?.toDomain()
+
+    override fun findAllByIds(photoIds: List<Long>): List<Photo> = repository.findAllById(photoIds).map {
+        it.toDomain()
+    }
+}
