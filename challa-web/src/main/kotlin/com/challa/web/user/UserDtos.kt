@@ -5,6 +5,8 @@ import com.challa.core.user.User
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
 
+data class UserEnvelope<T : Any>(val user: T)
+
 data class UserProfileResponse(val id: Long, val nickname: String?, val profileImageUrl: String?) {
     companion object {
         fun from(user: User): UserProfileResponse = UserProfileResponse(
@@ -25,5 +27,3 @@ data class UpdateProfileRequest(
 ) {
     fun toCommand(): UpdateProfileCommand = UpdateProfileCommand(nickname = nickname, profileImageUrl = profileImageUrl)
 }
-
-data class RandomNicknameResponse(val nickname: String)

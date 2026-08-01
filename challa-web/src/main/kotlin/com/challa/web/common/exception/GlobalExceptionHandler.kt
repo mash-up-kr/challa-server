@@ -3,12 +3,10 @@ package com.challa.web.common.exception
 import com.challa.core.auth.InvalidTokenException
 import com.challa.core.auth.TokenReuseDetectedException
 import com.challa.core.user.InvalidProfileException
-import com.challa.core.user.NicknameSuggestionUnavailableException
 import com.challa.core.user.UserNotFoundException
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.UnauthenticatedException
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -39,16 +37,6 @@ class GlobalExceptionHandler {
     @ExceptionHandler(InvalidProfileException::class)
     fun handleInvalidProfile(ex: InvalidProfileException): ResponseEntity<ApiResponse<Unit?>> =
         respond(HttpStatus.BAD_REQUEST, ex.message ?: "Invalid profile")
-
-    @ExceptionHandler(NicknameSuggestionUnavailableException::class)
-    fun handleNicknameSuggestionUnavailable(
-        ex: NicknameSuggestionUnavailableException
-    ): ResponseEntity<ApiResponse<Unit?>> {
-        log.error("Cannot suggest a nickname: {}", ex.message)
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-            .header(HttpHeaders.RETRY_AFTER, "3600")
-            .body(ApiResponse.error("Nickname suggestion unavailable"))
-    }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleUnreadable(ex: HttpMessageNotReadableException): ResponseEntity<ApiResponse<Unit?>> =

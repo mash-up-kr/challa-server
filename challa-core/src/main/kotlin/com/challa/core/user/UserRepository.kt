@@ -13,7 +13,3 @@ interface UserRepository {
 
     fun deleteById(id: Long)
 }
-
-interface RandomNicknameGenerator {
-    fun generate(): String?
-}

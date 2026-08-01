@@ -10,10 +10,6 @@ interface UpdateProfileUseCase {
 
 data class UpdateProfileCommand(val nickname: String, val profileImageUrl: String?)
 
-interface SuggestNicknameUseCase {
-    fun suggest(): String
-}
-
 interface DeleteAccountUseCase {
     fun delete(userId: Long)
 }

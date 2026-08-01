@@ -20,17 +20,17 @@ class AuthController(
 ) {
     @PublicEndpoint
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest): ApiResponse<LoginResponse> =
-        ApiResponse.ok(LoginResponse.from(loginUseCase.login(request.toCommand())))
+    fun login(@RequestBody request: AuthEnvelope<LoginRequest>): ApiResponse<AuthEnvelope<LoginResponse>> =
+        ApiResponse.ok(AuthEnvelope(LoginResponse.from(loginUseCase.login(request.auth.toCommand()))))
 
     @PublicEndpoint
     @PostMapping("/refresh")
-    fun refresh(@RequestBody request: RefreshRequest): ApiResponse<TokenPairResponse> =
-        ApiResponse.ok(TokenPairResponse.from(refreshTokenUseCase.refresh(request.refreshToken)))
+    fun refresh(@RequestBody request: AuthEnvelope<RefreshRequest>): ApiResponse<AuthEnvelope<TokenPairResponse>> =
+        ApiResponse.ok(AuthEnvelope(TokenPairResponse.from(refreshTokenUseCase.refresh(request.auth.refreshToken))))
 
     @PostMapping("/logout")
-    fun logout(@AuthUserId userId: Long, @RequestBody request: LogoutRequest): ApiResponse<Unit?> {
-        logoutUseCase.logout(userId, request.refreshToken)
+    fun logout(@AuthUserId userId: Long, @RequestBody request: AuthEnvelope<LogoutRequest>): ApiResponse<Unit?> {
+        logoutUseCase.logout(userId, request.auth.refreshToken)
         return ApiResponse.empty()
     }
 }
