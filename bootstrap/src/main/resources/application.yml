@@ -26,6 +26,13 @@ jwt:
   access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:30m}
   refresh-token-ttl: ${JWT_REFRESH_TOKEN_TTL:30d}
 
+s3:
+  bucket: ${S3_BUCKET}
+  region: ${S3_REGION:ap-northeast-2}
+  presigned-url-ttl: ${S3_PRESIGNED_URL_TTL:5m}
+  access-key: ${AWS_ACCESS_KEY_ID:}
+  secret-key: ${AWS_SECRET_ACCESS_KEY:}
+
 oidc:
   kakao:
     issuer: https://kauth.kakao.com
