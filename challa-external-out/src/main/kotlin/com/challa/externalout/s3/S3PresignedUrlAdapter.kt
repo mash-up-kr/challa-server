@@ -2,6 +2,7 @@ package com.challa.externalout.s3
 
 import com.challa.core.upload.PresignedUploadUrlIssuer
 import com.challa.core.upload.UploadUrl
+import com.challa.externalout.s3.properties.S3Properties
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider

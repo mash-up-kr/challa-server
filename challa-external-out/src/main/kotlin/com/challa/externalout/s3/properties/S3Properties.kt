@@ -1,4 +1,4 @@
-package com.challa.externalout.s3
+package com.challa.externalout.s3.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import java.time.Duration
