@@ -1,3 +1,5 @@
 package com.challa.core.room.port.input
 
-data class ListRoomsCommand(val userId: Long)
+import com.challa.core.room.domain.RoomStatus
+
+data class ListRoomsCommand(val userId: Long, val status: List<RoomStatus>)

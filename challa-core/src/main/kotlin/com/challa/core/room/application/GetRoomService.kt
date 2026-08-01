@@ -4,18 +4,16 @@ import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.input.GetRoomCommand
 import com.challa.core.room.port.input.GetRoomResult
 import com.challa.core.room.port.input.GetRoomUsecase
-import com.challa.core.room.port.output.RoomParticipantRepository
 import com.challa.core.room.port.output.RoomRepository
+import com.challa.core.room.port.output.RoomUserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
-class GetRoomService(
-    private val roomParticipantRepository: RoomParticipantRepository,
-    private val roomRepository: RoomRepository
-) : GetRoomUsecase {
+class GetRoomService(private val roomUserRepository: RoomUserRepository, private val roomRepository: RoomRepository) :
+    GetRoomUsecase {
     override fun getRoom(getRoomCommand: GetRoomCommand): GetRoomResult {
-        roomParticipantRepository.findByUserIdAndRoomId(
+        roomUserRepository.findByUserIdAndRoomId(
             userId = getRoomCommand.userId,
             roomId = getRoomCommand.roomId
         ) ?: throw NoMatchingRoomException()
@@ -31,7 +29,7 @@ class GetRoomService(
         }
 
         roomRepository.updateRoomsStatus(
-            roomIds = listOf(requireNotNull(room.roomId)),
+            roomIds = listOf(requireNotNull(room.id)),
             roomStatus = RoomStatus.PRINT_COMPLETED
         )
 

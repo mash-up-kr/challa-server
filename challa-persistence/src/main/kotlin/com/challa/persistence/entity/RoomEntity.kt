@@ -10,15 +10,15 @@ import java.time.LocalDateTime
     name = "room",
     uniqueConstraints = [
         UniqueConstraint(
-            name = "invite_code",
-            columnNames = ["invite_code"]
+            name = "invitation_code",
+            columnNames = ["invitation_code"]
         )
     ]
 )
-data class RoomEntity(
+class RoomEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val roomId: Long? = null,
+    val id: Long? = null,
 
     @Column(nullable = false, length = 20)
     val title: String,
@@ -30,42 +30,44 @@ data class RoomEntity(
     val remainingFilmCount: Long,
 
     @Column(nullable = false, length = 6)
-    val inviteCode: String,
+    val invitationCode: String,
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    val roomStatus: RoomStatus,
+    roomStatus: RoomStatus,
 
     @Column(nullable = true)
     val printCompletionAt: LocalDateTime?,
 
     @Column(nullable = false)
-    val isActive: Boolean,
-
-    @Column(nullable = false)
     val createdAt: LocalDateTime
 ) {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    var roomStatus: RoomStatus = roomStatus
+        private set
+
     fun toDomain() = Room(
-        roomId = roomId,
+        id = id,
         title = title,
         filmLimit = filmLimit,
         remainingFilmCount = remainingFilmCount,
-        inviteCode = inviteCode,
+        invitationCode = invitationCode,
         roomStatus = roomStatus,
         printCompletionAt = printCompletionAt,
-        isActive = isActive,
         createdAt = createdAt
     )
+
+    fun updateStatus(newStatus: RoomStatus) {
+        roomStatus = newStatus
+    }
 
     companion object {
         fun from(room: Room) = RoomEntity(
             title = room.title,
             filmLimit = room.filmLimit,
             remainingFilmCount = room.remainingFilmCount,
-            inviteCode = room.inviteCode,
+            invitationCode = room.invitationCode,
             roomStatus = room.roomStatus,
             printCompletionAt = room.printCompletionAt,
-            isActive = room.isActive,
             createdAt = room.createdAt
         )
     }

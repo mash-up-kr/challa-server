@@ -1,28 +1,28 @@
 package com.challa.core.room.application
 
 import com.challa.core.room.domain.Room
-import com.challa.core.room.domain.RoomParticipant
+import com.challa.core.room.domain.RoomUser
 import com.challa.core.room.port.input.CreateRoomCommand
 import com.challa.core.room.port.input.CreateRoomResult
 import com.challa.core.room.port.input.CreateRoomUsecase
-import com.challa.core.room.port.output.InviteCodeConflictException
-import com.challa.core.room.port.output.RoomParticipantRepository
+import com.challa.core.room.port.output.InvitationCodeConflictException
 import com.challa.core.room.port.output.RoomRepository
+import com.challa.core.room.port.output.RoomUserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import java.security.SecureRandom
 
-const val MAX_RETRY_COUNT = 5
-private const val INVITE_CODE_LENGTH = 6
+private const val MAX_RETRY_COUNT = 5
+private const val INVITATION_CODE_LENGTH = 6
 private const val CHARACTERS = "0123456789"
 
 @Service
 class CreateRoomService(
     private val roomRepository: RoomRepository,
-    private val roomParticipantRepository: RoomParticipantRepository,
-    transactionManager: PlatformTransactionManager
+    private val roomUserRepository: RoomUserRepository,
+    private val transactionManager: PlatformTransactionManager
 ) : CreateRoomUsecase {
     private val transactionTemplate = TransactionTemplate(transactionManager)
     private val secureRandom = SecureRandom()
@@ -35,35 +35,35 @@ class CreateRoomService(
                 }
 
                 return CreateRoomResult(
-                    inviteCode = result.inviteCode
+                    invitationCode = result.invitationCode
                 )
-            } catch (e: InviteCodeConflictException) {
-                logger.info("hmm.. invite code is already in use")
+            } catch (e: InvitationCodeConflictException) {
+                logger.info("invitation code is already in use")
             }
         }
 
-        throw InviteCodeAllocationFailedException()
+        throw InvitationCodeAllocationFailedException()
     }
 
     private fun createRoomWithOwner(input: CreateRoomCommand): Room {
         val room = Room.create(
             title = input.roomTitle,
             filmLimit = input.filmLimit,
-            inviteCode = generateInviteCode()
+            invitationCode = generateInvitationCode()
         )
         val savedRoom = roomRepository.save(room)
 
-        val newMember = RoomParticipant.createOwner(
-            roomId = savedRoom.roomId ?: throw IllegalArgumentException("roomId is null"),
+        val newMember = RoomUser.createOwner(
+            roomId = savedRoom.id ?: throw IllegalArgumentException("roomId is null"),
             userId = input.userId
         )
-        roomParticipantRepository.save(newMember)
+        roomUserRepository.save(newMember)
 
         return savedRoom
     }
 
-    private fun generateInviteCode(): String = buildString(INVITE_CODE_LENGTH) {
-        repeat(INVITE_CODE_LENGTH) {
+    private fun generateInvitationCode(): String = buildString(INVITATION_CODE_LENGTH) {
+        repeat(INVITATION_CODE_LENGTH) {
             append(
                 CHARACTERS[
                     secureRandom.nextInt(CHARACTERS.length)
@@ -75,4 +75,4 @@ class CreateRoomService(
     private val logger = LoggerFactory.getLogger(CreateRoomService::class.java)
 }
 
-class InviteCodeAllocationFailedException : RuntimeException("Invite code allocation failed")
+class InvitationCodeAllocationFailedException : RuntimeException("Invitation code allocation failed")

@@ -7,7 +7,7 @@ import com.challa.core.room.domain.RoomStatus
 interface RoomRepository {
     fun save(room: Room): Room
 
-    fun findByInviteCode(inviteCode: String): Room?
+    fun findByInvitationCode(invitationCode: String): Room?
 
     fun findAllByRoomIdIn(roomIds: List<RoomId>): List<Room>
 
@@ -16,4 +16,4 @@ interface RoomRepository {
     fun findByRoomId(roomId: RoomId): Room?
 }
 
-class InviteCodeConflictException : RuntimeException()
+class InvitationCodeConflictException : RuntimeException()

@@ -1,21 +1,11 @@
 package com.challa.web.room
 
-import com.challa.core.room.application.InviteCodeAllocationFailedException
-import com.challa.core.room.application.InviteCodeNotFoundException
+import com.challa.core.room.application.InvitationCodeAllocationFailedException
+import com.challa.core.room.application.InvitationCodeNotFoundException
 import com.challa.core.room.application.NoMatchingRoomException
 import com.challa.core.room.domain.Room
 import com.challa.core.room.domain.RoomStatus
-import com.challa.core.room.port.input.CreateRoomCommand
-import com.challa.core.room.port.input.CreateRoomResult
-import com.challa.core.room.port.input.CreateRoomUsecase
-import com.challa.core.room.port.input.GetRoomCommand
-import com.challa.core.room.port.input.GetRoomResult
-import com.challa.core.room.port.input.GetRoomUsecase
-import com.challa.core.room.port.input.JoinRoomCommand
-import com.challa.core.room.port.input.JoinRoomUsecase
-import com.challa.core.room.port.input.ListRoomsCommand
-import com.challa.core.room.port.input.ListRoomsResult
-import com.challa.core.room.port.input.ListRoomsUsecase
+import com.challa.core.room.port.input.*
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
 import com.challa.web.security.AuthenticationInterceptor
@@ -66,7 +56,7 @@ class RoomControllerTest {
                     filmLimit = 24
                 )
             )
-        } returns CreateRoomResult(inviteCode = "123456")
+        } returns CreateRoomResult(invitationCode = "123456")
 
         mockMvc.perform(
             post("/api/v1/rooms")
@@ -75,7 +65,7 @@ class RoomControllerTest {
                 .content("""{"roomTitle":"Trip","filmLimit":24}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.inviteCode").value("123456"))
+            .andExpect(jsonPath("$.data.invitationCode").value("123456"))
 
         verify {
             createRoomUsecase.createRoom(
@@ -114,10 +104,9 @@ class RoomControllerTest {
             title = "Trip",
             filmLimit = 24L,
             remainingFilmCount = 24L,
-            inviteCode = "123456",
+            invitationCode = "123456",
             roomStatus = RoomStatus.SHOOTING,
             printCompletionAt = null,
-            isActive = true,
             createdAt = LocalDateTime.of(2026, 8, 1, 12, 0)
         )
         every {
@@ -149,7 +138,7 @@ class RoomControllerTest {
             post("/api/v1/rooms/join")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"inviteCode":"123456"}""")
+                .content("""{"invitationCode":"123456"}""")
         )
             .andExpect(status().isOk)
 
@@ -157,21 +146,21 @@ class RoomControllerTest {
             joinRoomUsecase.joinRoom(
                 JoinRoomCommand(
                     userId = AUTH_USER_ID,
-                    inviteCode = "123456"
+                    invitationCode = "123456"
                 )
             )
         }
     }
 
     @Test
-    fun `unknown invite code returns 404`() {
-        every { joinRoomUsecase.joinRoom(any()) } throws InviteCodeNotFoundException()
+    fun `unknown invitation code returns 404`() {
+        every { joinRoomUsecase.joinRoom(any()) } throws InvitationCodeNotFoundException()
 
         mockMvc.perform(
             post("/api/v1/rooms/join")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"inviteCode":"999999"}""")
+                .content("""{"invitationCode":"999999"}""")
         )
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.message").value("Room not found"))
@@ -189,8 +178,8 @@ class RoomControllerTest {
     }
 
     @Test
-    fun `invite code allocation failure returns 503`() {
-        every { createRoomUsecase.createRoom(any()) } throws InviteCodeAllocationFailedException()
+    fun `invitation code allocation failure returns 503`() {
+        every { createRoomUsecase.createRoom(any()) } throws InvitationCodeAllocationFailedException()
 
         mockMvc.perform(
             post("/api/v1/rooms")

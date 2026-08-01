@@ -4,18 +4,16 @@ import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.input.ListRoomsCommand
 import com.challa.core.room.port.input.ListRoomsResult
 import com.challa.core.room.port.input.ListRoomsUsecase
-import com.challa.core.room.port.output.RoomParticipantRepository
 import com.challa.core.room.port.output.RoomRepository
+import com.challa.core.room.port.output.RoomUserRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
-class ListRoomsService(
-    private val roomRepository: RoomRepository,
-    private val roomParticipantRepository: RoomParticipantRepository
-) : ListRoomsUsecase {
+class ListRoomsService(private val roomRepository: RoomRepository, private val roomUserRepository: RoomUserRepository) :
+    ListRoomsUsecase {
     override fun listRooms(listRoomsCommand: ListRoomsCommand): ListRoomsResult {
-        val roomIds = roomParticipantRepository.findAllByUserId(listRoomsCommand.userId).map { it.roomId }
+        val roomIds = roomUserRepository.findAllByUserId(listRoomsCommand.userId).map { it.roomId }
         val rooms = roomRepository.findAllByRoomIdIn(roomIds)
         val now = LocalDateTime.now()
         val newlyCompletedRoomIds = rooms
@@ -23,8 +21,7 @@ class ListRoomsService(
                 room.roomStatus == RoomStatus.PRINT_PENDING &&
                     room.printCompletionAt?.isBefore(now) == true
             }
-            .map { requireNotNull(it.roomId) }
-
+            .map { requireNotNull(it.id) }
         if (newlyCompletedRoomIds.isNotEmpty()) {
             roomRepository.updateRoomsStatus(
                 roomIds = newlyCompletedRoomIds,
@@ -33,16 +30,18 @@ class ListRoomsService(
         }
 
         val newlyCompletedRoomIdSet = newlyCompletedRoomIds.toSet()
+        val requestedStatusSet = listRoomsCommand.status.toSet()
         val roomProjections = rooms.map { room ->
             ListRoomsResult.RoomProjection(
-                roomId = requireNotNull(room.roomId),
-                roomStatus = if (room.roomId in newlyCompletedRoomIdSet) {
+                roomId = requireNotNull(room.id),
+                roomStatus = if (room.id in newlyCompletedRoomIdSet) {
                     RoomStatus.PRINT_COMPLETED
                 } else {
                     room.roomStatus
                 }
             )
         }
+            .filter { it.roomStatus in requestedStatusSet }
 
         return ListRoomsResult(roomProjections = roomProjections)
     }
