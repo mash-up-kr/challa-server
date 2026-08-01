@@ -11,6 +11,9 @@ import com.challa.core.auth.RefreshTokenRepository
 import com.challa.core.auth.RefreshTokenService
 import com.challa.core.auth.RefreshTokenUseCase
 import com.challa.core.auth.SocialAccountRevoker
+import com.challa.core.upload.IssueUploadUrlService
+import com.challa.core.upload.IssueUploadUrlUseCase
+import com.challa.core.upload.PresignedUploadUrlIssuer
 import com.challa.core.user.DeleteAccountService
 import com.challa.core.user.DeleteAccountUseCase
 import com.challa.core.user.GetProfileService
@@ -86,4 +89,8 @@ class CoreBeansConfig {
         refreshTokenRepository: RefreshTokenRepository,
         socialAccountRevoker: SocialAccountRevoker
     ): DeleteAccountUseCase = DeleteAccountService(userRepository, refreshTokenRepository, socialAccountRevoker)
+
+    @Bean
+    fun issueUploadUrlUseCase(presignedUploadUrlIssuer: PresignedUploadUrlIssuer): IssueUploadUrlUseCase =
+        IssueUploadUrlService(presignedUploadUrlIssuer)
 }

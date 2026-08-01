@@ -2,6 +2,7 @@ package com.challa.web.common.exception
 
 import com.challa.core.auth.InvalidTokenException
 import com.challa.core.auth.TokenReuseDetectedException
+import com.challa.core.upload.UnsupportedImageTypeException
 import com.challa.core.user.InvalidProfileException
 import com.challa.core.user.UserNotFoundException
 import com.challa.web.common.response.ApiResponse
@@ -37,6 +38,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(InvalidProfileException::class)
     fun handleInvalidProfile(ex: InvalidProfileException): ResponseEntity<ApiResponse<Unit?>> =
         respond(HttpStatus.BAD_REQUEST, ex.message ?: "Invalid profile")
+
+    @ExceptionHandler(UnsupportedImageTypeException::class)
+    fun handleUnsupportedImageType(ex: UnsupportedImageTypeException): ResponseEntity<ApiResponse<Unit?>> =
+        respond(HttpStatus.BAD_REQUEST, ex.message ?: "Unsupported image type")
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleUnreadable(ex: HttpMessageNotReadableException): ResponseEntity<ApiResponse<Unit?>> =

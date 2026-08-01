@@ -12,6 +12,10 @@ spring:
 jwt:
   secret: test-only-secret-key-that-is-at-least-32-bytes-long-1234567890
 
+s3:
+  bucket: test-challa-bucket
+  region: ap-northeast-2
+
 oidc:
   kakao:
     client-id: test-kakao-rest-key
