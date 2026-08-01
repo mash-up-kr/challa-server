@@ -10,7 +10,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "chats")
-class ChatEntity (
+class ChatEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
@@ -28,6 +28,6 @@ class ChatEntity (
     var roomId: Long,
 
     @Column(name = "user_id", nullable = false)
-    var userId: Long,
+    var userId: Long
 
 ) : BaseEntity()

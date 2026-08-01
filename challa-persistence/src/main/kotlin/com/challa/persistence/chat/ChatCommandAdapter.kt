@@ -5,7 +5,4 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Transactional
-class ChatCommandAdapter(
-    private val chatRepository: ChatRepository,
-) {
-}
+class ChatCommandAdapter(private val chatRepository: ChatRepository)

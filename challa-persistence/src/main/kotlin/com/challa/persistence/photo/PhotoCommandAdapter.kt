@@ -5,7 +5,4 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Transactional
-class PhotoCommandAdapter(
-    private val photoRepository: PhotoRepository,
-) {
-}
+class PhotoCommandAdapter(private val photoRepository: PhotoRepository)
