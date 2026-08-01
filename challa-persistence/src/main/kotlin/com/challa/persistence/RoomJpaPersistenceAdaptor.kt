@@ -1,6 +1,8 @@
 package com.challa.persistence
 
 import com.challa.core.room.domain.Room
+import com.challa.core.room.domain.RoomId
+import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.output.InviteCodeConflictException
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.persistence.entity.RoomEntity
@@ -31,4 +33,11 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
 
     override fun findByInviteCode(inviteCode: String): Room? =
         roomJpaRepository.findByInviteCode(inviteCode)?.toDomain()
+
+    override fun findAllByRoomIdIn(roomIds: List<RoomId>): List<Room> =
+        roomJpaRepository.findAllByRoomIdIn(roomIds).map { it.toDomain() }
+
+    override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus) {
+        roomJpaRepository.updateRoomsStatus(roomIds, roomStatus)
+    }
 }

@@ -4,4 +4,6 @@ import com.challa.core.room.domain.RoomParticipant
 
 interface RoomParticipantRepository {
     fun save(roomParticipant: RoomParticipant): RoomParticipant
+
+    fun findAllByUserId(userId: Long): List<RoomParticipant>
 }

@@ -2,11 +2,15 @@ package com.challa.web.room
 
 import com.challa.core.room.application.InviteCodeAllocationFailedException
 import com.challa.core.room.application.InviteCodeNotFoundException
+import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.input.CreateRoomCommand
 import com.challa.core.room.port.input.CreateRoomResult
 import com.challa.core.room.port.input.CreateRoomUsecase
 import com.challa.core.room.port.input.JoinRoomCommand
 import com.challa.core.room.port.input.JoinRoomUsecase
+import com.challa.core.room.port.input.ListRoomsCommand
+import com.challa.core.room.port.input.ListRoomsResult
+import com.challa.core.room.port.input.ListRoomsUsecase
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
 import com.challa.web.security.AuthenticationInterceptor
@@ -19,6 +23,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -27,12 +32,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 class RoomControllerTest {
     private val createRoomUsecase = mockk<CreateRoomUsecase>()
     private val joinRoomUsecase = mockk<JoinRoomUsecase>(relaxed = true)
+    private val listRoomsUsecase = mockk<ListRoomsUsecase>()
 
     private val mockMvc: MockMvc = MockMvcBuilders
         .standaloneSetup(
             RoomController(
                 createRoomUsecase = createRoomUsecase,
-                joinRoomUsecase = joinRoomUsecase
+                joinRoomUsecase = joinRoomUsecase,
+                listRoomsUsecase = listRoomsUsecase
             )
         )
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
@@ -71,6 +78,25 @@ class RoomControllerTest {
                 )
             )
         }
+    }
+
+    @Test
+    fun `GET rooms uses the authenticated user ID`() {
+        every { listRoomsUsecase.listRooms(ListRoomsCommand(AUTH_USER_ID)) } returns ListRoomsResult(
+            roomProjections = listOf(
+                ListRoomsResult.RoomProjection(
+                    roomId = 11L,
+                    roomStatus = RoomStatus.SHOOTING
+                )
+            )
+        )
+
+        mockMvc.perform(get("/api/v1/rooms").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.roomProjection[0].roomId").value(11))
+            .andExpect(jsonPath("$.data.roomProjection[0].roomStatus").value("SHOOTING"))
+
+        verify { listRoomsUsecase.listRooms(ListRoomsCommand(AUTH_USER_ID)) }
     }
 
     @Test
