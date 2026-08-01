@@ -1,9 +1,12 @@
 package com.challa.web.room
 
 import com.challa.core.room.application.InviteCodeAllocationFailedException
+import com.challa.core.room.application.InviteCodeNotFoundException
 import com.challa.core.room.port.input.CreateRoomCommand
 import com.challa.core.room.port.input.CreateRoomResult
 import com.challa.core.room.port.input.CreateRoomUsecase
+import com.challa.core.room.port.input.JoinRoomCommand
+import com.challa.core.room.port.input.JoinRoomUsecase
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
 import com.challa.web.security.AuthenticationInterceptor
@@ -23,9 +26,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class RoomControllerTest {
     private val createRoomUsecase = mockk<CreateRoomUsecase>()
+    private val joinRoomUsecase = mockk<JoinRoomUsecase>(relaxed = true)
 
     private val mockMvc: MockMvc = MockMvcBuilders
-        .standaloneSetup(RoomController(createRoomUsecase))
+        .standaloneSetup(
+            RoomController(
+                createRoomUsecase = createRoomUsecase,
+                joinRoomUsecase = joinRoomUsecase
+            )
+        )
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
         .addInterceptors(AuthenticationInterceptor())
         .setControllerAdvice(GlobalExceptionHandler())
@@ -62,6 +71,40 @@ class RoomControllerTest {
                 )
             )
         }
+    }
+
+    @Test
+    fun `POST join uses the authenticated user ID`() {
+        mockMvc.perform(
+            post("/api/v1/rooms/join")
+                .authenticated()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"inviteCode":"123456"}""")
+        )
+            .andExpect(status().isOk)
+
+        verify {
+            joinRoomUsecase.joinRoom(
+                JoinRoomCommand(
+                    userId = AUTH_USER_ID,
+                    inviteCode = "123456"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `unknown invite code returns 404`() {
+        every { joinRoomUsecase.joinRoom(any()) } throws InviteCodeNotFoundException()
+
+        mockMvc.perform(
+            post("/api/v1/rooms/join")
+                .authenticated()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"inviteCode":"999999"}""")
+        )
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Room not found"))
     }
 
     @Test

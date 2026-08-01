@@ -28,4 +28,7 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
             throw e
         }
     }
+
+    override fun findByInviteCode(inviteCode: String): Room? =
+        roomJpaRepository.findByInviteCode(inviteCode)?.toDomain()
 }
