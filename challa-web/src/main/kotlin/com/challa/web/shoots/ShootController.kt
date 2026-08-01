@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/shoots")
-class ShootController(
-    private val cameraFilterUseCase: CameraFilterUseCase,
-) {
+class ShootController(private val cameraFilterUseCase: CameraFilterUseCase) {
 
     @GetMapping("/camera-filters")
     fun getCameraFilters(): ApiResponse<GetCameraFiltersResponse> {
