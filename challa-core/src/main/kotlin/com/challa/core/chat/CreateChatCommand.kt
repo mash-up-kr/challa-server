@@ -15,7 +15,7 @@ data class CreateChatCommand(
         content = content,
         userId = userId,
         roomId = roomId,
-        photoId = photoId,
+        photoId = photoId
     )
 
     fun createWithoutPhoto() = Chat(
@@ -23,6 +23,6 @@ data class CreateChatCommand(
         content = content,
         userId = userId,
         roomId = roomId,
-        photoId = null,
+        photoId = null
     )
 }

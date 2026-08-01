@@ -43,9 +43,7 @@ class FakeUserRepository : UserRepository {
         store.remove(id)
     }
 
-    override fun findAllByIds(userIds: List<Long>): List<User> {
-        return emptyList()
-    }
+    override fun findAllByIds(userIds: List<Long>): List<User> = emptyList()
 }
 
 open class FakeRefreshTokenRepository : RefreshTokenRepository {

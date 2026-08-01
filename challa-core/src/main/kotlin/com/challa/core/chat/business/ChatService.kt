@@ -20,14 +20,10 @@ class ChatService(
     private val chatRepository: ChatRepository,
     private val roomRepository: RoomRepository,
     private val userRepository: UserRepository,
-    private val photoRepository: PhotoRepository,
-): ChatUseCase {
+    private val photoRepository: PhotoRepository
+) : ChatUseCase {
 
-    override fun getChatsByRoomId(
-        roomId: Long,
-        page: Int,
-        size: Int
-    ): GetChatsResult {
+    override fun getChatsByRoomId(roomId: Long, page: Int, size: Int): GetChatsResult {
         val pageable = PageRequest.of(
             page,
             size,
@@ -87,5 +83,4 @@ class ChatService(
             ChatType.COMMENT
         )
     }
-
 }

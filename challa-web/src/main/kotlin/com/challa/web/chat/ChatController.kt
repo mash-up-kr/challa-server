@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/chats")
-class ChatController(
-    private val chatUseCase: ChatUseCase
-) {
+class ChatController(private val chatUseCase: ChatUseCase) {
 
     @GetMapping("/{roomId}")
     fun getChats(
@@ -27,16 +25,13 @@ class ChatController(
         description = "type = DEFAULT"
     )
     @PostMapping
-    fun createChat(
-        @AuthUserId userId: Long,
-        @RequestBody request: CreateChatRequest
-    ): ApiResponse<CreateChatResponse> {
+    fun createChat(@AuthUserId userId: Long, @RequestBody request: CreateChatRequest): ApiResponse<CreateChatResponse> {
         val result = chatUseCase.chat(request.toCommand(userId))
         return ApiResponse.ok(CreateChatResponse.from(result))
     }
 
     @Operation(
-        summary ="사진 반응 남기기",
+        summary = "사진 반응 남기기",
         description = "type = EMOJI or COMMENT"
     )
     @PostMapping("/reaction")

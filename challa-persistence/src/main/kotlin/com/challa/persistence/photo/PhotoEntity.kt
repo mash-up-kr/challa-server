@@ -32,6 +32,6 @@ class PhotoEntity(
         id = this.id,
         imageUrl = this.imageUrl,
         roomId = this.roomId,
-        userId = this.userId,
+        userId = this.userId
     )
 }

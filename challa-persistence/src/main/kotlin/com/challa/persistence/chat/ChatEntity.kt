@@ -53,7 +53,7 @@ class ChatEntity(
             content = chat.content,
             photoId = chat.photoId,
             roomId = chat.roomId,
-            userId = chat.userId,
+            userId = chat.userId
         )
     }
 }

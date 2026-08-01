@@ -6,10 +6,7 @@ import com.challa.core.chat.GetChatsResult
 import com.challa.core.chat.RoomResultForChat
 import com.challa.core.chat.domain.ChatType
 
-data class GetChatsResponse(
-    val room: RoomResultForChat,
-    val chats: List<ChatResult>,
-) {
+data class GetChatsResponse(val room: RoomResultForChat, val chats: List<ChatResult>) {
     companion object {
         fun from(result: GetChatsResult) = GetChatsResponse(
             room = result.room,
@@ -22,7 +19,7 @@ data class CreateChatRequest(
     val roomId: Long,
     val photoId: Long? = null,
     val type: ChatType? = ChatType.DEFAULT,
-    val content: String,
+    val content: String
 ) {
     fun toCommand(userId: Long) = CreateChatCommand(
         userId = userId,
@@ -33,9 +30,7 @@ data class CreateChatRequest(
     )
 }
 
-data class CreateChatResponse(
-    val chat: ChatResult
-) {
+data class CreateChatResponse(val chat: ChatResult) {
     companion object {
         fun from(result: ChatResult) = CreateChatResponse(
             chat = result

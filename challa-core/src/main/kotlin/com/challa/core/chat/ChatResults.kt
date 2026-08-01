@@ -7,18 +7,10 @@ import com.challa.core.room.domain.Room
 import com.challa.core.user.User
 import java.time.LocalDateTime
 
-data class GetChatsResult(
-    val room: RoomResultForChat,
-    val chats: List<ChatResult>,
-) {
+data class GetChatsResult(val room: RoomResultForChat, val chats: List<ChatResult>) {
     companion object {
-        fun from(
-            room: Room,
-            chats: List<Chat>,
-            photos: Map<Long, Photo>,
-            users: Map<Long, User>
-        ): GetChatsResult {
-            return GetChatsResult(
+        fun from(room: Room, chats: List<Chat>, photos: Map<Long, Photo>, users: Map<Long, User>): GetChatsResult =
+            GetChatsResult(
                 room = RoomResultForChat.from(room),
                 chats = chats.mapNotNull { chat ->
                     users[chat.userId]?.let { user ->
@@ -27,13 +19,10 @@ data class GetChatsResult(
                     }
                 }
             )
-        }
     }
 }
 
-data class RoomResultForChat(
-    val title: String
-) {
+data class RoomResultForChat(val title: String) {
     companion object {
         fun from(room: Room) = RoomResultForChat(
             title = room.title
@@ -46,7 +35,7 @@ data class ChatResult(
     val content: String,
     val photoImageUrl: String? = null,
     val createdAt: LocalDateTime,
-    val user: UserResultForChat? = null,
+    val user: UserResultForChat? = null
 ) {
     companion object {
         fun from(chat: Chat, photo: Photo?, user: User): ChatResult? {
@@ -64,15 +53,12 @@ data class ChatResult(
         fun from(chat: Chat) = ChatResult(
             type = chat.type,
             content = chat.content,
-            createdAt = chat.createdAt ?: LocalDateTime.now(),
+            createdAt = chat.createdAt ?: LocalDateTime.now()
         )
     }
 }
 
-data class UserResultForChat(
-    val name: String? = "닉네임 없음",
-    val profileImageUrl: String? = null
-) {
+data class UserResultForChat(val name: String? = "닉네임 없음", val profileImageUrl: String? = null) {
     companion object {
         fun from(user: User): UserResultForChat = UserResultForChat(
             name = user.nickname,

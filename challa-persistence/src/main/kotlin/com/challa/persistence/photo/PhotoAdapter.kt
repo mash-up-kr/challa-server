@@ -7,13 +7,11 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Transactional(readOnly = true)
-class PhotoAdapter(private val repository: PhotoJpaRepository): PhotoRepository {
+class PhotoAdapter(private val repository: PhotoJpaRepository) : PhotoRepository {
 
-    override fun findById(photoId: Long): Photo? {
-        return repository.findById(photoId).orElse(null)?.toDomain()
-    }
+    override fun findById(photoId: Long): Photo? = repository.findById(photoId).orElse(null)?.toDomain()
 
-    override fun findAllByIds(photoIds: List<Long>): List<Photo> {
-        return repository.findAllById(photoIds).map { it.toDomain() }
+    override fun findAllByIds(photoIds: List<Long>): List<Photo> = repository.findAllById(photoIds).map {
+        it.toDomain()
     }
 }

@@ -8,19 +8,13 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Transactional(readOnly = true)
-class ChatAdapter(private val repository: ChatJpaRepository): ChatRepository {
+class ChatAdapter(private val repository: ChatJpaRepository) : ChatRepository {
 
     @Transactional
-    override fun save(chat: Chat): Chat {
-        return repository.save(ChatEntity.from(chat)).toDomain()
-    }
+    override fun save(chat: Chat): Chat = repository.save(ChatEntity.from(chat)).toDomain()
 
-    override fun getChatsByRoomId(
-        roomId: Long,
-        pageable: Pageable
-    ): List<Chat> {
-        return repository.findAllByRoomId(roomId, pageable)
+    override fun getChatsByRoomId(roomId: Long, pageable: Pageable): List<Chat> =
+        repository.findAllByRoomId(roomId, pageable)
             .filter { it.createdAt != null }
             .map { it.toDomain() }
-    }
 }
