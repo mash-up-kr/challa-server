@@ -2,16 +2,22 @@ package com.challa.bootstrap
 
 import com.challa.core.auth.LoginUseCase
 import com.challa.core.auth.RefreshTokenUseCase
+import com.challa.core.shoot.CameraFiltersStorage
+import com.challa.core.shoot.domain.CameraFilter
 import com.challa.core.upload.IssueUploadUrlUseCase
 import com.challa.core.user.DeleteAccountUseCase
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(TestStorageConfig::class)
 class ChallaApplicationTests {
 
     @Autowired
@@ -33,4 +39,14 @@ class ChallaApplicationTests {
         assertNotNull(deleteAccountUseCase)
         assertNotNull(issueUploadUrlUseCase)
     }
+}
+
+@TestConfiguration
+class TestStorageConfig {
+
+    @Bean
+    fun cameraFiltersStorage(): CameraFiltersStorage =
+        object : CameraFiltersStorage {
+            override fun getAll() = emptyList<CameraFilter>()
+        }
 }
