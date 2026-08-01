@@ -50,8 +50,8 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/v1/users/me").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.id").value(7))
-            .andExpect(jsonPath("$.data.nickname").value("호랑이"))
+            .andExpect(jsonPath("$.data.user.id").value(7))
+            .andExpect(jsonPath("$.data.user.nickname").value("호랑이"))
     }
 
     @Test
@@ -60,7 +60,7 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/v1/users/me").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.nickname").value(null as String?))
+            .andExpect(jsonPath("$.data.user.nickname").value(null as String?))
     }
 
     @Test
@@ -71,11 +71,11 @@ class UserControllerTest {
         mockMvc.perform(
             put("/api/v1/users/me").authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"nickname":"호랑이","profileImageUrl":"https://img.example/1.png"}""")
+                .content("""{"user":{"nickname":"호랑이","profileImageUrl":"https://img.example/1.png"}}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.nickname").value("호랑이"))
-            .andExpect(jsonPath("$.data.profileImageUrl").value("https://img.example/1.png"))
+            .andExpect(jsonPath("$.data.user.nickname").value("호랑이"))
+            .andExpect(jsonPath("$.data.user.profileImageUrl").value("https://img.example/1.png"))
 
         verify { updateProfile.update(7, UpdateProfileCommand("호랑이", "https://img.example/1.png")) }
     }
@@ -88,15 +88,21 @@ class UserControllerTest {
         mockMvc.perform(
             put("/api/v1/users/me").authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"nickname":"호랑이","profileImageUrl":null}""")
+                .content("""{"user":{"nickname":"호랑이","profileImageUrl":null}}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.profileImageUrl").value(null as String?))
+            .andExpect(jsonPath("$.data.user.profileImageUrl").value(null as String?))
     }
 
     @Test
     fun `PUT me rejects a partial body with 400`() {
-        listOf("""{"nickname":"호랑이"}""", """{"profileImageUrl":null}""", "{}").forEach { body ->
+        listOf(
+            """{"user":{"nickname":"호랑이"}}""",
+            """{"user":{"profileImageUrl":null}}""",
+            """{"user":{}}""",
+            """{"nickname":"호랑이","profileImageUrl":null}""",
+            "{}"
+        ).forEach { body ->
             mockMvc.perform(
                 put("/api/v1/users/me").authenticated()
                     .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +121,7 @@ class UserControllerTest {
         mockMvc.perform(
             put("/api/v1/users/me").authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"nickname":"   ","profileImageUrl":null}""")
+                .content("""{"user":{"nickname":"   ","profileImageUrl":null}}""")
         )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.message").value("Nickname must not be blank"))
@@ -126,7 +132,7 @@ class UserControllerTest {
         mockMvc.perform(
             put("/api/v1/users/me")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"nickname":"호랑이","profileImageUrl":null}""")
+                .content("""{"user":{"nickname":"호랑이","profileImageUrl":null}}""")
         )
             .andExpect(status().isUnauthorized)
     }
@@ -137,7 +143,7 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/v1/users/nickname/random").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.nickname").value("용감한 호랑이"))
+            .andExpect(jsonPath("$.data.user.nickname").value("용감한 호랑이"))
     }
 
     @Test
@@ -146,7 +152,7 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/v1/users/nickname/random"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.nickname").value("용감한 호랑이"))
+            .andExpect(jsonPath("$.data.user.nickname").value("용감한 호랑이"))
     }
 
     @Test

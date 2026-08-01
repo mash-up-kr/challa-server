@@ -6,6 +6,8 @@ import com.challa.core.auth.Provider
 import com.challa.core.auth.TokenPair
 import com.fasterxml.jackson.annotation.JsonProperty
 
+data class AuthEnvelope<T : Any>(val auth: T)
+
 data class LoginRequest(val provider: Provider, val idToken: String, val authorizationCode: String? = null) {
     fun toCommand(): LoginCommand = LoginCommand(
         provider = provider,

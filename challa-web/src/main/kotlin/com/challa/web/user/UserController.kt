@@ -23,20 +23,21 @@ class UserController(
     private val deleteAccountUseCase: DeleteAccountUseCase
 ) {
     @GetMapping("/me")
-    fun me(@AuthUserId userId: Long): ApiResponse<UserProfileResponse> =
-        ApiResponse.ok(UserProfileResponse.from(getProfileUseCase.getProfile(userId)))
+    fun me(@AuthUserId userId: Long): ApiResponse<UserEnvelope<UserProfileResponse>> =
+        ApiResponse.ok(UserEnvelope(UserProfileResponse.from(getProfileUseCase.getProfile(userId))))
 
     @PutMapping("/me")
     fun updateMe(
         @AuthUserId userId: Long,
-        @RequestBody request: UpdateProfileRequest
-    ): ApiResponse<UserProfileResponse> =
-        ApiResponse.ok(UserProfileResponse.from(updateProfileUseCase.update(userId, request.toCommand())))
+        @RequestBody request: UserEnvelope<UpdateProfileRequest>
+    ): ApiResponse<UserEnvelope<UserProfileResponse>> = ApiResponse.ok(
+        UserEnvelope(UserProfileResponse.from(updateProfileUseCase.update(userId, request.user.toCommand())))
+    )
 
     @PublicEndpoint
     @GetMapping("/nickname/random")
-    fun randomNickname(): ApiResponse<RandomNicknameResponse> =
-        ApiResponse.ok(RandomNicknameResponse(suggestNicknameUseCase.suggest()))
+    fun randomNickname(): ApiResponse<UserEnvelope<RandomNicknameResponse>> =
+        ApiResponse.ok(UserEnvelope(RandomNicknameResponse(suggestNicknameUseCase.suggest())))
 
     @DeleteMapping("/me")
     fun deleteMe(@AuthUserId userId: Long): ApiResponse<Unit?> {

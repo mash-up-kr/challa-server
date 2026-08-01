@@ -12,27 +12,40 @@ class UserDtosJsonTest {
     private val mapper = jacksonObjectMapper()
 
     @Test
-    fun `profile update accepts a full body`() {
-        val request: UpdateProfileRequest =
-            mapper.readValue("""{"nickname":"닉","profileImageUrl":"https://img.example/1.png"}""")
+    fun `profile response nests the payload under user`() {
+        val json = mapper.writeValueAsString(UserEnvelope(UserProfileResponse(7, "닉", null)))
 
-        assertEquals("닉", request.nickname)
-        assertEquals("https://img.example/1.png", request.profileImageUrl)
+        assertEquals("""{"user":{"id":7,"nickname":"닉","profileImageUrl":null}}""", json)
+    }
+
+    @Test
+    fun `profile update accepts a full body`() {
+        val request: UserEnvelope<UpdateProfileRequest> =
+            mapper.readValue("""{"user":{"nickname":"닉","profileImageUrl":"https://img.example/1.png"}}""")
+
+        assertEquals("닉", request.user.nickname)
+        assertEquals("https://img.example/1.png", request.user.profileImageUrl)
     }
 
     @Test
     fun `profile update accepts an explicit null image url`() {
-        val request: UpdateProfileRequest =
-            mapper.readValue("""{"nickname":"닉","profileImageUrl":null}""")
+        val request: UserEnvelope<UpdateProfileRequest> =
+            mapper.readValue("""{"user":{"nickname":"닉","profileImageUrl":null}}""")
 
-        assertNull(request.profileImageUrl)
+        assertNull(request.user.profileImageUrl)
     }
 
     @Test
     fun `profile update rejects a body missing any field`() {
-        listOf("""{"nickname":"닉"}""", """{"profileImageUrl":null}""", "{}").forEach { body ->
+        listOf(
+            """{"user":{"nickname":"닉"}}""",
+            """{"user":{"profileImageUrl":null}}""",
+            """{"user":{}}""",
+            """{"nickname":"닉","profileImageUrl":null}""",
+            "{}"
+        ).forEach { body ->
             assertThrows(JacksonException::class.java) {
-                mapper.readValue<UpdateProfileRequest>(body)
+                mapper.readValue<UserEnvelope<UpdateProfileRequest>>(body)
             }
         }
     }
