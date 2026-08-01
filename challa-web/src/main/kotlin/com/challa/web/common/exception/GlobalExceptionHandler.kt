@@ -2,6 +2,7 @@ package com.challa.web.common.exception
 
 import com.challa.core.auth.InvalidTokenException
 import com.challa.core.auth.TokenReuseDetectedException
+import com.challa.core.room.application.InviteCodeAllocationFailedException
 import com.challa.core.upload.UnsupportedImageTypeException
 import com.challa.core.user.InvalidProfileException
 import com.challa.core.user.UserNotFoundException
@@ -42,6 +43,12 @@ class GlobalExceptionHandler {
     @ExceptionHandler(UnsupportedImageTypeException::class)
     fun handleUnsupportedImageType(ex: UnsupportedImageTypeException): ResponseEntity<ApiResponse<Unit?>> =
         respond(HttpStatus.BAD_REQUEST, ex.message ?: "Unsupported image type")
+
+    @ExceptionHandler(InviteCodeAllocationFailedException::class)
+    fun handleInviteCodeAllocationFailed(ex: InviteCodeAllocationFailedException): ResponseEntity<ApiResponse<Unit?>> {
+        log.error("Cannot allocate a room invite code", ex)
+        return respond(HttpStatus.SERVICE_UNAVAILABLE, "Room creation temporarily unavailable")
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleUnreadable(ex: HttpMessageNotReadableException): ResponseEntity<ApiResponse<Unit?>> =
