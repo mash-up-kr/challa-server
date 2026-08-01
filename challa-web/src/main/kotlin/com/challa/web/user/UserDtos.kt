@@ -27,5 +27,3 @@ data class UpdateProfileRequest(
 ) {
     fun toCommand(): UpdateProfileCommand = UpdateProfileCommand(nickname = nickname, profileImageUrl = profileImageUrl)
 }
-
-data class RandomNicknameResponse(val nickname: String)

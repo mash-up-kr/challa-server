@@ -4,8 +4,6 @@ import com.challa.core.auth.Provider
 import com.challa.core.user.DeleteAccountUseCase
 import com.challa.core.user.GetProfileUseCase
 import com.challa.core.user.InvalidNicknameException
-import com.challa.core.user.NicknameSuggestionUnavailableException
-import com.challa.core.user.SuggestNicknameUseCase
 import com.challa.core.user.UpdateProfileCommand
 import com.challa.core.user.UpdateProfileUseCase
 import com.challa.core.user.User
@@ -18,14 +16,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -33,11 +29,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 class UserControllerTest {
     private val getProfile = mockk<GetProfileUseCase>()
     private val updateProfile = mockk<UpdateProfileUseCase>()
-    private val suggestNickname = mockk<SuggestNicknameUseCase>()
     private val deleteAccount = mockk<DeleteAccountUseCase>(relaxed = true)
 
     private val mockMvc: MockMvc = MockMvcBuilders
-        .standaloneSetup(UserController(getProfile, updateProfile, suggestNickname, deleteAccount))
+        .standaloneSetup(UserController(getProfile, updateProfile, deleteAccount))
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
         .addInterceptors(AuthenticationInterceptor())
         .setControllerAdvice(GlobalExceptionHandler())
@@ -135,33 +130,6 @@ class UserControllerTest {
                 .content("""{"user":{"nickname":"호랑이","profileImageUrl":null}}""")
         )
             .andExpect(status().isUnauthorized)
-    }
-
-    @Test
-    fun `GET random nickname returns a suggestion`() {
-        every { suggestNickname.suggest() } returns "용감한 호랑이"
-
-        mockMvc.perform(get("/api/v1/users/nickname/random").authenticated())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.user.nickname").value("용감한 호랑이"))
-    }
-
-    @Test
-    fun `GET random nickname works without authentication`() {
-        every { suggestNickname.suggest() } returns "용감한 호랑이"
-
-        mockMvc.perform(get("/api/v1/users/nickname/random"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.user.nickname").value("용감한 호랑이"))
-    }
-
-    @Test
-    fun `GET random nickname reports an unseeded source as 503 with Retry-After`() {
-        every { suggestNickname.suggest() } throws NicknameSuggestionUnavailableException()
-
-        mockMvc.perform(get("/api/v1/users/nickname/random").authenticated())
-            .andExpect(status().isServiceUnavailable)
-            .andExpect(header().string(HttpHeaders.RETRY_AFTER, "3600"))
     }
 
     @Test

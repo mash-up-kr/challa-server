@@ -4,7 +4,6 @@ import com.challa.core.auth.AccessTokenIssuer
 import com.challa.core.auth.Provider
 import com.challa.core.auth.RefreshToken
 import com.challa.core.auth.RefreshTokenRepository
-import com.challa.core.user.RandomNicknameGenerator
 import com.challa.core.user.User
 import com.challa.core.user.UserRepository
 import java.time.Instant
@@ -86,8 +85,4 @@ open class FakeRefreshTokenRepository : RefreshTokenRepository {
 
 class FakeAccessTokenIssuer : AccessTokenIssuer {
     override fun issue(userId: Long, provider: Provider): String = "access-token-for-$userId-$provider"
-}
-
-class FakeRandomNicknameGenerator(var next: String? = "용감한 호랑이") : RandomNicknameGenerator {
-    override fun generate(): String? = next
 }

@@ -15,9 +15,6 @@ import com.challa.core.user.DeleteAccountService
 import com.challa.core.user.DeleteAccountUseCase
 import com.challa.core.user.GetProfileService
 import com.challa.core.user.GetProfileUseCase
-import com.challa.core.user.RandomNicknameGenerator
-import com.challa.core.user.SuggestNicknameService
-import com.challa.core.user.SuggestNicknameUseCase
 import com.challa.core.user.UpdateProfileService
 import com.challa.core.user.UpdateProfileUseCase
 import com.challa.core.user.UserRepository
@@ -82,10 +79,6 @@ class CoreBeansConfig {
     @Bean
     fun updateProfileUseCase(userRepository: UserRepository): UpdateProfileUseCase =
         UpdateProfileService(userRepository)
-
-    @Bean
-    fun suggestNicknameUseCase(randomNicknameGenerator: RandomNicknameGenerator): SuggestNicknameUseCase =
-        SuggestNicknameService(randomNicknameGenerator)
 
     @Bean
     fun deleteAccountUseCase(

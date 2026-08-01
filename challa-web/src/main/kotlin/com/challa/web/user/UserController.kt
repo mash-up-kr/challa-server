@@ -2,11 +2,9 @@ package com.challa.web.user
 
 import com.challa.core.user.DeleteAccountUseCase
 import com.challa.core.user.GetProfileUseCase
-import com.challa.core.user.SuggestNicknameUseCase
 import com.challa.core.user.UpdateProfileUseCase
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.AuthUserId
-import com.challa.web.security.PublicEndpoint
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val getProfileUseCase: GetProfileUseCase,
     private val updateProfileUseCase: UpdateProfileUseCase,
-    private val suggestNicknameUseCase: SuggestNicknameUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase
 ) {
     @GetMapping("/me")
@@ -33,11 +30,6 @@ class UserController(
     ): ApiResponse<UserEnvelope<UserProfileResponse>> = ApiResponse.ok(
         UserEnvelope(UserProfileResponse.from(updateProfileUseCase.update(userId, request.user.toCommand())))
     )
-
-    @PublicEndpoint
-    @GetMapping("/nickname/random")
-    fun randomNickname(): ApiResponse<UserEnvelope<RandomNicknameResponse>> =
-        ApiResponse.ok(UserEnvelope(RandomNicknameResponse(suggestNicknameUseCase.suggest())))
 
     @DeleteMapping("/me")
     fun deleteMe(@AuthUserId userId: Long): ApiResponse<Unit?> {
