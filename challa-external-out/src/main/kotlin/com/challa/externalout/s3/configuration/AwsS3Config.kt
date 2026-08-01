@@ -9,20 +9,24 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 
 @Configuration
-class AwsS3Config(private val s3Properties: S3Properties) {
+class AwsS3Config(private val properties: S3Properties) {
 
     @Bean
     fun s3Client(): S3Client {
-        val credentials = AwsBasicCredentials.create(
-            s3Properties.accessKey,
-            s3Properties.secretKey
-        )
+        val builder = S3Client.builder()
+            .region(Region.of(properties.region))
 
-        return S3Client.builder()
-            .region(Region.of(s3Properties.region))
-            .credentialsProvider(
-                StaticCredentialsProvider.create(credentials)
+        if (properties.accessKey.isNotBlank()) {
+            builder.credentialsProvider(
+                StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(
+                        properties.accessKey,
+                        properties.secretKey
+                    )
+                )
             )
-            .build()
+        }
+
+        return builder.build()
     }
 }
