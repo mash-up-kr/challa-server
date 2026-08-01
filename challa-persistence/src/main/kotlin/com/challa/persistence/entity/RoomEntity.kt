@@ -62,6 +62,7 @@ class RoomEntity(
 
     companion object {
         fun from(room: Room) = RoomEntity(
+            id = room.id,
             title = room.title,
             filmLimit = room.filmLimit,
             remainingFilmCount = room.remainingFilmCount,

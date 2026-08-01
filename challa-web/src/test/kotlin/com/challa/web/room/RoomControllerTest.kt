@@ -88,7 +88,10 @@ class RoomControllerTest {
             roomProjections = listOf(
                 ListRoomsResult.RoomProjection(
                     roomId = 11L,
-                    roomStatus = RoomStatus.SHOOTING
+                    roomStatus = RoomStatus.SHOOTING,
+                    title = "Trip",
+                    memberCount = 3L,
+                    remainingFilmCount = 24L
                 )
             )
         )

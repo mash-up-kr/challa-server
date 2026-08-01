@@ -11,7 +11,6 @@ import com.challa.persistence.util.findCause
 import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 private const val INVITATION_CODE_CONSTRAINT = "invitation_code"
 
@@ -32,20 +31,19 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
         }
     }
 
+    override fun saveAll(rooms: List<Room>): List<Room> =
+        roomJpaRepository.saveAll(rooms.map { RoomEntity.from(it) }).map { it.toDomain() }
+
     override fun findByInvitationCode(invitationCode: String): Room? =
         roomJpaRepository.findByInvitationCode(invitationCode)?.toDomain()
 
-    override fun findAllByRoomIdIn(roomIds: List<RoomId>): List<Room> =
+    override fun findAllById(roomIds: List<RoomId>): List<Room> =
         roomJpaRepository.findAllById(roomIds).map { it.toDomain() }
 
-    @Transactional
-    override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus) {
-        if (roomIds.isEmpty()) return
-
-        roomJpaRepository.findAllById(roomIds).forEach { room ->
-            room.updateStatus(roomStatus)
-        }
-    }
+    override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room> =
+        roomJpaRepository.findAllById(roomIds).onEach { room ->
+            room.updateStatus(newStatus = RoomStatus.PRINT_COMPLETED)
+        }.map { it.toDomain() }
 
     override fun findByRoomId(roomId: RoomId): Room? = roomJpaRepository.findById(roomId).orElse(null)?.toDomain()
 }

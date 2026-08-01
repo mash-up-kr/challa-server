@@ -14,34 +14,44 @@ class ListRoomsService(private val roomRepository: RoomRepository, private val r
     ListRoomsUsecase {
     override fun listRooms(listRoomsCommand: ListRoomsCommand): ListRoomsResult {
         val roomIds = roomUserRepository.findAllByUserId(listRoomsCommand.userId).map { it.roomId }
-        val rooms = roomRepository.findAllByRoomIdIn(roomIds)
+        val rooms = roomRepository.findAllById(roomIds)
         val now = LocalDateTime.now()
         val newlyCompletedRoomIds = rooms
             .filter { room ->
                 room.roomStatus == RoomStatus.PRINT_PENDING &&
                     room.printCompletionAt?.isBefore(now) == true
             }
-            .map { requireNotNull(it.id) }
+            .map { it.id!! }
         if (newlyCompletedRoomIds.isNotEmpty()) {
-            roomRepository.updateRoomsStatus(
+            val newlyCompletedRooms = roomRepository.updateRoomsStatus(
                 roomIds = newlyCompletedRoomIds,
                 roomStatus = RoomStatus.PRINT_COMPLETED
             )
+            roomRepository.saveAll(newlyCompletedRooms)
         }
 
         val newlyCompletedRoomIdSet = newlyCompletedRoomIds.toSet()
+        val roomsWithUpdatedStatus = rooms.map { room ->
+            if (room.id in newlyCompletedRoomIdSet) {
+                room.copy(roomStatus = RoomStatus.PRINT_COMPLETED)
+            } else {
+                room
+            }
+        }
         val requestedStatusSet = listRoomsCommand.status.toSet()
-        val roomProjections = rooms.map { room ->
+        val filteredRooms = roomsWithUpdatedStatus.filter { it.roomStatus in requestedStatusSet }
+        val memberCountsByRoomId = roomUserRepository
+            .countMembersByRoomIds(filteredRooms.map { it.id!! })
+            .associate { it.roomId to it.memberCount }
+        val roomProjections = filteredRooms.map { room ->
             ListRoomsResult.RoomProjection(
-                roomId = requireNotNull(room.id),
-                roomStatus = if (room.id in newlyCompletedRoomIdSet) {
-                    RoomStatus.PRINT_COMPLETED
-                } else {
-                    room.roomStatus
-                }
+                roomId = room.id!!,
+                roomStatus = room.roomStatus,
+                title = room.title,
+                memberCount = memberCountsByRoomId.getValue(room.id),
+                remainingFilmCount = room.remainingFilmCount
             )
         }
-            .filter { it.roomStatus in requestedStatusSet }
 
         return ListRoomsResult(roomProjections = roomProjections)
     }

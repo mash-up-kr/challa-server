@@ -14,7 +14,7 @@ class JoinRoomService(private val roomRepository: RoomRepository, private val ro
         val room = roomRepository.findByInvitationCode(joinRoomCommand.invitationCode)
             ?: throw InvitationCodeNotFoundException()
         val newMember = RoomUser.createMember(
-            roomId = requireNotNull(room.id),
+            roomId = room.id!!,
             userId = joinRoomCommand.userId
         )
 

@@ -29,7 +29,7 @@ class GetRoomService(private val roomUserRepository: RoomUserRepository, private
         }
 
         roomRepository.updateRoomsStatus(
-            roomIds = listOf(requireNotNull(room.id)),
+            roomIds = listOf(room.id!!),
             roomStatus = RoomStatus.PRINT_COMPLETED
         )
 
