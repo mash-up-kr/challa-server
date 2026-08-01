@@ -45,8 +45,7 @@ class ChallaApplicationTests {
 class TestStorageConfig {
 
     @Bean
-    fun cameraFiltersStorage(): CameraFiltersStorage =
-        object : CameraFiltersStorage {
-            override fun getAll() = emptyList<CameraFilter>()
-        }
+    fun cameraFiltersStorage(): CameraFiltersStorage = object : CameraFiltersStorage {
+        override fun getAll() = emptyList<CameraFilter>()
+    }
 }
