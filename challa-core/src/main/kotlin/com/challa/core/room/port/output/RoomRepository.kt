@@ -12,6 +12,8 @@ interface RoomRepository {
     fun findAllByRoomIdIn(roomIds: List<RoomId>): List<Room>
 
     fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus)
+
+    fun findByRoomId(roomId: RoomId): Room?
 }
 
 class InviteCodeConflictException : RuntimeException()

@@ -4,6 +4,7 @@ import com.challa.core.auth.InvalidTokenException
 import com.challa.core.auth.TokenReuseDetectedException
 import com.challa.core.room.application.InviteCodeAllocationFailedException
 import com.challa.core.room.application.InviteCodeNotFoundException
+import com.challa.core.room.application.NoMatchingRoomException
 import com.challa.core.upload.UnsupportedImageTypeException
 import com.challa.core.user.InvalidProfileException
 import com.challa.core.user.UserNotFoundException
@@ -47,6 +48,10 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(InviteCodeNotFoundException::class)
     fun handleInviteCodeNotFound(ex: InviteCodeNotFoundException): ResponseEntity<ApiResponse<Unit?>> =
+        respond(HttpStatus.NOT_FOUND, "Room not found")
+
+    @ExceptionHandler(NoMatchingRoomException::class)
+    fun handleNoMatchingRoom(ex: NoMatchingRoomException): ResponseEntity<ApiResponse<Unit?>> =
         respond(HttpStatus.NOT_FOUND, "Room not found")
 
     @ExceptionHandler(InviteCodeAllocationFailedException::class)

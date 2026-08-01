@@ -2,10 +2,15 @@ package com.challa.web.room
 
 import com.challa.core.room.application.InviteCodeAllocationFailedException
 import com.challa.core.room.application.InviteCodeNotFoundException
+import com.challa.core.room.application.NoMatchingRoomException
+import com.challa.core.room.domain.Room
 import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.input.CreateRoomCommand
 import com.challa.core.room.port.input.CreateRoomResult
 import com.challa.core.room.port.input.CreateRoomUsecase
+import com.challa.core.room.port.input.GetRoomCommand
+import com.challa.core.room.port.input.GetRoomResult
+import com.challa.core.room.port.input.GetRoomUsecase
 import com.challa.core.room.port.input.JoinRoomCommand
 import com.challa.core.room.port.input.JoinRoomUsecase
 import com.challa.core.room.port.input.ListRoomsCommand
@@ -28,18 +33,21 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.time.LocalDateTime
 
 class RoomControllerTest {
     private val createRoomUsecase = mockk<CreateRoomUsecase>()
     private val joinRoomUsecase = mockk<JoinRoomUsecase>(relaxed = true)
     private val listRoomsUsecase = mockk<ListRoomsUsecase>()
+    private val getRoomUsecase = mockk<GetRoomUsecase>()
 
     private val mockMvc: MockMvc = MockMvcBuilders
         .standaloneSetup(
             RoomController(
                 createRoomUsecase = createRoomUsecase,
                 joinRoomUsecase = joinRoomUsecase,
-                listRoomsUsecase = listRoomsUsecase
+                listRoomsUsecase = listRoomsUsecase,
+                getRoomUsecase = getRoomUsecase
             )
         )
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
@@ -97,6 +105,42 @@ class RoomControllerTest {
             .andExpect(jsonPath("$.data.roomProjection[0].roomStatus").value("SHOOTING"))
 
         verify { listRoomsUsecase.listRooms(ListRoomsCommand(AUTH_USER_ID)) }
+    }
+
+    @Test
+    fun `GET room uses the authenticated user ID`() {
+        val room = Room(
+            roomId = 11L,
+            title = "Trip",
+            filmLimit = 24L,
+            remainingFilmCount = 24L,
+            inviteCode = "123456",
+            roomStatus = RoomStatus.SHOOTING,
+            printCompletionAt = null,
+            isActive = true,
+            createdAt = LocalDateTime.of(2026, 8, 1, 12, 0)
+        )
+        every {
+            getRoomUsecase.getRoom(GetRoomCommand(userId = AUTH_USER_ID, roomId = 11L))
+        } returns GetRoomResult(room)
+
+        mockMvc.perform(get("/api/v1/rooms/11").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.room.roomId").value(11))
+            .andExpect(jsonPath("$.data.room.title").value("Trip"))
+
+        verify { getRoomUsecase.getRoom(GetRoomCommand(userId = AUTH_USER_ID, roomId = 11L)) }
+    }
+
+    @Test
+    fun `room not visible to the user returns 404`() {
+        every {
+            getRoomUsecase.getRoom(GetRoomCommand(userId = AUTH_USER_ID, roomId = 11L))
+        } throws NoMatchingRoomException()
+
+        mockMvc.perform(get("/api/v1/rooms/11").authenticated())
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Room not found"))
     }
 
     @Test

@@ -40,4 +40,6 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
     override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus) {
         roomJpaRepository.updateRoomsStatus(roomIds, roomStatus)
     }
+
+    override fun findByRoomId(roomId: RoomId): Room? = roomJpaRepository.findByRoomId(roomId)?.toDomain()
 }

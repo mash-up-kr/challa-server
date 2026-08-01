@@ -23,4 +23,6 @@ interface RoomJpaRepository : JpaRepository<RoomEntity, RoomId> {
         """
     )
     fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): Int
+
+    fun findByRoomId(roomId: RoomId): RoomEntity?
 }

@@ -1,12 +1,15 @@
 package com.challa.web.room
 
 import com.challa.core.room.port.input.CreateRoomUsecase
+import com.challa.core.room.port.input.GetRoomCommand
+import com.challa.core.room.port.input.GetRoomUsecase
 import com.challa.core.room.port.input.JoinRoomUsecase
 import com.challa.core.room.port.input.ListRoomsCommand
 import com.challa.core.room.port.input.ListRoomsUsecase
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.room.dto.CreateRoomRequest
 import com.challa.web.room.dto.CreateRoomResponse
+import com.challa.web.room.dto.GetRoomResponse
 import com.challa.web.room.dto.JoinRoomRequest
 import com.challa.web.room.dto.ListRoomsResponse
 import com.challa.web.security.AuthUserId
@@ -17,7 +20,8 @@ import org.springframework.web.bind.annotation.*
 class RoomController(
     private val createRoomUsecase: CreateRoomUsecase,
     private val joinRoomUsecase: JoinRoomUsecase,
-    private val listRoomsUsecase: ListRoomsUsecase
+    private val listRoomsUsecase: ListRoomsUsecase,
+    private val getRoomUsecase: GetRoomUsecase
 ) {
     @PostMapping
     fun createRoom(
@@ -43,5 +47,12 @@ class RoomController(
         val result = listRoomsUsecase.listRooms(ListRoomsCommand(userId = userId))
 
         return ApiResponse.ok(ListRoomsResponse.fromResult(result))
+    }
+
+    @GetMapping("/{roomId}")
+    fun getRoom(@AuthUserId userId: Long, @PathVariable roomId: Long): ApiResponse<GetRoomResponse> {
+        val result = getRoomUsecase.getRoom(GetRoomCommand(userId = userId, roomId = roomId))
+
+        return ApiResponse.ok(GetRoomResponse.fromResult(result))
     }
 }
