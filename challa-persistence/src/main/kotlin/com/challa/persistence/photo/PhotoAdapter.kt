@@ -9,9 +9,20 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class PhotoAdapter(private val repository: PhotoJpaRepository) : PhotoRepository {
 
+    @Transactional
+    override fun save(photo: Photo): Photo = repository.saveAndFlush(PhotoEntity.from(photo)).toDomain()
+
     override fun findById(photoId: Long): Photo? = repository.findById(photoId).orElse(null)?.toDomain()
 
     override fun findAllByIds(photoIds: List<Long>): List<Photo> = repository.findAllById(photoIds).map {
         it.toDomain()
+    }
+
+    @Transactional
+    override fun updateImageUrl(photoId: Long, userId: Long, imageUrl: String): Photo? {
+        val photo = repository.findByIdAndUserId(photoId, userId) ?: return null
+
+        photo.updateImageUrl(imageUrl)
+        return photo.toDomain()
     }
 }

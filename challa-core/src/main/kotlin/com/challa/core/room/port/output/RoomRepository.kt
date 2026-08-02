@@ -3,6 +3,7 @@ package com.challa.core.room.port.output
 import com.challa.core.room.domain.Room
 import com.challa.core.room.domain.RoomId
 import com.challa.core.room.domain.RoomStatus
+import java.time.LocalDateTime
 
 interface RoomRepository {
     fun save(room: Room): Room
@@ -15,7 +16,11 @@ interface RoomRepository {
 
     fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room>
 
+    fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletionAt: LocalDateTime)
+
     fun findByRoomId(roomId: RoomId): Room?
+
+    fun decrementRemainedPhotoCount(roomId: RoomId): Boolean
 }
 
 class InvitationCodeConflictException : RuntimeException()

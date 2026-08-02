@@ -1,8 +1,6 @@
 package com.challa.core.upload
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -14,7 +12,11 @@ class IssueUploadUrlServiceTest {
         override fun issue(key: String, contentType: String): UploadUrl {
             keys += key
             lastContentType = contentType
-            return UploadUrl("https://bucket/$key?sig=x", "https://bucket/$key", 300)
+            return UploadUrl(
+                uploadUrl = "https://bucket/$key?sig=x",
+                imageUrl = "https://bucket/$key",
+                expiresInSeconds = 300
+            )
         }
     }
 

@@ -29,22 +29,19 @@ class RoomEntity(
     @Column(nullable = false)
     val remainedPhotoCount: Long,
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    var roomStatus: RoomStatus,
+
     @Column(nullable = false, length = 6)
     val invitationCode: String,
 
-    roomStatus: RoomStatus,
-
     @Column(nullable = true)
-    val photoPrintCompletionAt: LocalDateTime?,
+    var photoPrintCompletionAt: LocalDateTime?,
 
     @Column(nullable = false)
     val createdAt: LocalDateTime
 ) {
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    var roomStatus: RoomStatus = roomStatus
-        private set
-
     fun toDomain() = Room(
         id = id,
         title = title,
@@ -58,6 +55,11 @@ class RoomEntity(
 
     fun updateStatus(newStatus: RoomStatus) {
         roomStatus = newStatus
+    }
+
+    fun markPhotoPrintPending(newPhotoPrintCompletionAt: LocalDateTime) {
+        roomStatus = RoomStatus.PHOTO_PRINT_PENDING
+        photoPrintCompletionAt = newPhotoPrintCompletionAt
     }
 
     companion object {
