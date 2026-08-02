@@ -1,12 +1,8 @@
 package com.challa.web.upload
 
-import com.challa.core.upload.IssuePhotoUploadUseCase
 import com.challa.core.upload.IssueUploadUrlUseCase
-import com.challa.core.upload.UploadPurpose
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.AuthUserId
-import com.challa.web.upload.dto.IssuePhotoUploadRequest
-import com.challa.web.upload.dto.IssuePhotoUploadResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,10 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "upload", description = "이미지 업로드용 S3 서명 URL 발급")
 @RestController
 @RequestMapping("/api/v1/uploads")
-class UploadController(
-    private val issueUploadUrlUseCase: IssueUploadUrlUseCase,
-    private val issuePhotoUploadUseCase: IssuePhotoUploadUseCase
-) {
+class UploadController(private val issueUploadUrlUseCase: IssueUploadUrlUseCase) {
     @Operation(
         summary = "이미지 업로드용 서명 URL 발급",
         description = UPLOAD_URL_GUIDE
@@ -29,27 +22,10 @@ class UploadController(
     fun issue(
         @AuthUserId userId: Long,
         @RequestBody request: UploadEnvelope<IssueUploadUrlRequest>
-    ): ApiResponse<UploadEnvelope<UploadUrlResponse>> {
-        if (request.upload.purpose == UploadPurpose.PHOTO) {
-            throw InvalidPhotoUploadRequestException("Use POST /api/v1/uploads/photos for PHOTO")
-        }
-
-        return ApiResponse.ok(
-            UploadEnvelope(UploadUrlResponse.from(issueUploadUrlUseCase.issue(userId, request.upload.toCommand())))
-        )
-    }
-
-    @Operation(summary = "촬영 사진 업로드 URL 발급")
-    @PostMapping("/photos")
-    fun issuePhotoUpload(
-        @AuthUserId userId: Long,
-        @RequestBody request: IssuePhotoUploadRequest
-    ): ApiResponse<IssuePhotoUploadResponse> = ApiResponse.ok(
-        IssuePhotoUploadResponse.from(issuePhotoUploadUseCase.issue(request.toCommand(userId)))
+    ): ApiResponse<UploadEnvelope<UploadUrlResponse>> = ApiResponse.ok(
+        UploadEnvelope(UploadUrlResponse.from(issueUploadUrlUseCase.issue(userId, request.upload.toCommand())))
     )
 }
-
-class InvalidPhotoUploadRequestException(message: String) : RuntimeException(message)
 
 private const val UPLOAD_URL_GUIDE = """
 이미지 파일을 서버로 보내지 않습니다. 서버는 **S3에 직접 올릴 수 있는 서명 URL만** 발급하고,
@@ -70,10 +46,15 @@ Body: 이미지 바이너리 그대로   ← multipart/form-data 아님
 - `Authorization` 헤더를 **넣지 마세요.** 넣으면 서명이 깨져 403이 납니다.
 - 응답 200이면 성공입니다.
 
-**3단계 — 프로필에 반영.** 1단계에서 받은 `imageUrl`을 그대로 씁니다.
+**3단계 — 업로드 결과 반영.** 프로필 이미지는 `imageUrl`을 프로필 수정 API에 전달합니다.
 ```
 PUT /api/v1/users/me
 { "user": { "nickname": "...", "profileImageUrl": "{imageUrl}" } }
+```
+촬영 사진은 `roomId`, `cameraFilterName`과 함께 1단계에서 받은 `imageUrl`을 완료 API에 전달합니다.
+```
+POST /api/v1/photos
+{ "roomId": 1, "cameraFilterName": "filter-original", "imageUrl": "{imageUrl}" }
 ```
 
 ## 주의사항
@@ -89,7 +70,6 @@ PUT /api/v1/users/me
 | 상황 | 상태 | message |
 |---|---|---|
 | 허용하지 않는 `contentType` | 400 | `Unsupported image type: ...` |
-| `PHOTO` 용도 | 400 | `Use POST /api/v1/uploads/photos for PHOTO` |
 | `purpose` 값이 잘못됨 | 400 | `Malformed or invalid request body` |
 | 액세스 토큰 없음·만료 | 401 | `Authentication required` / `Invalid or expired token` |
 
