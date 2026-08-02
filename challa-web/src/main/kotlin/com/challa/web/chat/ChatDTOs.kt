@@ -2,15 +2,25 @@ package com.challa.web.chat
 
 import com.challa.core.chat.ChatResult
 import com.challa.core.chat.CreateChatCommand
-import com.challa.core.chat.GetChatsResult
-import com.challa.core.chat.RoomResultForChat
 import com.challa.core.chat.domain.ChatType
+import java.time.LocalDateTime
 
-data class GetChatsResponse(val room: RoomResultForChat, val chats: List<ChatResult>) {
+data class GetChatsResponse(
+    val type: ChatType,
+    val content: String,
+    val photoImageUrl: String? = null,
+    val createdAt: LocalDateTime,
+    val userName: String? = null,
+    val userProfileImageUrl: String? = null
+) {
     companion object {
-        fun from(result: GetChatsResult) = GetChatsResponse(
-            room = result.room,
-            chats = result.chats
+        fun from(result: ChatResult) = GetChatsResponse(
+            type = result.type,
+            content = result.content,
+            photoImageUrl = result.photoImageUrl,
+            createdAt = result.createdAt,
+            userName = result.user?.name,
+            userProfileImageUrl = result.user?.profileImageUrl
         )
     }
 }
@@ -30,10 +40,22 @@ data class CreateChatRequest(
     )
 }
 
-data class CreateChatResponse(val chat: ChatResult) {
+data class CreateChatResponse(
+    val type: ChatType,
+    val content: String,
+    val photoImageUrl: String? = null,
+    val createdAt: LocalDateTime,
+    val userName: String? = null,
+    val userProfileImageUrl: String? = null
+) {
     companion object {
         fun from(result: ChatResult) = CreateChatResponse(
-            chat = result
+            type = result.type,
+            content = result.content,
+            photoImageUrl = result.photoImageUrl,
+            createdAt = result.createdAt,
+            userName = result.user?.name,
+            userProfileImageUrl = result.user?.profileImageUrl
         )
     }
 }

@@ -15,9 +15,9 @@ class ChatController(private val chatUseCase: ChatUseCase) {
         @PathVariable roomId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
-    ): ApiResponse<GetChatsResponse> {
+    ): ApiResponse<ChatEnvelope<List<GetChatsResponse>>> {
         val result = chatUseCase.getChatsByRoomId(roomId, page, size)
-        return ApiResponse.ok(GetChatsResponse.from(result))
+        return ApiResponse.ok(ChatEnvelope(result.chats.map(GetChatsResponse::from)))
     }
 
     @Operation(
@@ -25,9 +25,12 @@ class ChatController(private val chatUseCase: ChatUseCase) {
         description = "type = DEFAULT"
     )
     @PostMapping
-    fun createChat(@AuthUserId userId: Long, @RequestBody request: CreateChatRequest): ApiResponse<CreateChatResponse> {
-        val result = chatUseCase.chat(request.toCommand(userId))
-        return ApiResponse.ok(CreateChatResponse.from(result))
+    fun createChat(
+        @AuthUserId userId: Long,
+        @RequestBody request: ChatEnvelope<CreateChatRequest>
+    ): ApiResponse<ChatEnvelope<CreateChatResponse>> {
+        val result = chatUseCase.chat(request.chat.toCommand(userId))
+        return ApiResponse.ok(ChatEnvelope(CreateChatResponse.from(result)))
     }
 
     @Operation(
@@ -37,9 +40,9 @@ class ChatController(private val chatUseCase: ChatUseCase) {
     @PostMapping("/reaction")
     fun createChatForReaction(
         @AuthUserId userId: Long,
-        @RequestBody request: CreateChatRequest
-    ): ApiResponse<CreateChatResponse> {
-        val result = chatUseCase.reactForPhoto(request.toCommand(userId))
-        return ApiResponse.ok(CreateChatResponse.from(result))
+        @RequestBody request: ChatEnvelope<CreateChatRequest>
+    ): ApiResponse<ChatEnvelope<CreateChatResponse>> {
+        val result = chatUseCase.reactForPhoto(request.chat.toCommand(userId))
+        return ApiResponse.ok(ChatEnvelope(CreateChatResponse.from(result)))
     }
 }

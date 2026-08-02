@@ -19,41 +19,41 @@ class RoomController(
     @PostMapping
     fun createRoom(
         @AuthUserId userId: Long,
-        @RequestBody createRoomRequest: CreateRoomRequest
-    ): ApiResponse<CreateRoomResponse> {
-        val result = CreateRoomResponse.fromResult(
-            createRoomUsecase.createRoom(createRoomRequest.toCommand(userId))
-        )
+        @RequestBody request: RoomEnvelope<CreateRoomRequest>
+    ): ApiResponse<RoomEnvelope<CreateRoomResponse>> {
+        val result = createRoomUsecase.createRoom(request.room.toCommand(userId))
 
-        return ApiResponse.ok(result)
+        return ApiResponse.ok(RoomEnvelope(CreateRoomResponse.fromResult(result)))
     }
 
     @PostMapping("/join")
-    fun joinRoom(@AuthUserId userId: Long, @RequestBody joinRoomRequest: JoinRoomRequest): ApiResponse<Unit> {
-        joinRoomUsecase.joinRoom(joinRoomRequest.toCommand(userId))
+    fun joinRoom(@AuthUserId userId: Long, @RequestBody request: RoomEnvelope<JoinRoomRequest>): ApiResponse<Unit?> {
+        joinRoomUsecase.joinRoom(request.room.toCommand(userId))
 
-        return ApiResponse.ok(Unit)
+        return ApiResponse.empty()
     }
 
-    // 여기서 requestParam 에 빈 리스트 들어오면 거르게 하기
     @GetMapping
-    fun listRooms(@AuthUserId userId: Long, @RequestParam status: List<RoomStatus>): ApiResponse<ListRoomsResponse> {
+    fun listRooms(
+        @AuthUserId userId: Long,
+        @RequestParam status: List<RoomStatus>
+    ): ApiResponse<RoomEnvelope<List<ListRoomsResponse>>> {
         val result = listRoomsUsecase.listRooms(ListRoomsCommand(userId = userId, status = status))
 
-        return ApiResponse.ok(ListRoomsResponse.fromResult(result))
+        return ApiResponse.ok(RoomEnvelope(result.roomProjections.map(ListRoomsResponse::fromResult)))
     }
 
     @GetMapping("/{roomId}")
-    fun getRoom(@AuthUserId userId: Long, @PathVariable roomId: Long): ApiResponse<GetRoomResponse> {
+    fun getRoom(@AuthUserId userId: Long, @PathVariable roomId: Long): ApiResponse<RoomEnvelope<GetRoomResponse>> {
         val result = getRoomUsecase.getRoom(GetRoomCommand(userId = userId, roomId = roomId))
 
-        return ApiResponse.ok(GetRoomResponse.fromResult(result))
+        return ApiResponse.ok(RoomEnvelope(GetRoomResponse.fromResult(result)))
     }
 
     @GetMapping("/shootable")
-    fun getShootableRooms(@AuthUserId userId: Long): ApiResponse<GetShootableRoomsResponse> {
+    fun getShootableRooms(@AuthUserId userId: Long): ApiResponse<RoomEnvelope<List<GetShootableRoomsResponse>>> {
         val result = getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = userId))
 
-        return ApiResponse.ok(GetShootableRoomsResponse.fromResult(result))
+        return ApiResponse.ok(RoomEnvelope(result.rooms.map(GetShootableRoomsResponse::fromResult)))
     }
 }
