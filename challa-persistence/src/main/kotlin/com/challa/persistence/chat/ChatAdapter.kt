@@ -17,4 +17,7 @@ class ChatAdapter(private val repository: ChatJpaRepository) : ChatRepository {
         repository.findAllByRoomId(roomId, pageable)
             .filter { it.createdAt != null }
             .map { it.toDomain() }
+
+    override fun findAllByPhotoId(photoId: Long): List<Chat> =
+        repository.findAllByPhotoId(photoId).map { it.toDomain() }
 }

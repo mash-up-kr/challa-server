@@ -1,12 +1,8 @@
 package com.challa.web.photo
 
-import com.challa.core.photo.CompletePhotoCommand
-import com.challa.core.photo.CompletePhotoResult
-import com.challa.core.photo.CompletePhotoUseCase
-import com.challa.core.photo.ListPhotosCommand
-import com.challa.core.photo.ListPhotosResult
-import com.challa.core.photo.ListPhotosUseCase
-import com.challa.core.photo.NoRemainedPhotoException
+import com.challa.core.chat.domain.Chat
+import com.challa.core.chat.domain.ChatType
+import com.challa.core.photo.*
 import com.challa.core.room.application.NoMatchingRoomException
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
@@ -29,8 +25,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 class PhotoControllerTest {
     private val completePhotoUseCase = mockk<CompletePhotoUseCase>()
     private val listPhotosUseCase = mockk<ListPhotosUseCase>()
+    private val getPhotoDetailUseCase = mockk<GetPhotoDetailUseCase>()
     private val mockMvc: MockMvc = MockMvcBuilders
-        .standaloneSetup(PhotoController(completePhotoUseCase, listPhotosUseCase))
+        .standaloneSetup(PhotoController(completePhotoUseCase, listPhotosUseCase, getPhotoDetailUseCase))
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
         .addInterceptors(AuthenticationInterceptor())
         .setControllerAdvice(GlobalExceptionHandler())
@@ -91,6 +88,39 @@ class PhotoControllerTest {
         mockMvc.perform(get("/api/v1/photos").param("roomId", ROOM_ID.toString()).authenticated())
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.message").value("Room not found"))
+    }
+
+    @Test
+    fun `returns an owned photo with its chats`() {
+        val command = GetPhotoDetailCommand(userId = USER_ID, photoId = PHOTO_ID)
+        val chat = Chat(
+            id = 41,
+            type = ChatType.COMMENT,
+            content = "멋진 사진",
+            photoId = PHOTO_ID,
+            roomId = ROOM_ID,
+            userId = 8
+        )
+        every { getPhotoDetailUseCase.getPhotoDetail(command) } returns GetPhotoDetailResult(
+            photoDetail = PhotoDetail(id = PHOTO_ID, chats = listOf(chat))
+        )
+
+        mockMvc.perform(get("/api/v1/photos/$PHOTO_ID").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.photoDetail.id").value(PHOTO_ID))
+            .andExpect(jsonPath("$.data.photoDetail.chats[0].id").value(41))
+            .andExpect(jsonPath("$.data.photoDetail.chats[0].content").value("멋진 사진"))
+
+        verify { getPhotoDetailUseCase.getPhotoDetail(command) }
+    }
+
+    @Test
+    fun `returns not found when the detailed photo does not belong to the user`() {
+        every { getPhotoDetailUseCase.getPhotoDetail(any()) } throws PhotoNotFoundException()
+
+        mockMvc.perform(get("/api/v1/photos/$PHOTO_ID").authenticated())
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Photo not found"))
     }
 
     private fun command() = CompletePhotoCommand(
