@@ -25,11 +25,6 @@ class PhotoEntity(
     var userId: Long
 
 ) : BaseEntity() {
-
-    fun updateImageUrl(newImageUrl: String) {
-        imageUrl = newImageUrl
-    }
-
     fun toDomain(): Photo = Photo(
         id = this.id,
         imageUrl = this.imageUrl,

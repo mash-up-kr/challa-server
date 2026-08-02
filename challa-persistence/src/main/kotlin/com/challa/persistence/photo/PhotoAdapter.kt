@@ -17,12 +17,4 @@ class PhotoAdapter(private val repository: PhotoJpaRepository) : PhotoRepository
     override fun findAllByIds(photoIds: List<Long>): List<Photo> = repository.findAllById(photoIds).map {
         it.toDomain()
     }
-
-    @Transactional
-    override fun updateImageUrl(photoId: Long, userId: Long, imageUrl: String): Photo? {
-        val photo = repository.findByIdAndUserId(photoId, userId) ?: return null
-
-        photo.updateImageUrl(imageUrl)
-        return photo.toDomain()
-    }
 }

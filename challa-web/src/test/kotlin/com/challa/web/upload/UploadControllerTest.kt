@@ -1,11 +1,7 @@
 package com.challa.web.upload
 
-import com.challa.core.upload.IssuePhotoUploadCommand
-import com.challa.core.upload.IssuePhotoUploadResult
-import com.challa.core.upload.IssuePhotoUploadUseCase
 import com.challa.core.upload.IssueUploadUrlCommand
 import com.challa.core.upload.IssueUploadUrlUseCase
-import com.challa.core.upload.NoRemainedPhotoException
 import com.challa.core.upload.UploadPurpose
 import com.challa.core.upload.UploadUrl
 import com.challa.web.common.exception.GlobalExceptionHandler
@@ -27,9 +23,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class UploadControllerTest {
     private val issueUploadUrlUseCase = mockk<IssueUploadUrlUseCase>()
-    private val issuePhotoUploadUseCase = mockk<IssuePhotoUploadUseCase>()
     private val mockMvc: MockMvc = MockMvcBuilders
-        .standaloneSetup(UploadController(issueUploadUrlUseCase, issuePhotoUploadUseCase))
+        .standaloneSetup(UploadController(issueUploadUrlUseCase))
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
         .addInterceptors(AuthenticationInterceptor())
         .setControllerAdvice(GlobalExceptionHandler())
@@ -37,13 +32,9 @@ class UploadControllerTest {
         .build()
 
     @Test
-    fun `PROFILE_IMAGE keeps the existing request and response`() {
-        every {
-            issueUploadUrlUseCase.issue(
-                USER_ID,
-                IssueUploadUrlCommand(UploadPurpose.PROFILE_IMAGE, "image/jpeg")
-            )
-        } returns uploadUrl()
+    fun `PROFILE_IMAGE keeps the existing upload endpoint`() {
+        val command = IssueUploadUrlCommand(UploadPurpose.PROFILE_IMAGE, "image/jpeg")
+        every { issueUploadUrlUseCase.issue(USER_ID, command) } returns uploadUrl(PROFILE_IMAGE_KEY)
 
         mockMvc.perform(
             post("/api/v1/uploads").authenticated()
@@ -51,70 +42,32 @@ class UploadControllerTest {
                 .content("""{"upload":{"purpose":"PROFILE_IMAGE","contentType":"image/jpeg"}}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.upload.uploadUrl").value("https://bucket/profile?signature"))
-            .andExpect(jsonPath("$.data.upload.imageUrl").value("https://bucket/profile"))
+            .andExpect(jsonPath("$.data.upload.uploadUrl").value("https://bucket/$PROFILE_IMAGE_KEY?signature"))
+            .andExpect(jsonPath("$.data.upload.imageUrl").value("https://bucket/$PROFILE_IMAGE_KEY"))
+
+        verify { issueUploadUrlUseCase.issue(USER_ID, command) }
     }
 
     @Test
-    fun `PHOTO directs clients to the dedicated endpoint`() {
+    fun `PHOTO uses the common upload endpoint`() {
+        val command = IssueUploadUrlCommand(UploadPurpose.PHOTO, "image/jpeg")
+        every { issueUploadUrlUseCase.issue(USER_ID, command) } returns uploadUrl(PHOTO_IMAGE_KEY)
+
         mockMvc.perform(
             post("/api/v1/uploads").authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"upload":{"purpose":"PHOTO","contentType":"image/jpeg"}}""")
         )
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message").value("Use POST /api/v1/uploads/photos for PHOTO"))
-
-        verify(exactly = 0) { issueUploadUrlUseCase.issue(any(), any()) }
-    }
-
-    @Test
-    fun `photo upload URL issuance accepts a flat request`() {
-        val command = IssuePhotoUploadCommand(
-            userId = USER_ID,
-            roomId = ROOM_ID,
-            cameraFilterId = "filter-original",
-            contentType = "image/jpeg"
-        )
-        every { issuePhotoUploadUseCase.issue(command) } returns IssuePhotoUploadResult(
-            photoId = PHOTO_ID,
-            uploadUrl = "https://bucket/photo?signature",
-            imageUrl = "https://bucket/photo",
-            expiresInSeconds = 300,
-            remainedPhotoCount = 18
-        )
-
-        mockMvc.perform(
-            post("/api/v1/uploads/photos").authenticated()
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomId":11,"cameraFilterId":"filter-original","contentType":"image/jpeg"}""")
-        )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.upload.uploadUrl").value("https://bucket/photo?signature"))
-            .andExpect(jsonPath("$.data.upload.imageUrl").value("https://bucket/photo"))
-            .andExpect(jsonPath("$.data.photo.id").value(PHOTO_ID))
-            .andExpect(jsonPath("$.data.photo.status").doesNotExist())
-            .andExpect(jsonPath("$.data.room.remainedPhotoCount").value(18))
+            .andExpect(jsonPath("$.data.upload.uploadUrl").value("https://bucket/$PHOTO_IMAGE_KEY?signature"))
+            .andExpect(jsonPath("$.data.upload.imageUrl").value("https://bucket/$PHOTO_IMAGE_KEY"))
 
-        verify { issuePhotoUploadUseCase.issue(command) }
+        verify { issueUploadUrlUseCase.issue(USER_ID, command) }
     }
 
-    @Test
-    fun `an exhausted room returns conflict without a URL`() {
-        every { issuePhotoUploadUseCase.issue(any()) } throws NoRemainedPhotoException()
-
-        mockMvc.perform(
-            post("/api/v1/uploads/photos").authenticated()
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomId":11,"cameraFilterId":"filter-original","contentType":"image/jpeg"}""")
-        )
-            .andExpect(status().isConflict)
-            .andExpect(jsonPath("$.message").value("촬영 가능한 장 수가 없습니다"))
-    }
-
-    private fun uploadUrl() = UploadUrl(
-        uploadUrl = "https://bucket/profile?signature",
-        imageUrl = "https://bucket/profile",
+    private fun uploadUrl(objectKey: String) = UploadUrl(
+        uploadUrl = "https://bucket/$objectKey?signature",
+        imageUrl = "https://bucket/$objectKey",
         expiresInSeconds = 300
     )
 
@@ -124,7 +77,7 @@ class UploadControllerTest {
 
     private companion object {
         const val USER_ID = 7L
-        const val ROOM_ID = 11L
-        const val PHOTO_ID = 31L
+        const val PROFILE_IMAGE_KEY = "profile/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
+        const val PHOTO_IMAGE_KEY = "photo/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
     }
 }

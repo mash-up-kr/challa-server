@@ -1,6 +1,9 @@
 package com.challa.web.photo
 
-import com.challa.core.photo.*
+import com.challa.core.photo.CompletePhotoCommand
+import com.challa.core.photo.CompletePhotoResult
+import com.challa.core.photo.CompletePhotoUseCase
+import com.challa.core.photo.NoRemainedPhotoException
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
 import com.challa.web.security.AuthenticationInterceptor
@@ -29,43 +32,43 @@ class PhotoControllerTest {
         .build()
 
     @Test
-    fun `stores the image URL in the reserved photo`() {
-        val command = CompletePhotoCommand(USER_ID, PHOTO_ID, IMAGE_URL)
-        every { completePhotoUseCase.complete(command) } returns CompletePhotoResult(photo())
+    fun `returns only the remaining photo count after completion`() {
+        val command = command()
+        every { completePhotoUseCase.complete(command) } returns CompletePhotoResult(remainedPhotoCount = 18)
 
         mockMvc.perform(
             post("/api/v1/photos").authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"photoId":31,"imageUrl":"$IMAGE_URL"}""")
+                .content(requestBody())
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.message").value("OK"))
-            .andExpect(jsonPath("$.data").isEmpty())
+            .andExpect(jsonPath("$.data.remainedPhotoCount").value(18))
+            .andExpect(jsonPath("$.data.photoId").doesNotExist())
 
         verify { completePhotoUseCase.complete(command) }
     }
 
     @Test
-    fun `returns not found when the reserved photo does not belong to the user`() {
-        every { completePhotoUseCase.complete(any()) } throws PhotoNotFoundException()
+    fun `returns conflict when no photos remain`() {
+        every { completePhotoUseCase.complete(any()) } throws NoRemainedPhotoException()
 
         mockMvc.perform(
             post("/api/v1/photos").authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"photoId":31,"imageUrl":"$IMAGE_URL"}""")
+                .content(requestBody())
         )
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.message").value("Photo not found"))
+            .andExpect(status().isConflict)
+            .andExpect(jsonPath("$.message").value("촬영 가능한 장 수가 없습니다"))
     }
 
-    private fun photo() = Photo(
-        id = PHOTO_ID,
-        roomId = 11,
+    private fun command() = CompletePhotoCommand(
         userId = USER_ID,
-        imageUrl = IMAGE_URL,
-        filterId = "filter-original"
+        roomId = ROOM_ID,
+        cameraFilterId = CAMERA_FILTER_ID,
+        imageUrl = IMAGE_URL
     )
+
+    private fun requestBody() = """{"roomId":11,"cameraFilterId":"$CAMERA_FILTER_ID","imageUrl":"$IMAGE_URL"}"""
 
     private fun <B : MockHttpServletRequestBuilder> B.authenticated(): B = apply {
         requestAttr(JwtAuthenticationFilter.AUTH_USER_ID_ATTRIBUTE, USER_ID)
@@ -73,7 +76,8 @@ class PhotoControllerTest {
 
     private companion object {
         const val USER_ID = 7L
-        const val PHOTO_ID = 31L
-        const val IMAGE_URL = "https://bucket/photo"
+        const val ROOM_ID = 11L
+        const val CAMERA_FILTER_ID = "filter-original"
+        const val IMAGE_URL = "https://bucket/photo/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
     }
 }
