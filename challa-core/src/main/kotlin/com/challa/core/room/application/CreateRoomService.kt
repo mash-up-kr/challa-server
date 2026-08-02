@@ -48,7 +48,7 @@ class CreateRoomService(
     private fun createRoomWithOwner(input: CreateRoomCommand): Room {
         val room = Room.create(
             title = input.roomTitle,
-            filmLimit = input.filmLimit,
+            totalPhotoCount = input.totalPhotoCount,
             invitationCode = generateInvitationCode()
         )
         val savedRoom = roomRepository.save(room)

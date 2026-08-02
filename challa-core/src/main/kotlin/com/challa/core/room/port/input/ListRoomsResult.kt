@@ -8,6 +8,6 @@ data class ListRoomsResult(val roomProjections: List<RoomProjection>) {
         val roomStatus: RoomStatus,
         val title: String,
         val memberCount: Long,
-        val remainingFilmCount: Long
+        val remainedPhotoCount: Long
     )
 }

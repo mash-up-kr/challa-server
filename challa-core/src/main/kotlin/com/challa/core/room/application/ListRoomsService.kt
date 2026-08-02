@@ -18,14 +18,14 @@ class ListRoomsService(private val roomRepository: RoomRepository, private val r
         val now = LocalDateTime.now()
         val newlyCompletedRoomIds = rooms
             .filter { room ->
-                room.roomStatus == RoomStatus.PRINT_PENDING &&
-                    room.printCompletionAt?.isBefore(now) == true
+                room.roomStatus == RoomStatus.PHOTO_PRINT_PENDING &&
+                    room.photoPrintCompletionAt?.isBefore(now) == true
             }
             .map { it.id!! }
         if (newlyCompletedRoomIds.isNotEmpty()) {
             val newlyCompletedRooms = roomRepository.updateRoomsStatus(
                 roomIds = newlyCompletedRoomIds,
-                roomStatus = RoomStatus.PRINT_COMPLETED
+                roomStatus = RoomStatus.PHOTO_PRINT_COMPLETED
             )
             roomRepository.saveAll(newlyCompletedRooms)
         }
@@ -33,7 +33,7 @@ class ListRoomsService(private val roomRepository: RoomRepository, private val r
         val newlyCompletedRoomIdSet = newlyCompletedRoomIds.toSet()
         val roomsWithUpdatedStatus = rooms.map { room ->
             if (room.id in newlyCompletedRoomIdSet) {
-                room.copy(roomStatus = RoomStatus.PRINT_COMPLETED)
+                room.copy(roomStatus = RoomStatus.PHOTO_PRINT_COMPLETED)
             } else {
                 room
             }
@@ -49,7 +49,7 @@ class ListRoomsService(private val roomRepository: RoomRepository, private val r
                 roomStatus = room.roomStatus,
                 title = room.title,
                 memberCount = memberCountsByRoomId.getValue(room.id),
-                remainingFilmCount = room.remainingFilmCount
+                remainedPhotoCount = room.remainedPhotoCount
             )
         }
 

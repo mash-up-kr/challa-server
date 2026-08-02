@@ -42,7 +42,7 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
 
     override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room> =
         roomJpaRepository.findAllById(roomIds).onEach { room ->
-            room.updateStatus(newStatus = RoomStatus.PRINT_COMPLETED)
+            room.updateStatus(newStatus = RoomStatus.PHOTO_PRINT_COMPLETED)
         }.map { it.toDomain() }
 
     override fun findByRoomId(roomId: RoomId): Room? = roomJpaRepository.findById(roomId).orElse(null)?.toDomain()
