@@ -51,10 +51,10 @@ Body: 이미지 바이너리 그대로   ← multipart/form-data 아님
 PUT /api/v1/users/me
 { "user": { "nickname": "...", "profileImageUrl": "{imageUrl}" } }
 ```
-촬영 사진은 `roomId`, `cameraFilterId`와 함께 1단계에서 받은 `imageUrl`을 완료 API에 전달합니다.
+촬영 사진은 `roomId`, `cameraFilterName`과 함께 1단계에서 받은 `imageUrl`을 완료 API에 전달합니다.
 ```
 POST /api/v1/photos
-{ "roomId": 1, "cameraFilterId": "filter-original", "imageUrl": "{imageUrl}" }
+{ "roomId": 1, "cameraFilterName": "filter-original", "imageUrl": "{imageUrl}" }
 ```
 
 ## 주의사항

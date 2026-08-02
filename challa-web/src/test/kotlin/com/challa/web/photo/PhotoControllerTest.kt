@@ -64,11 +64,11 @@ class PhotoControllerTest {
     private fun command() = CompletePhotoCommand(
         userId = USER_ID,
         roomId = ROOM_ID,
-        cameraFilterId = CAMERA_FILTER_ID,
+        cameraFilterName = CAMERA_FILTER_NAME,
         imageUrl = IMAGE_URL
     )
 
-    private fun requestBody() = """{"roomId":11,"cameraFilterId":"$CAMERA_FILTER_ID","imageUrl":"$IMAGE_URL"}"""
+    private fun requestBody() = """{"roomId":11,"cameraFilterName":"$CAMERA_FILTER_NAME","imageUrl":"$IMAGE_URL"}"""
 
     private fun <B : MockHttpServletRequestBuilder> B.authenticated(): B = apply {
         requestAttr(JwtAuthenticationFilter.AUTH_USER_ID_ATTRIBUTE, USER_ID)
@@ -77,7 +77,7 @@ class PhotoControllerTest {
     private companion object {
         const val USER_ID = 7L
         const val ROOM_ID = 11L
-        const val CAMERA_FILTER_ID = "filter-original"
+        const val CAMERA_FILTER_NAME = "filter-original"
         const val IMAGE_URL = "https://bucket/photo/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
     }
 }
