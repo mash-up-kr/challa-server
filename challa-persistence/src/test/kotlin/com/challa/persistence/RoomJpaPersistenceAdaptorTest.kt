@@ -83,7 +83,8 @@ class RoomJpaPersistenceAdaptorTest {
     }
 
     @Test
-    fun `updateRoomStatus persists a status change through dirty checking`() {
+    fun `markPhotoPrintPending persists status and completion time through dirty checking`() {
+        val photoPrintCompletionAt = LocalDateTime.now().plusHours(24)
         val entity = repository.saveAndFlush(
             RoomEntity(
                 title = "Trip",
@@ -96,14 +97,16 @@ class RoomJpaPersistenceAdaptorTest {
             )
         )
         entityManager.clear()
-        adaptor.updateRoomStatus(
+        adaptor.markPhotoPrintPending(
             roomId = requireNotNull(entity.id),
-            roomStatus = RoomStatus.PHOTO_PRINT_PENDING
+            photoPrintCompletionAt = photoPrintCompletionAt
         )
         entityManager.flush()
         entityManager.clear()
 
-        assertEquals(RoomStatus.PHOTO_PRINT_PENDING, repository.findById(requireNotNull(entity.id)).get().roomStatus)
+        val updatedRoom = repository.findById(requireNotNull(entity.id)).get()
+        assertEquals(RoomStatus.PHOTO_PRINT_PENDING, updatedRoom.roomStatus)
+        assertEquals(photoPrintCompletionAt, updatedRoom.photoPrintCompletionAt)
     }
 
     @Test

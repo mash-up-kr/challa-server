@@ -9,10 +9,12 @@ import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.room.port.output.RoomUserRepository
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifyOrder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -51,7 +53,7 @@ class PhotoUploadServiceTest {
         assertEquals(PHOTO_ID, result.photoId)
         assertEquals("https://bucket/photo?signature", result.uploadUrl)
         assertEquals("https://bucket/photo", result.imageUrl)
-        verify(exactly = 0) { roomRepository.updateRoomStatus(any(), any()) }
+        verify(exactly = 0) { roomRepository.markPhotoPrintPending(any(), any()) }
         verifyOrder {
             roomRepository.decrementRemainedPhotoCount(ROOM_ID)
             roomRepository.findByRoomId(ROOM_ID)
@@ -62,23 +64,32 @@ class PhotoUploadServiceTest {
 
     @Test
     fun `changes the room status explicitly when the refreshed count reaches zero`() {
+        val requestedAt = LocalDateTime.now()
+        val photoPrintCompletionAt = slot<LocalDateTime>()
         every { roomUserRepository.findByUserIdAndRoomId(USER_ID, ROOM_ID) } returns roomUser()
         every { roomRepository.findByRoomId(ROOM_ID) } returnsMany listOf(
             room(remainedPhotoCount = 1),
             room(remainedPhotoCount = 0)
         )
         every { roomRepository.decrementRemainedPhotoCount(ROOM_ID) } returns true
-        every { roomRepository.updateRoomStatus(ROOM_ID, RoomStatus.PHOTO_PRINT_PENDING) } returns Unit
+        every {
+            roomRepository.markPhotoPrintPending(
+                ROOM_ID,
+                capture(photoPrintCompletionAt)
+            )
+        } returns Unit
         every { photoRepository.save(any()) } answers { firstArg<Photo>().copy(id = PHOTO_ID) }
         every { presignedUploadUrlIssuer.issue(any(), "image/jpeg") } returns uploadUrl()
 
         val result = service.issue(command())
 
         assertEquals(0, result.remainedPhotoCount)
+        assertTrue(!photoPrintCompletionAt.captured.isBefore(requestedAt.plusHours(24)))
+        assertTrue(!photoPrintCompletionAt.captured.isAfter(LocalDateTime.now().plusHours(24)))
         verifyOrder {
             roomRepository.decrementRemainedPhotoCount(ROOM_ID)
             roomRepository.findByRoomId(ROOM_ID)
-            roomRepository.updateRoomStatus(ROOM_ID, RoomStatus.PHOTO_PRINT_PENDING)
+            roomRepository.markPhotoPrintPending(ROOM_ID, any())
             photoRepository.save(any())
             presignedUploadUrlIssuer.issue(any(), "image/jpeg")
         }

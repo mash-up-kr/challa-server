@@ -3,12 +3,14 @@ package com.challa.core.upload
 import com.challa.core.photo.Photo
 import com.challa.core.photo.PhotoRepository
 import com.challa.core.room.application.NoMatchingRoomException
-import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.room.port.output.RoomUserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.UUID
+
+private const val PHOTO_PRINT_COMPLETION_HOURS = 24L
 
 @Service
 class PhotoUploadService(
@@ -36,9 +38,10 @@ class PhotoUploadService(
         val updatedRemainedPhotoCount =
             roomRepository.findByRoomId(command.roomId)?.remainedPhotoCount ?: throw NoMatchingRoomException()
         if (updatedRemainedPhotoCount == 0L) {
-            roomRepository.updateRoomStatus(
+            val photoPrintCompletionAt = LocalDateTime.now().plusHours(PHOTO_PRINT_COMPLETION_HOURS)
+            roomRepository.markPhotoPrintPending(
                 roomId = command.roomId,
-                roomStatus = RoomStatus.PHOTO_PRINT_PENDING
+                photoPrintCompletionAt = photoPrintCompletionAt
             )
         }
 

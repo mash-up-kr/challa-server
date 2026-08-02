@@ -12,6 +12,7 @@ import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 private const val INVITATION_CODE_CONSTRAINT = "invitation_code"
 
@@ -47,8 +48,8 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
         }.map { it.toDomain() }
 
     @Transactional
-    override fun updateRoomStatus(roomId: RoomId, roomStatus: RoomStatus) {
-        roomJpaRepository.findById(roomId).orElse(null)?.updateStatus(roomStatus)
+    override fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletionAt: LocalDateTime) {
+        roomJpaRepository.findById(roomId).orElse(null)?.markPhotoPrintPending(photoPrintCompletionAt)
     }
 
     override fun findByRoomId(roomId: RoomId): Room? = roomJpaRepository.findById(roomId).orElse(null)?.toDomain()

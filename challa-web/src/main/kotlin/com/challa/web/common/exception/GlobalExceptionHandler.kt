@@ -2,6 +2,7 @@ package com.challa.web.common.exception
 
 import com.challa.core.auth.InvalidTokenException
 import com.challa.core.auth.TokenReuseDetectedException
+import com.challa.core.photo.PhotoNotFoundException
 import com.challa.core.room.application.InvitationCodeAllocationFailedException
 import com.challa.core.room.application.InvitationCodeNotFoundException
 import com.challa.core.room.application.NoMatchingRoomException
@@ -55,6 +56,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(NoRemainedPhotoException::class)
     fun handleNoRemainedPhoto(ex: NoRemainedPhotoException): ResponseEntity<ApiResponse<Unit?>> =
         respond(HttpStatus.CONFLICT, ex.message ?: "촬영 가능한 장 수가 없습니다")
+
+    @ExceptionHandler(PhotoNotFoundException::class)
+    fun handlePhotoNotFound(ex: PhotoNotFoundException): ResponseEntity<ApiResponse<Unit?>> =
+        respond(HttpStatus.NOT_FOUND, "Photo not found")
 
     @ExceptionHandler(InvitationCodeNotFoundException::class)
     fun handleInvitationCodeNotFound(ex: InvitationCodeNotFoundException): ResponseEntity<ApiResponse<Unit?>> =

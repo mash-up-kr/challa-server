@@ -29,4 +29,44 @@ class PhotoAdapterTest {
         assertNull(found?.imageUrl)
         assertEquals("filter-original", found?.filterId)
     }
+
+    @Test
+    fun `updateImageUrl updates an owned photo through dirty checking`() {
+        val saved = adapter.save(
+            Photo(
+                roomId = 11,
+                userId = 7,
+                filterId = "filter-original"
+            )
+        )
+
+        val updated = adapter.updateImageUrl(
+            photoId = requireNotNull(saved.id),
+            userId = 7,
+            imageUrl = "https://bucket/photo"
+        )
+
+        assertEquals("https://bucket/photo", updated?.imageUrl)
+        assertEquals("https://bucket/photo", adapter.findById(requireNotNull(saved.id))?.imageUrl)
+    }
+
+    @Test
+    fun `updateImageUrl does not update another user's photo`() {
+        val saved = adapter.save(
+            Photo(
+                roomId = 11,
+                userId = 7,
+                filterId = "filter-original"
+            )
+        )
+
+        val updated = adapter.updateImageUrl(
+            photoId = requireNotNull(saved.id),
+            userId = 8,
+            imageUrl = "https://bucket/photo"
+        )
+
+        assertNull(updated)
+        assertNull(adapter.findById(requireNotNull(saved.id))?.imageUrl)
+    }
 }
