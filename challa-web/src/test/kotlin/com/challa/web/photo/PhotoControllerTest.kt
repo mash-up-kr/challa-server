@@ -45,8 +45,8 @@ class PhotoControllerTest {
                 .content(requestBody())
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.remainedPhotoCount").value(18))
-            .andExpect(jsonPath("$.data.photoId").doesNotExist())
+            .andExpect(jsonPath("$.data.photo.remainedPhotoCount").value(18))
+            .andExpect(jsonPath("$.data.photo.photoId").doesNotExist())
 
         verify { completePhotoUseCase.complete(command) }
     }
@@ -75,8 +75,8 @@ class PhotoControllerTest {
 
         mockMvc.perform(get("/api/v1/photos").param("roomId", ROOM_ID.toString()).authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.photoProjections[0].id").value(PHOTO_ID))
-            .andExpect(jsonPath("$.data.photoProjections[0].imageUrl").value(IMAGE_URL))
+            .andExpect(jsonPath("$.data.photo[0].id").value(PHOTO_ID))
+            .andExpect(jsonPath("$.data.photo[0].imageUrl").value(IMAGE_URL))
 
         verify { listPhotosUseCase.listPhotos(command) }
     }
@@ -107,9 +107,9 @@ class PhotoControllerTest {
 
         mockMvc.perform(get("/api/v1/photos/$PHOTO_ID").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.photoDetail.id").value(PHOTO_ID))
-            .andExpect(jsonPath("$.data.photoDetail.chats[0].id").value(41))
-            .andExpect(jsonPath("$.data.photoDetail.chats[0].content").value("멋진 사진"))
+            .andExpect(jsonPath("$.data.photo.id").value(PHOTO_ID))
+            .andExpect(jsonPath("$.data.photo.chats[0].id").value(41))
+            .andExpect(jsonPath("$.data.photo.chats[0].content").value("멋진 사진"))
 
         verify { getPhotoDetailUseCase.getPhotoDetail(command) }
     }
@@ -130,7 +130,8 @@ class PhotoControllerTest {
         imageUrl = IMAGE_URL
     )
 
-    private fun requestBody() = """{"roomId":11,"cameraFilterName":"$CAMERA_FILTER_NAME","imageUrl":"$IMAGE_URL"}"""
+    private fun requestBody() =
+        """{"photo":{"roomId":11,"cameraFilterName":"$CAMERA_FILTER_NAME","imageUrl":"$IMAGE_URL"}}"""
 
     private fun <B : MockHttpServletRequestBuilder> B.authenticated(): B = apply {
         requestAttr(JwtAuthenticationFilter.AUTH_USER_ID_ATTRIBUTE, USER_ID)

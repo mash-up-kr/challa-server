@@ -64,10 +64,10 @@ class RoomControllerTest {
             post("/api/v1/rooms")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomTitle":"Trip","totalPhotoCount":24}""")
+                .content("""{"room":{"title":"Trip","totalPhotoCount":24}}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.invitationCode").value("123456"))
+            .andExpect(jsonPath("$.data.room.invitationCode").value("123456"))
 
         verify {
             createRoomUsecase.createRoom(
@@ -100,9 +100,9 @@ class RoomControllerTest {
 
         mockMvc.perform(get("/api/v1/rooms").param("status", "SHOOTING").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.roomProjection[0].roomId").value(11))
-            .andExpect(jsonPath("$.data.roomProjection[0].roomStatus").value("SHOOTING"))
-            .andExpect(jsonPath("$.data.roomProjection[0].remainedPhotoCount").value(24))
+            .andExpect(jsonPath("$.data.room[0].id").value(11))
+            .andExpect(jsonPath("$.data.room[0].status").value("SHOOTING"))
+            .andExpect(jsonPath("$.data.room[0].remainedPhotoCount").value(24))
 
         verify {
             listRoomsUsecase.listRooms(
@@ -131,6 +131,7 @@ class RoomControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.room.id").value(11))
             .andExpect(jsonPath("$.data.room.title").value("Trip"))
+            .andExpect(jsonPath("$.data.room.status").value("SHOOTING"))
             .andExpect(jsonPath("$.data.room.totalPhotoCount").value(24))
             .andExpect(jsonPath("$.data.room.remainedPhotoCount").value(24))
 
@@ -154,9 +155,10 @@ class RoomControllerTest {
             post("/api/v1/rooms/join")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"invitationCode":"123456"}""")
+                .content("""{"room":{"invitationCode":"123456"}}""")
         )
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data").value(null as String?))
 
         verify {
             joinRoomUsecase.joinRoom(
@@ -176,7 +178,7 @@ class RoomControllerTest {
             post("/api/v1/rooms/join")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"invitationCode":"999999"}""")
+                .content("""{"room":{"invitationCode":"999999"}}""")
         )
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.message").value("Room not found"))
@@ -187,7 +189,7 @@ class RoomControllerTest {
         mockMvc.perform(
             post("/api/v1/rooms")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomTitle":"Trip","totalPhotoCount":24}""")
+                .content("""{"room":{"title":"Trip","totalPhotoCount":24}}""")
         )
             .andExpect(status().isUnauthorized)
             .andExpect(jsonPath("$.message").value("Authentication required"))
@@ -201,7 +203,7 @@ class RoomControllerTest {
             post("/api/v1/rooms")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomTitle":"Trip","totalPhotoCount":24}""")
+                .content("""{"room":{"title":"Trip","totalPhotoCount":24}}""")
         )
             .andExpect(status().isServiceUnavailable)
             .andExpect(jsonPath("$.message").value("Room creation temporarily unavailable"))

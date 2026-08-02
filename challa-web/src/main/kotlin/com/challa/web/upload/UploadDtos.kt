@@ -43,10 +43,10 @@ data class UploadUrlResponse(
     val expiresInSeconds: Long
 ) {
     companion object {
-        fun from(url: UploadUrl): UploadUrlResponse = UploadUrlResponse(
-            uploadUrl = url.uploadUrl,
-            imageUrl = url.imageUrl,
-            expiresInSeconds = url.expiresInSeconds
+        fun from(result: UploadUrl) = UploadUrlResponse(
+            uploadUrl = result.uploadUrl,
+            imageUrl = result.imageUrl,
+            expiresInSeconds = result.expiresInSeconds
         )
     }
 }

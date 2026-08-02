@@ -21,7 +21,8 @@ core         →  (없음)
 
 ## 패키지는 도메인 우선
 
-모든 모듈이 `<모듈 루트>.<도메인>` 으로 나뉜다. 현재 도메인은 `auth`, `user`. 레이어(`entity`, `adapter`, `usecase`, `port`)로 먼저 나누지 않고, 도메인 안에서는 평평하게 둔다.
+모든 모듈이 `<모듈 루트>.<도메인>` 으로 나뉜다. 현재 도메인은 `auth`, `user`. 레이어(`entity`, `adapter`, `usecase`, `port`)로 먼저 나누지 않고, 도메인 안에서는
+평평하게 둔다.
 
 `src/test`도 같은 규칙을 따른다. 여러 도메인이 함께 쓰는 테스트 픽스처만 모듈 테스트 루트에 둔다 (`core/src/test/.../core/Fakes.kt`).
 
@@ -42,14 +43,15 @@ core         →  (없음)
 
 클래스가 하나뿐인 파일은 그 클래스 이름을 파일명으로 쓴다. ktlint가 강제한다.
 
-`core`의 유스케이스 구현은 `...Service`, 나가는 포트 구현은 `...Adapter`다. 유스케이스에 Spring 애노테이션을 달지 않고, 빈 등록은 `bootstrap`의 `CoreBeansConfig`가 생성자 주입으로 한다.
+`core`의 유스케이스 구현은 `...Service`, 나가는 포트 구현은 `...Adapter`다. 유스케이스에 Spring 애노테이션을 달지 않고, 빈 등록은 `bootstrap`의
+`CoreBeansConfig`가 생성자 주입으로 한다.
 
 ## 컨트롤러
 
 - 경로는 `/api/v1/<도메인 복수형>` — `user` 도메인 → `/api/v1/users`
 - 반환은 항상 `ApiResponse<T>`. `ResponseEntity`는 예외 핸들러만 쓴다
 - **성공은 항상 200이다.** POST에도 201을 쓰지 않는다
-- 목록은 `ApiResponse<List<T>>`로 내린다. 페이징이 실제로 필요해지면 그때 래퍼를 만든다
+- 요청·응답 DTO와 JSON 구조는 [`following-api-contract`](../following-api-contract/SKILL.md)을 따른다
 - 파라미터 순서는 `@AuthUserId`, `@RequestBody`
 - 도메인 ↔ DTO 변환은 DTO 쪽 `from()` / `toCommand()`에서 한다
 - 컨트롤러는 분기하지 않는다. 조건이 필요하면 유스케이스로 옮긴다

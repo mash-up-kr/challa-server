@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController
 class ShootController(private val cameraFilterUseCase: CameraFilterUseCase) {
 
     @GetMapping("/camera-filters")
-    fun getCameraFilters(): ApiResponse<GetCameraFiltersResponse> {
-        val result = GetCameraFiltersResponse.fromResult(cameraFilterUseCase.getAll())
-        return ApiResponse.ok(result)
-    }
+    fun getCameraFilters(): ApiResponse<ShootEnvelope<GetCameraFiltersResponse>> =
+        ApiResponse.ok(ShootEnvelope(GetCameraFiltersResponse.fromResult(cameraFilterUseCase.getAll())))
 }

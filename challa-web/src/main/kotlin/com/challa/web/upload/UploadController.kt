@@ -54,7 +54,7 @@ PUT /api/v1/users/me
 촬영 사진은 `roomId`, `cameraFilterName`과 함께 1단계에서 받은 `imageUrl`을 완료 API에 전달합니다.
 ```
 POST /api/v1/photos
-{ "roomId": 1, "cameraFilterName": "filter-original", "imageUrl": "{imageUrl}" }
+{ "photo": { "roomId": 1, "cameraFilterName": "filter-original", "imageUrl": "{imageUrl}" } }
 ```
 
 ## 주의사항
