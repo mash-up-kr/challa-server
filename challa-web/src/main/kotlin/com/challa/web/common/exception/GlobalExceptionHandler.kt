@@ -5,11 +5,13 @@ import com.challa.core.auth.TokenReuseDetectedException
 import com.challa.core.room.application.InvitationCodeAllocationFailedException
 import com.challa.core.room.application.InvitationCodeNotFoundException
 import com.challa.core.room.application.NoMatchingRoomException
+import com.challa.core.upload.NoRemainedPhotoException
 import com.challa.core.upload.UnsupportedImageTypeException
 import com.challa.core.user.InvalidProfileException
 import com.challa.core.user.UserNotFoundException
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.UnauthenticatedException
+import com.challa.web.upload.InvalidPhotoUploadRequestException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -45,6 +47,14 @@ class GlobalExceptionHandler {
     @ExceptionHandler(UnsupportedImageTypeException::class)
     fun handleUnsupportedImageType(ex: UnsupportedImageTypeException): ResponseEntity<ApiResponse<Unit?>> =
         respond(HttpStatus.BAD_REQUEST, ex.message ?: "Unsupported image type")
+
+    @ExceptionHandler(InvalidPhotoUploadRequestException::class)
+    fun handleInvalidPhotoUploadRequest(ex: InvalidPhotoUploadRequestException): ResponseEntity<ApiResponse<Unit?>> =
+        respond(HttpStatus.BAD_REQUEST, ex.message ?: "Invalid photo upload request")
+
+    @ExceptionHandler(NoRemainedPhotoException::class)
+    fun handleNoRemainedPhoto(ex: NoRemainedPhotoException): ResponseEntity<ApiResponse<Unit?>> =
+        respond(HttpStatus.CONFLICT, ex.message ?: "촬영 가능한 장 수가 없습니다")
 
     @ExceptionHandler(InvitationCodeNotFoundException::class)
     fun handleInvitationCodeNotFound(ex: InvitationCodeNotFoundException): ResponseEntity<ApiResponse<Unit?>> =

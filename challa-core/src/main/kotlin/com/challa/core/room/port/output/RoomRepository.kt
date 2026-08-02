@@ -15,7 +15,11 @@ interface RoomRepository {
 
     fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room>
 
+    fun updateRoomStatus(roomId: RoomId, roomStatus: RoomStatus)
+
     fun findByRoomId(roomId: RoomId): Room?
+
+    fun decrementRemainedPhotoCount(roomId: RoomId): Boolean
 }
 
 class InvitationCodeConflictException : RuntimeException()
