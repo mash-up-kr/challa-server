@@ -13,7 +13,8 @@ class RoomController(
     private val createRoomUsecase: CreateRoomUsecase,
     private val joinRoomUsecase: JoinRoomUsecase,
     private val listRoomsUsecase: ListRoomsUsecase,
-    private val getRoomUsecase: GetRoomUsecase
+    private val getRoomUsecase: GetRoomUsecase,
+    private val getShootableRoomsUsecase: GetShootableRoomsUsecase
 ) {
     @PostMapping
     fun createRoom(
@@ -34,6 +35,7 @@ class RoomController(
         return ApiResponse.ok(Unit)
     }
 
+    // 여기서 requestParam 에 빈 리스트 들어오면 거르게 하기
     @GetMapping
     fun listRooms(@AuthUserId userId: Long, @RequestParam status: List<RoomStatus>): ApiResponse<ListRoomsResponse> {
         val result = listRoomsUsecase.listRooms(ListRoomsCommand(userId = userId, status = status))
@@ -46,5 +48,12 @@ class RoomController(
         val result = getRoomUsecase.getRoom(GetRoomCommand(userId = userId, roomId = roomId))
 
         return ApiResponse.ok(GetRoomResponse.fromResult(result))
+    }
+
+    @GetMapping("/shootable")
+    fun getShootableRooms(@AuthUserId userId: Long): ApiResponse<GetShootableRoomsResponse> {
+        val result = getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = userId))
+
+        return ApiResponse.ok(GetShootableRoomsResponse.fromResult(result))
     }
 }
