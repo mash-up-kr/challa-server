@@ -17,4 +17,6 @@ class PhotoAdapter(private val repository: PhotoJpaRepository) : PhotoRepository
     override fun findAllByIds(photoIds: List<Long>): List<Photo> = repository.findAllById(photoIds).map {
         it.toDomain()
     }
+
+    override fun findAllByRoomId(roomId: Long): List<Photo> = repository.findAllByRoomId(roomId).map { it.toDomain() }
 }
