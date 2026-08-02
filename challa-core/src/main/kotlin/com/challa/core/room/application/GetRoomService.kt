@@ -21,19 +21,19 @@ class GetRoomService(private val roomUserRepository: RoomUserRepository, private
         val room = roomRepository.findByRoomId(getRoomCommand.roomId)
             ?: throw NoMatchingRoomException()
         val shouldCompletePrinting =
-            room.roomStatus == RoomStatus.PRINT_PENDING &&
-                room.printCompletionAt?.isBefore(LocalDateTime.now()) == true
+            room.roomStatus == RoomStatus.PHOTO_PRINT_PENDING &&
+                room.photoPrintCompletionAt?.isBefore(LocalDateTime.now()) == true
 
         if (!shouldCompletePrinting) {
             return GetRoomResult(room = room)
         }
 
         roomRepository.updateRoomsStatus(
-            roomIds = listOf(requireNotNull(room.id)),
-            roomStatus = RoomStatus.PRINT_COMPLETED
+            roomIds = listOf(room.id!!),
+            roomStatus = RoomStatus.PHOTO_PRINT_COMPLETED
         )
 
-        return GetRoomResult(room = room.copy(roomStatus = RoomStatus.PRINT_COMPLETED))
+        return GetRoomResult(room = room.copy(roomStatus = RoomStatus.PHOTO_PRINT_COMPLETED))
     }
 }
 

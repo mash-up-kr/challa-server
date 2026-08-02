@@ -53,7 +53,7 @@ class RoomControllerTest {
                 CreateRoomCommand(
                     userId = AUTH_USER_ID,
                     roomTitle = "Trip",
-                    filmLimit = 24
+                    totalPhotoCount = 24
                 )
             )
         } returns CreateRoomResult(invitationCode = "123456")
@@ -62,7 +62,7 @@ class RoomControllerTest {
             post("/api/v1/rooms")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomTitle":"Trip","filmLimit":24}""")
+                .content("""{"roomTitle":"Trip","totalPhotoCount":24}""")
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.invitationCode").value("123456"))
@@ -72,7 +72,7 @@ class RoomControllerTest {
                 CreateRoomCommand(
                     userId = AUTH_USER_ID,
                     roomTitle = "Trip",
-                    filmLimit = 24
+                    totalPhotoCount = 24
                 )
             )
         }
@@ -88,7 +88,10 @@ class RoomControllerTest {
             roomProjections = listOf(
                 ListRoomsResult.RoomProjection(
                     roomId = 11L,
-                    roomStatus = RoomStatus.SHOOTING
+                    roomStatus = RoomStatus.SHOOTING,
+                    title = "Trip",
+                    memberCount = 3L,
+                    remainedPhotoCount = 24L
                 )
             )
         )
@@ -97,6 +100,7 @@ class RoomControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.roomProjection[0].roomId").value(11))
             .andExpect(jsonPath("$.data.roomProjection[0].roomStatus").value("SHOOTING"))
+            .andExpect(jsonPath("$.data.roomProjection[0].remainedPhotoCount").value(24))
 
         verify {
             listRoomsUsecase.listRooms(
@@ -110,11 +114,11 @@ class RoomControllerTest {
         val room = Room(
             id = 11L,
             title = "Trip",
-            filmLimit = 24L,
-            remainingFilmCount = 24L,
+            totalPhotoCount = 24L,
+            remainedPhotoCount = 24L,
             invitationCode = "123456",
             roomStatus = RoomStatus.SHOOTING,
-            printCompletionAt = null,
+            photoPrintCompletionAt = null,
             createdAt = LocalDateTime.of(2026, 8, 1, 12, 0)
         )
         every {
@@ -125,6 +129,8 @@ class RoomControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.room.id").value(11))
             .andExpect(jsonPath("$.data.room.title").value("Trip"))
+            .andExpect(jsonPath("$.data.room.totalPhotoCount").value(24))
+            .andExpect(jsonPath("$.data.room.remainedPhotoCount").value(24))
 
         verify { getRoomUsecase.getRoom(GetRoomCommand(userId = AUTH_USER_ID, roomId = 11L)) }
     }
@@ -179,7 +185,7 @@ class RoomControllerTest {
         mockMvc.perform(
             post("/api/v1/rooms")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomTitle":"Trip","filmLimit":24}""")
+                .content("""{"roomTitle":"Trip","totalPhotoCount":24}""")
         )
             .andExpect(status().isUnauthorized)
             .andExpect(jsonPath("$.message").value("Authentication required"))
@@ -193,7 +199,7 @@ class RoomControllerTest {
             post("/api/v1/rooms")
                 .authenticated()
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"roomTitle":"Trip","filmLimit":24}""")
+                .content("""{"roomTitle":"Trip","totalPhotoCount":24}""")
         )
             .andExpect(status().isServiceUnavailable)
             .andExpect(jsonPath("$.message").value("Room creation temporarily unavailable"))

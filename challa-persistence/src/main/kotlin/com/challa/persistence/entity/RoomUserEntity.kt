@@ -29,6 +29,7 @@ class RoomUserEntity(
 
     companion object {
         fun from(roomUser: RoomUser) = RoomUserEntity(
+            id = roomUser.id,
             roomId = roomUser.roomId,
             userId = roomUser.userId,
             createdAt = roomUser.createdAt

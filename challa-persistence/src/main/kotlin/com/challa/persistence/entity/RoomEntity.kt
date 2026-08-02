@@ -24,10 +24,10 @@ class RoomEntity(
     val title: String,
 
     @Column(nullable = false)
-    val filmLimit: Long,
+    val totalPhotoCount: Long,
 
     @Column(nullable = false)
-    val remainingFilmCount: Long,
+    val remainedPhotoCount: Long,
 
     @Column(nullable = false, length = 6)
     val invitationCode: String,
@@ -35,7 +35,7 @@ class RoomEntity(
     roomStatus: RoomStatus,
 
     @Column(nullable = true)
-    val printCompletionAt: LocalDateTime?,
+    val photoPrintCompletionAt: LocalDateTime?,
 
     @Column(nullable = false)
     val createdAt: LocalDateTime
@@ -48,11 +48,11 @@ class RoomEntity(
     fun toDomain() = Room(
         id = id,
         title = title,
-        filmLimit = filmLimit,
-        remainingFilmCount = remainingFilmCount,
+        totalPhotoCount = totalPhotoCount,
+        remainedPhotoCount = remainedPhotoCount,
         invitationCode = invitationCode,
         roomStatus = roomStatus,
-        printCompletionAt = printCompletionAt,
+        photoPrintCompletionAt = photoPrintCompletionAt,
         createdAt = createdAt
     )
 
@@ -62,12 +62,13 @@ class RoomEntity(
 
     companion object {
         fun from(room: Room) = RoomEntity(
+            id = room.id,
             title = room.title,
-            filmLimit = room.filmLimit,
-            remainingFilmCount = room.remainingFilmCount,
+            totalPhotoCount = room.totalPhotoCount,
+            remainedPhotoCount = room.remainedPhotoCount,
             invitationCode = room.invitationCode,
             roomStatus = room.roomStatus,
-            printCompletionAt = room.printCompletionAt,
+            photoPrintCompletionAt = room.photoPrintCompletionAt,
             createdAt = room.createdAt
         )
     }

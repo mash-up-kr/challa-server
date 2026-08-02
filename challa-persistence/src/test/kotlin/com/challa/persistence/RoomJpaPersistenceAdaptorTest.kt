@@ -28,11 +28,11 @@ class RoomJpaPersistenceAdaptorTest {
         val room = repository.saveAndFlush(
             RoomEntity(
                 title = "Trip",
-                filmLimit = 24,
-                remainingFilmCount = 0,
+                totalPhotoCount = 24,
+                remainedPhotoCount = 0,
                 invitationCode = "123456",
-                roomStatus = RoomStatus.PRINT_PENDING,
-                printCompletionAt = LocalDateTime.now(),
+                roomStatus = RoomStatus.PHOTO_PRINT_PENDING,
+                photoPrintCompletionAt = LocalDateTime.now(),
                 createdAt = LocalDateTime.now()
             )
         )
@@ -40,12 +40,12 @@ class RoomJpaPersistenceAdaptorTest {
 
         adaptor.updateRoomsStatus(
             roomIds = listOf(requireNotNull(room.id)),
-            roomStatus = RoomStatus.PRINT_COMPLETED
+            roomStatus = RoomStatus.PHOTO_PRINT_COMPLETED
         )
         entityManager.flush()
         entityManager.clear()
 
         val updatedRoom = repository.findById(requireNotNull(room.id)).orElseThrow()
-        assertEquals(RoomStatus.PRINT_COMPLETED, updatedRoom.roomStatus)
+        assertEquals(RoomStatus.PHOTO_PRINT_COMPLETED, updatedRoom.roomStatus)
     }
 }

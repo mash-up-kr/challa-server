@@ -7,11 +7,13 @@ import com.challa.core.room.domain.RoomStatus
 interface RoomRepository {
     fun save(room: Room): Room
 
+    fun saveAll(rooms: List<Room>): List<Room>
+
     fun findByInvitationCode(invitationCode: String): Room?
 
-    fun findAllByRoomIdIn(roomIds: List<RoomId>): List<Room>
+    fun findAllById(roomIds: List<RoomId>): List<Room>
 
-    fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus)
+    fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room>
 
     fun findByRoomId(roomId: RoomId): Room?
 }
