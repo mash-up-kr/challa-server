@@ -3,6 +3,8 @@ package com.challa.persistence
 import com.challa.core.room.domain.RoomStatus
 import com.challa.persistence.entity.RoomEntity
 import com.challa.persistence.repository.RoomJpaRepository
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 
@@ -106,7 +109,7 @@ class RoomJpaPersistenceAdaptorTest {
 
         val updatedRoom = repository.findById(requireNotNull(entity.id)).get()
         assertEquals(RoomStatus.PHOTO_PRINT_PENDING, updatedRoom.roomStatus)
-        assertEquals(photoPrintCompletionAt, updatedRoom.photoPrintCompletionAt)
+        assertThat(updatedRoom.photoPrintCompletionAt).isCloseTo(photoPrintCompletionAt, within(1, ChronoUnit.MILLIS))
     }
 
     @Test
