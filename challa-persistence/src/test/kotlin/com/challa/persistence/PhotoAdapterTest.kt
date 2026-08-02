@@ -3,6 +3,7 @@ package com.challa.persistence
 import com.challa.core.photo.Photo
 import com.challa.persistence.photo.PhotoAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
@@ -29,4 +30,31 @@ class PhotoAdapterTest {
         assertEquals("https://bucket/photo/7/image-id", found?.imageUrl)
         assertEquals("filter-original", found?.filterId)
     }
+
+    @Test
+    fun `findAllByRoomId returns only photos from the requested room`() {
+        val firstPhoto = adapter.save(photo(roomId = 11, userId = 7, filterId = "filter-one"))
+        val secondPhoto = adapter.save(photo(roomId = 11, userId = 8, filterId = "filter-two"))
+        adapter.save(photo(roomId = 12, userId = 7, filterId = "filter-three"))
+
+        val foundIds = adapter.findAllByRoomId(11).map { it.id }.toSet()
+
+        assertEquals(setOf(firstPhoto.id, secondPhoto.id), foundIds)
+    }
+
+    @Test
+    fun `findByIdAndUserId returns only an owned photo`() {
+        val saved = adapter.save(photo(roomId = 11, userId = 7, filterId = "filter-original"))
+        val photoId = requireNotNull(saved.id)
+
+        assertEquals(photoId, adapter.findByIdAndUserId(photoId, 7)?.id)
+        assertNull(adapter.findByIdAndUserId(photoId, 8))
+    }
+
+    private fun photo(roomId: Long, userId: Long, filterId: String) = Photo(
+        roomId = roomId,
+        userId = userId,
+        filterId = filterId,
+        imageUrl = "https://bucket/photo/$roomId/$userId/$filterId"
+    )
 }
