@@ -58,7 +58,7 @@ class RoomControllerTest {
                     totalPhotoCount = 24
                 )
             )
-        } returns CreateRoomResult(invitationCode = "123456")
+        } returns CreateRoomResult(id = 1)
 
         mockMvc.perform(
             post("/api/v1/rooms")
@@ -67,7 +67,7 @@ class RoomControllerTest {
                 .content("""{"room":{"title":"Trip","totalPhotoCount":24}}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.room.invitationCode").value("123456"))
+            .andExpect(jsonPath("$.data.room.id").value(1))
 
         verify {
             createRoomUsecase.createRoom(

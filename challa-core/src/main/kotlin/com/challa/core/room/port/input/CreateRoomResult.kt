@@ -1,3 +1,3 @@
 package com.challa.core.room.port.input
 
-data class CreateRoomResult(val invitationCode: String)
+data class CreateRoomResult(val id: Long)

@@ -35,7 +35,7 @@ class CreateRoomService(
                 }
 
                 return CreateRoomResult(
-                    invitationCode = result.invitationCode
+                    id = result.id!!
                 )
             } catch (e: InvitationCodeConflictException) {
                 logger.info("invitation code is already in use")
