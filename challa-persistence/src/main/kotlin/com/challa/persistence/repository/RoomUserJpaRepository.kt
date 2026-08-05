@@ -21,4 +21,6 @@ interface RoomUserJpaRepository : JpaRepository<RoomUserEntity, RoomUserId> {
     fun countMembersByRoomIds(@Param("roomIds") roomIds: Collection<Long>): List<RoomMemberCount>
 
     fun findByUserIdAndRoomId(userId: Long, roomId: Long): RoomUserEntity?
+
+    fun findAllByRoomId(roomId: Long): List<RoomUserEntity>
 }

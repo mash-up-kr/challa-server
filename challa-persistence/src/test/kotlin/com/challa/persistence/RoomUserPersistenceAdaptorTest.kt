@@ -46,4 +46,21 @@ class RoomUserPersistenceAdaptorTest {
     fun `returns an empty list when no room IDs are requested`() {
         assertEquals(emptyList<RoomMemberCount>(), adaptor.countMembersByRoomIds(emptyList()))
     }
+
+    @Test
+    fun `findAllByRoomId returns only users in the requested room`() {
+        val createdAt = LocalDateTime.now()
+        repository.saveAllAndFlush(
+            listOf(
+                RoomUserEntity(roomId = 1L, userId = 11L, createdAt = createdAt),
+                RoomUserEntity(roomId = 1L, userId = 12L, createdAt = createdAt.plusSeconds(1)),
+                RoomUserEntity(roomId = 2L, userId = 21L, createdAt = createdAt)
+            )
+        )
+
+        val result = adaptor.findAllByRoomId(1L)
+
+        assertEquals(setOf(11L, 12L), result.map { it.userId }.toSet())
+        assertEquals(setOf(1L), result.map { it.roomId }.toSet())
+    }
 }

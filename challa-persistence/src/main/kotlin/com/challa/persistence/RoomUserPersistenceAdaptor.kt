@@ -21,4 +21,7 @@ class RoomUserPersistenceAdaptor(private val roomUserJpaRepository: RoomUserJpaR
 
     override fun findByUserIdAndRoomId(userId: Long, roomId: Long): RoomUser? =
         roomUserJpaRepository.findByUserIdAndRoomId(userId = userId, roomId = roomId)?.toDomain()
+
+    override fun findAllByRoomId(roomId: Long): List<RoomUser> =
+        roomUserJpaRepository.findAllByRoomId(roomId).map { it.toDomain() }
 }

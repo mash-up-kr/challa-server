@@ -3,7 +3,7 @@ package com.challa.web.room.dto
 import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.input.ListRoomsResult
 
-data class ListRoomsResponse(
+data class ListRoomResponse(
     val id: Long,
     val status: RoomStatus,
     val title: String,
@@ -11,7 +11,7 @@ data class ListRoomsResponse(
     val remainedPhotoCount: Long
 ) {
     companion object {
-        fun fromResult(result: ListRoomsResult.RoomProjection) = ListRoomsResponse(
+        fun fromResult(result: ListRoomsResult.RoomProjection) = ListRoomResponse(
             id = result.roomId,
             status = result.roomStatus,
             title = result.title,

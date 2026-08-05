@@ -14,7 +14,8 @@ class RoomController(
     private val joinRoomUsecase: JoinRoomUsecase,
     private val listRoomsUsecase: ListRoomsUsecase,
     private val getRoomUsecase: GetRoomUsecase,
-    private val getShootableRoomsUsecase: GetShootableRoomsUsecase
+    private val getShootableRoomsUsecase: GetShootableRoomsUsecase,
+    private val getRoomUsersUsecase: GetRoomUsersUsecase
 ) {
     @PostMapping
     fun createRoom(
@@ -40,10 +41,10 @@ class RoomController(
     fun listRooms(
         @AuthUserId userId: Long,
         @RequestParam status: List<RoomStatus>
-    ): ApiResponse<RoomEnvelope<List<ListRoomsResponse>>> {
+    ): ApiResponse<RoomEnvelope<List<ListRoomResponse>>> {
         val result = listRoomsUsecase.listRooms(ListRoomsCommand(userId = userId, status = status))
 
-        return ApiResponse.ok(RoomEnvelope(result.roomProjections.map(ListRoomsResponse::fromResult)))
+        return ApiResponse.ok(RoomEnvelope(result.roomProjections.map(ListRoomResponse::fromResult)))
     }
 
     @GetMapping("/{roomId}")
@@ -54,9 +55,19 @@ class RoomController(
     }
 
     @GetMapping("/shootable")
-    fun getShootableRooms(@AuthUserId userId: Long): ApiResponse<RoomEnvelope<List<GetShootableRoomsResponse>>> {
+    fun getShootableRooms(@AuthUserId userId: Long): ApiResponse<RoomEnvelope<List<GetShootableRoomResponse>>> {
         val result = getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = userId))
 
-        return ApiResponse.ok(RoomEnvelope(result.rooms.map(GetShootableRoomsResponse::fromResult)))
+        return ApiResponse.ok(RoomEnvelope(result.rooms.map(GetShootableRoomResponse::fromResult)))
+    }
+
+    @GetMapping("/{roomId}/users")
+    fun getRoomUsers(
+        @AuthUserId userId: Long,
+        @PathVariable roomId: Long
+    ): ApiResponse<RoomEnvelope<List<GetRoomUserResponse>>> {
+        val result = getRoomUsersUsecase.getRoomUsers(GetRoomUsersCommand(userId = userId, roomId = roomId))
+
+        return ApiResponse.ok(RoomEnvelope(result.userProjections.map(GetRoomUserResponse::fromResult)))
     }
 }

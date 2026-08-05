@@ -11,4 +11,6 @@ interface RoomUserRepository {
     fun countMembersByRoomIds(roomIds: List<RoomId>): List<RoomMemberCount>
 
     fun findByUserIdAndRoomId(userId: Long, roomId: Long): RoomUser?
+
+    fun findAllByRoomId(roomId: Long): List<RoomUser>
 }
