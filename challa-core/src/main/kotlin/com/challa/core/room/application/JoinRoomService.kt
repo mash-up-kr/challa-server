@@ -19,10 +19,10 @@ class JoinRoomService(private val roomRepository: RoomRepository, private val ro
             userId = joinRoomCommand.userId
         )
 
-        val savedRoom = roomUserRepository.save(newMember)
+        roomUserRepository.save(newMember)
 
         return JoinRoomResult(
-            id = savedRoom.id!!
+            id = room.id
         )
     }
 }
