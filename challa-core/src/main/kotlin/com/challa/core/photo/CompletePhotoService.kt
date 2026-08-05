@@ -1,6 +1,6 @@
 package com.challa.core.photo
 
-import com.challa.core.room.application.NoMatchingRoomException
+import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.room.port.output.RoomUserRepository
 import com.challa.core.upload.UploadedObjectDeleter

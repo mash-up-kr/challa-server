@@ -2,9 +2,9 @@ package com.challa.web.room
 
 import com.challa.core.room.application.InvitationCodeAllocationFailedException
 import com.challa.core.room.application.InvitationCodeNotFoundException
-import com.challa.core.room.application.NoMatchingRoomException
 import com.challa.core.room.domain.Room
 import com.challa.core.room.domain.RoomStatus
+import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.input.*
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
@@ -31,6 +31,7 @@ class RoomControllerTest {
     private val listRoomsUsecase = mockk<ListRoomsUsecase>()
     private val getRoomUsecase = mockk<GetRoomUsecase>()
     private val getShootableRoomsUsecase = mockk<GetShootableRoomsUsecase>()
+    private val getRoomUsersUsecase = mockk<GetRoomUsersUsecase>()
 
     private val mockMvc: MockMvc = MockMvcBuilders
         .standaloneSetup(
@@ -39,7 +40,8 @@ class RoomControllerTest {
                 joinRoomUsecase = joinRoomUsecase,
                 listRoomsUsecase = listRoomsUsecase,
                 getRoomUsecase = getRoomUsecase,
-                getShootableRoomsUsecase = getShootableRoomsUsecase
+                getShootableRoomsUsecase = getShootableRoomsUsecase,
+                getRoomUsersUsecase = getRoomUsersUsecase
             )
         )
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
@@ -145,6 +147,46 @@ class RoomControllerTest {
         } throws NoMatchingRoomException()
 
         mockMvc.perform(get("/api/v1/rooms/11").authenticated())
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Room not found"))
+    }
+
+    @Test
+    fun `GET room users uses the authenticated user ID and maps the users`() {
+        every {
+            getRoomUsersUsecase.getRoomUsers(GetRoomUsersCommand(userId = AUTH_USER_ID, roomId = 11L))
+        } returns GetRoomUsersResult(
+            userProjections = listOf(
+                GetRoomUsersResult.UserProjection(
+                    id = 8L,
+                    nickname = "라이언",
+                    profileImageUrl = "https://img.example/ryan.png"
+                ),
+                GetRoomUsersResult.UserProjection(id = 9L, nickname = null, profileImageUrl = null)
+            )
+        )
+
+        mockMvc.perform(get("/api/v1/rooms/11/users").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.room[0].id").value(8))
+            .andExpect(jsonPath("$.data.room[0].nickname").value("라이언"))
+            .andExpect(jsonPath("$.data.room[0].profileImageUrl").value("https://img.example/ryan.png"))
+            .andExpect(jsonPath("$.data.room[1].id").value(9))
+            .andExpect(jsonPath("$.data.room[1].nickname").isEmpty)
+            .andExpect(jsonPath("$.data.room[1].profileImageUrl").isEmpty)
+
+        verify {
+            getRoomUsersUsecase.getRoomUsers(GetRoomUsersCommand(userId = AUTH_USER_ID, roomId = 11L))
+        }
+    }
+
+    @Test
+    fun `GET room users returns 404 when the requester is not in the room`() {
+        every {
+            getRoomUsersUsecase.getRoomUsers(GetRoomUsersCommand(userId = AUTH_USER_ID, roomId = 11L))
+        } throws NoMatchingRoomException()
+
+        mockMvc.perform(get("/api/v1/rooms/11/users").authenticated())
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.message").value("Room not found"))
     }

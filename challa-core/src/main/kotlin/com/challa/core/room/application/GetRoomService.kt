@@ -1,6 +1,7 @@
 package com.challa.core.room.application
 
 import com.challa.core.room.domain.RoomStatus
+import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.input.GetRoomCommand
 import com.challa.core.room.port.input.GetRoomResult
 import com.challa.core.room.port.input.GetRoomUsecase
@@ -36,5 +37,3 @@ class GetRoomService(private val roomUserRepository: RoomUserRepository, private
         return GetRoomResult(room = room.copy(roomStatus = RoomStatus.PHOTO_PRINT_COMPLETED))
     }
 }
-
-class NoMatchingRoomException : RuntimeException("Room not found")

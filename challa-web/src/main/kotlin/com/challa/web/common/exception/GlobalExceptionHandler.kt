@@ -6,7 +6,7 @@ import com.challa.core.photo.NoRemainedPhotoException
 import com.challa.core.photo.PhotoNotFoundException
 import com.challa.core.room.application.InvitationCodeAllocationFailedException
 import com.challa.core.room.application.InvitationCodeNotFoundException
-import com.challa.core.room.application.NoMatchingRoomException
+import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.upload.UnsupportedImageTypeException
 import com.challa.core.user.InvalidProfileException
 import com.challa.core.user.UserNotFoundException

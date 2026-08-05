@@ -1,14 +1,10 @@
 package com.challa.core.chat.business
 
-import com.challa.core.chat.ChatRepository
-import com.challa.core.chat.ChatResult
-import com.challa.core.chat.ChatUseCase
-import com.challa.core.chat.CreateChatCommand
-import com.challa.core.chat.GetChatsResult
+import com.challa.core.chat.*
 import com.challa.core.chat.domain.Chat
 import com.challa.core.chat.domain.ChatType
 import com.challa.core.photo.PhotoRepository
-import com.challa.core.room.application.NoMatchingRoomException
+import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.user.UserRepository
 import org.springframework.data.domain.PageRequest

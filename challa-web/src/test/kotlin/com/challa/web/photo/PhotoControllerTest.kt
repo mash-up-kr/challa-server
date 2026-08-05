@@ -3,7 +3,7 @@ package com.challa.web.photo
 import com.challa.core.chat.domain.Chat
 import com.challa.core.chat.domain.ChatType
 import com.challa.core.photo.*
-import com.challa.core.room.application.NoMatchingRoomException
+import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthUserIdArgumentResolver
 import com.challa.web.security.AuthenticationInterceptor
