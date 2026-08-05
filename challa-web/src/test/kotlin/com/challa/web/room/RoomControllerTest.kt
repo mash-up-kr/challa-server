@@ -151,6 +151,15 @@ class RoomControllerTest {
 
     @Test
     fun `POST join uses the authenticated user ID`() {
+        every {
+            joinRoomUsecase.joinRoom(
+                JoinRoomCommand(
+                    userId = AUTH_USER_ID,
+                    invitationCode = "123456"
+                )
+            )
+        } returns JoinRoomResult(id = 1L)
+
         mockMvc.perform(
             post("/api/v1/rooms/join")
                 .authenticated()
@@ -158,7 +167,7 @@ class RoomControllerTest {
                 .content("""{"room":{"invitationCode":"123456"}}""")
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data").value(null as String?))
+            .andExpect(jsonPath("$.data.room.id").value(1))
 
         verify {
             joinRoomUsecase.joinRoom(

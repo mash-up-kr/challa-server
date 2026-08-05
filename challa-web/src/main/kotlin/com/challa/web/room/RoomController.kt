@@ -27,10 +27,13 @@ class RoomController(
     }
 
     @PostMapping("/join")
-    fun joinRoom(@AuthUserId userId: Long, @RequestBody request: RoomEnvelope<JoinRoomRequest>): ApiResponse<Unit?> {
-        joinRoomUsecase.joinRoom(request.room.toCommand(userId))
+    fun joinRoom(
+        @AuthUserId userId: Long,
+        @RequestBody request: RoomEnvelope<JoinRoomRequest>
+    ): ApiResponse<RoomEnvelope<JoinRoomResponse>> {
+        val result = joinRoomUsecase.joinRoom(request.room.toCommand(userId))
 
-        return ApiResponse.empty()
+        return ApiResponse.ok(RoomEnvelope(JoinRoomResponse.fromResult(result)))
     }
 
     @GetMapping
