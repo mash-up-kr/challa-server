@@ -43,6 +43,23 @@ class PhotoAdapterTest {
     }
 
     @Test
+    fun `findLatestFourByRoomIdsIn returns at most four newest photos per room`() {
+        val roomElevenPhotos = (1L..5L).map { sequence ->
+            adapter.save(photo(roomId = 11, userId = sequence, filterId = "filter-$sequence"))
+        }
+        val roomTwelvePhoto = adapter.save(photo(roomId = 12, userId = 1, filterId = "filter-room-twelve"))
+        adapter.save(photo(roomId = 13, userId = 1, filterId = "filter-room-thirteen"))
+
+        val found = adapter.findLatestFourByRoomIdsIn(listOf(11, 12))
+
+        val expectedRoomElevenPhotoIds = roomElevenPhotos.takeLast(4).map { it.id }.reversed()
+        val foundRoomElevenPhotoIds = found.filter { it.roomId == 11L }.map { it.id }
+        assertEquals(expectedRoomElevenPhotoIds, foundRoomElevenPhotoIds)
+        assertEquals(listOf(roomTwelvePhoto.id), found.filter { it.roomId == 12L }.map { it.id })
+        assertEquals(setOf(11L, 12L), found.map { it.roomId }.toSet())
+    }
+
+    @Test
     fun `findByIdAndUserId returns only an owned photo`() {
         val saved = adapter.save(photo(roomId = 11, userId = 7, filterId = "filter-original"))
         val photoId = requireNotNull(saved.id)

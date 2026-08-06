@@ -1,5 +1,6 @@
 package com.challa.core.room.application
 
+import com.challa.core.photo.PhotoRepository
 import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.input.ListRoomsCommand
 import com.challa.core.room.port.input.ListRoomsResult
@@ -10,8 +11,11 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
-class ListRoomsService(private val roomRepository: RoomRepository, private val roomUserRepository: RoomUserRepository) :
-    ListRoomsUsecase {
+class ListRoomsService(
+    private val roomRepository: RoomRepository,
+    private val roomUserRepository: RoomUserRepository,
+    private val photoRepository: PhotoRepository
+) : ListRoomsUsecase {
     override fun listRooms(listRoomsCommand: ListRoomsCommand): ListRoomsResult {
         val roomIds = roomUserRepository.findAllByUserId(listRoomsCommand.userId).map { it.roomId }
         val rooms = roomRepository.findAllById(roomIds)
@@ -43,13 +47,17 @@ class ListRoomsService(private val roomRepository: RoomRepository, private val r
         val memberCountsByRoomId = roomUserRepository
             .countMembersByRoomIds(filteredRooms.map { it.id!! })
             .associate { it.roomId to it.memberCount }
+        val photosByRoomId = photoRepository.findLatestFourByRoomIdsIn(roomIds).groupBy { it.roomId }
         val roomProjections = filteredRooms.map { room ->
             ListRoomsResult.RoomProjection(
                 roomId = room.id!!,
                 roomStatus = room.roomStatus,
                 title = room.title,
                 memberCount = memberCountsByRoomId.getValue(room.id),
-                remainedPhotoCount = room.remainedPhotoCount
+                totalPhotoCount = room.totalPhotoCount,
+                remainedPhotoCount = room.remainedPhotoCount,
+                thumbnailImageUrls = photosByRoomId[room.id].orEmpty().map { it.imageUrl },
+                photoPrintCompletionAt = room.photoPrintCompletionAt
             )
         }
 

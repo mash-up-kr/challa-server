@@ -95,7 +95,13 @@ class RoomControllerTest {
                     roomStatus = RoomStatus.SHOOTING,
                     title = "Trip",
                     memberCount = 3L,
-                    remainedPhotoCount = 24L
+                    totalPhotoCount = 30L,
+                    remainedPhotoCount = 24L,
+                    thumbnailImageUrls = listOf(
+                        "https://bucket/photo/11/7/first",
+                        "https://bucket/photo/11/8/second"
+                    ),
+                    photoPrintCompletionAt = null
                 )
             )
         )
@@ -104,7 +110,11 @@ class RoomControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.room[0].id").value(11))
             .andExpect(jsonPath("$.data.room[0].status").value("SHOOTING"))
+            .andExpect(jsonPath("$.data.room[0].totalPhotoCount").value(30))
             .andExpect(jsonPath("$.data.room[0].remainedPhotoCount").value(24))
+            .andExpect(jsonPath("$.data.room[0].thumbnailImageUrls[0]").value("https://bucket/photo/11/7/first"))
+            .andExpect(jsonPath("$.data.room[0].thumbnailImageUrls[1]").value("https://bucket/photo/11/8/second"))
+            .andExpect(jsonPath("$.data.room[0].photoPrintCompletedAt").isEmpty)
 
         verify {
             listRoomsUsecase.listRooms(
