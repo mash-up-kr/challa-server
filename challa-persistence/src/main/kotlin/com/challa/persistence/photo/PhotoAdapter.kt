@@ -22,4 +22,7 @@ class PhotoAdapter(private val repository: PhotoJpaRepository) : PhotoRepository
     }
 
     override fun findAllByRoomId(roomId: Long): List<Photo> = repository.findAllByRoomId(roomId).map { it.toDomain() }
+
+    override fun findLatestFourByRoomIdsIn(roomIds: List<Long>): List<Photo> =
+        repository.findLatestFourByRoomIds(roomIds).map { it.toDomain() }
 }

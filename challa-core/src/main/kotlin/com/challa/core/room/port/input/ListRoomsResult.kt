@@ -1,6 +1,7 @@
 package com.challa.core.room.port.input
 
 import com.challa.core.room.domain.RoomStatus
+import java.time.LocalDateTime
 
 data class ListRoomsResult(val roomProjections: List<RoomProjection>) {
     data class RoomProjection(
@@ -8,6 +9,9 @@ data class ListRoomsResult(val roomProjections: List<RoomProjection>) {
         val roomStatus: RoomStatus,
         val title: String,
         val memberCount: Long,
-        val remainedPhotoCount: Long
+        val totalPhotoCount: Long,
+        val remainedPhotoCount: Long,
+        val thumbnailImageUrls: List<String?>,
+        val photoPrintCompletionAt: LocalDateTime?
     )
 }
