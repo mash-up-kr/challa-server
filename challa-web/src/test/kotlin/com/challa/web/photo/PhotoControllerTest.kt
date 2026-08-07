@@ -75,8 +75,9 @@ class PhotoControllerTest {
 
         mockMvc.perform(get("/api/v1/photos").param("roomId", ROOM_ID.toString()).authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.photo[0].id").value(PHOTO_ID))
-            .andExpect(jsonPath("$.data.photo[0].imageUrl").value(IMAGE_URL))
+            .andExpect(jsonPath("$.data.photos[0].id").value(PHOTO_ID))
+            .andExpect(jsonPath("$.data.photos[0].imageUrl").value(IMAGE_URL))
+            .andExpect(jsonPath("$.data.photo").doesNotExist())
 
         verify { listPhotosUseCase.listPhotos(command) }
     }

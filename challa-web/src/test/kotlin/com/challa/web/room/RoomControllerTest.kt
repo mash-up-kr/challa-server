@@ -108,18 +108,47 @@ class RoomControllerTest {
 
         mockMvc.perform(get("/api/v1/rooms").param("status", "SHOOTING").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.room[0].id").value(11))
-            .andExpect(jsonPath("$.data.room[0].status").value("SHOOTING"))
-            .andExpect(jsonPath("$.data.room[0].totalPhotoCount").value(30))
-            .andExpect(jsonPath("$.data.room[0].remainedPhotoCount").value(24))
-            .andExpect(jsonPath("$.data.room[0].thumbnailImageUrls[0]").value("https://bucket/photo/11/7/first"))
-            .andExpect(jsonPath("$.data.room[0].thumbnailImageUrls[1]").value("https://bucket/photo/11/8/second"))
-            .andExpect(jsonPath("$.data.room[0].photoPrintCompletedAt").isEmpty)
+            .andExpect(jsonPath("$.data.rooms[0].id").value(11))
+            .andExpect(jsonPath("$.data.rooms[0].status").value("SHOOTING"))
+            .andExpect(jsonPath("$.data.rooms[0].totalPhotoCount").value(30))
+            .andExpect(jsonPath("$.data.rooms[0].remainedPhotoCount").value(24))
+            .andExpect(jsonPath("$.data.rooms[0].thumbnailImageUrls[0]").value("https://bucket/photo/11/7/first"))
+            .andExpect(jsonPath("$.data.rooms[0].thumbnailImageUrls[1]").value("https://bucket/photo/11/8/second"))
+            .andExpect(jsonPath("$.data.rooms[0].photoPrintCompletedAt").isEmpty)
+            .andExpect(jsonPath("$.data.room").doesNotExist())
 
         verify {
             listRoomsUsecase.listRooms(
                 ListRoomsCommand(userId = AUTH_USER_ID, status = listOf(RoomStatus.SHOOTING))
             )
+        }
+    }
+
+    @Test
+    fun `GET shootable rooms returns rooms envelope`() {
+        every {
+            getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = AUTH_USER_ID))
+        } returns GetShootableRoomsResult(
+            rooms = listOf(
+                GetShootableRoomsResult.ShootableRoom(
+                    id = 11L,
+                    title = "Trip",
+                    remainedPhotoCount = 24L,
+                    totalPhotoCount = 30L
+                )
+            )
+        )
+
+        mockMvc.perform(get("/api/v1/rooms/shootable").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.rooms[0].id").value(11))
+            .andExpect(jsonPath("$.data.rooms[0].title").value("Trip"))
+            .andExpect(jsonPath("$.data.rooms[0].remainedPhotoCount").value(24))
+            .andExpect(jsonPath("$.data.rooms[0].totalPhotoCount").value(30))
+            .andExpect(jsonPath("$.data.room").doesNotExist())
+
+        verify {
+            getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = AUTH_USER_ID))
         }
     }
 
@@ -178,12 +207,13 @@ class RoomControllerTest {
 
         mockMvc.perform(get("/api/v1/rooms/11/users").authenticated())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.room[0].id").value(8))
-            .andExpect(jsonPath("$.data.room[0].nickname").value("라이언"))
-            .andExpect(jsonPath("$.data.room[0].profileImageUrl").value("https://img.example/ryan.png"))
-            .andExpect(jsonPath("$.data.room[1].id").value(9))
-            .andExpect(jsonPath("$.data.room[1].nickname").isEmpty)
-            .andExpect(jsonPath("$.data.room[1].profileImageUrl").isEmpty)
+            .andExpect(jsonPath("$.data.users[0].id").value(8))
+            .andExpect(jsonPath("$.data.users[0].nickname").value("라이언"))
+            .andExpect(jsonPath("$.data.users[0].profileImageUrl").value("https://img.example/ryan.png"))
+            .andExpect(jsonPath("$.data.users[1].id").value(9))
+            .andExpect(jsonPath("$.data.users[1].nickname").isEmpty)
+            .andExpect(jsonPath("$.data.users[1].profileImageUrl").isEmpty)
+            .andExpect(jsonPath("$.data.room").doesNotExist())
 
         verify {
             getRoomUsersUsecase.getRoomUsers(GetRoomUsersCommand(userId = AUTH_USER_ID, roomId = 11L))

@@ -15,9 +15,9 @@ class ChatController(private val chatUseCase: ChatUseCase) {
         @PathVariable roomId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
-    ): ApiResponse<ChatEnvelope<List<GetChatsResponse>>> {
+    ): ApiResponse<ChatsEnvelope<GetChatsResponse>> {
         val result = chatUseCase.getChatsByRoomId(roomId, page, size)
-        return ApiResponse.ok(ChatEnvelope(result.chats.map(GetChatsResponse::from)))
+        return ApiResponse.ok(ChatsEnvelope(result.chats.map(GetChatsResponse::from)))
     }
 
     @Operation(

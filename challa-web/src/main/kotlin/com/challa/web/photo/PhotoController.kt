@@ -7,6 +7,7 @@ import com.challa.web.photo.dto.CompletePhotoResponse
 import com.challa.web.photo.dto.GetPhotoDetailResponse
 import com.challa.web.photo.dto.ListPhotosResponse
 import com.challa.web.photo.dto.PhotoEnvelope
+import com.challa.web.photo.dto.PhotosEnvelope
 import com.challa.web.security.AuthUserId
 import org.springframework.web.bind.annotation.*
 
@@ -29,10 +30,10 @@ class PhotoController(
     fun listPhotos(
         @AuthUserId userId: Long,
         @RequestParam roomId: Long
-    ): ApiResponse<PhotoEnvelope<List<ListPhotosResponse>>> {
+    ): ApiResponse<PhotosEnvelope<ListPhotosResponse>> {
         val result = listPhotosUseCase.listPhotos(ListPhotosCommand(userId = userId, roomId = roomId))
 
-        return ApiResponse.ok(PhotoEnvelope(result.photoProjections.map(ListPhotosResponse::fromResult)))
+        return ApiResponse.ok(PhotosEnvelope(result.photoProjections.map(ListPhotosResponse::fromResult)))
     }
 
     @GetMapping("/{photoId}")
