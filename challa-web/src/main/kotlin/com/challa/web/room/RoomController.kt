@@ -41,10 +41,10 @@ class RoomController(
     fun listRooms(
         @AuthUserId userId: Long,
         @RequestParam status: List<RoomStatus>
-    ): ApiResponse<RoomEnvelope<List<ListRoomResponse>>> {
+    ): ApiResponse<RoomsEnvelope<ListRoomResponse>> {
         val result = listRoomsUsecase.listRooms(ListRoomsCommand(userId = userId, status = status))
 
-        return ApiResponse.ok(RoomEnvelope(result.roomProjections.map(ListRoomResponse::fromResult)))
+        return ApiResponse.ok(RoomsEnvelope(result.roomProjections.map(ListRoomResponse::fromResult)))
     }
 
     @GetMapping("/{roomId}")
@@ -55,19 +55,19 @@ class RoomController(
     }
 
     @GetMapping("/shootable")
-    fun getShootableRooms(@AuthUserId userId: Long): ApiResponse<RoomEnvelope<List<GetShootableRoomResponse>>> {
+    fun getShootableRooms(@AuthUserId userId: Long): ApiResponse<RoomsEnvelope<GetShootableRoomResponse>> {
         val result = getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = userId))
 
-        return ApiResponse.ok(RoomEnvelope(result.rooms.map(GetShootableRoomResponse::fromResult)))
+        return ApiResponse.ok(RoomsEnvelope(result.rooms.map(GetShootableRoomResponse::fromResult)))
     }
 
     @GetMapping("/{roomId}/users")
     fun getRoomUsers(
         @AuthUserId userId: Long,
         @PathVariable roomId: Long
-    ): ApiResponse<RoomEnvelope<List<GetRoomUserResponse>>> {
+    ): ApiResponse<UsersEnvelope<GetRoomUserResponse>> {
         val result = getRoomUsersUsecase.getRoomUsers(GetRoomUsersCommand(userId = userId, roomId = roomId))
 
-        return ApiResponse.ok(RoomEnvelope(result.userProjections.map(GetRoomUserResponse::fromResult)))
+        return ApiResponse.ok(UsersEnvelope(result.userProjections.map(GetRoomUserResponse::fromResult)))
     }
 }
