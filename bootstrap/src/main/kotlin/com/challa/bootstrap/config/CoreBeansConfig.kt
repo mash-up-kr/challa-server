@@ -11,6 +11,9 @@ import com.challa.core.auth.RefreshTokenRepository
 import com.challa.core.auth.RefreshTokenService
 import com.challa.core.auth.RefreshTokenUseCase
 import com.challa.core.auth.SocialAccountRevoker
+import com.challa.core.notification.DeviceTokenRepository
+import com.challa.core.notification.NotificationService
+import com.challa.core.notification.PushSender
 import com.challa.core.upload.IssueUploadUrlService
 import com.challa.core.upload.IssueUploadUrlUseCase
 import com.challa.core.upload.PresignedUploadUrlIssuer
@@ -93,4 +96,9 @@ class CoreBeansConfig {
     @Bean
     fun issueUploadUrlUseCase(presignedUploadUrlIssuer: PresignedUploadUrlIssuer): IssueUploadUrlUseCase =
         IssueUploadUrlService(presignedUploadUrlIssuer)
+
+    // 등록·삭제·테스트 발송 유스케이스를 한 인스턴스가 모두 구현한다.
+    @Bean
+    fun notificationService(deviceTokenRepository: DeviceTokenRepository, pushSender: PushSender): NotificationService =
+        NotificationService(deviceTokenRepository, pushSender)
 }

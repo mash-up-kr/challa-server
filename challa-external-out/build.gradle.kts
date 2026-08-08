@@ -23,6 +23,8 @@ dependencies {
     implementation(platform("software.amazon.awssdk:bom:2.50.2"))
     implementation("software.amazon.awssdk:s3")
 
+    implementation("com.google.firebase:firebase-admin:9.6.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.13.13")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

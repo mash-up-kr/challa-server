@@ -26,6 +26,9 @@ jwt:
   access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:30m}
   refresh-token-ttl: ${JWT_REFRESH_TOKEN_TTL:30d}
 
+fcm:
+  credentials: ${FCM_CREDENTIALS}
+
 oidc:
   kakao:
     issuer: https://kauth.kakao.com
