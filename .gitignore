@@ -43,3 +43,6 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# AGENTS
+AGENTS.md

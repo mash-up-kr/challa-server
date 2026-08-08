@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
 
-private const val ERROR_DESTINATION = "/queue/errors"
+private const val ERROR_DESTINATION = "/queue/error"
 
 @Component
 class WebSocketMessageSender(@param:Lazy private val simpMessagingTemplate: SimpMessagingTemplate) {
