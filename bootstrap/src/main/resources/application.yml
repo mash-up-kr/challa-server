@@ -54,5 +54,9 @@ spring:
   config:
     activate:
       on-profile: dev
+    # prod 와 같은 어댑터 설정을 쓴다. 값은 Infisical dev 환경에서 채워진다.
+    import:
+      - classpath:persistence-config/application-prod.yml
+      - classpath:external-config/application-prod.yml
 jwt:
   secret: ${JWT_SECRET:dev-only-insecure-secret-change-me-challa-0123456789}
