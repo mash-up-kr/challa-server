@@ -12,6 +12,8 @@ data class ListRoomsResult(val roomProjections: List<RoomProjection>) {
         val totalPhotoCount: Long,
         val remainedPhotoCount: Long,
         val thumbnailImageUrls: List<String?>,
-        val photoPrintCompletionAt: LocalDateTime?
+        val photoPrintCompletionAt: LocalDateTime?,
+        val createdAt: LocalDateTime,
+        val expiresAt: LocalDateTime
     )
 }

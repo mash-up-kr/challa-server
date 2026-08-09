@@ -12,7 +12,8 @@ data class GetRoomResponse(
     val invitationCode: String,
     val status: RoomStatus,
     val photoPrintCompletionAt: LocalDateTime?,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val expiresAt: LocalDateTime
 ) {
     companion object {
         fun fromResult(result: GetRoomResult) = GetRoomResponse(
@@ -23,7 +24,8 @@ data class GetRoomResponse(
             invitationCode = result.room.invitationCode,
             status = result.room.roomStatus,
             photoPrintCompletionAt = result.room.photoPrintCompletionAt,
-            createdAt = result.room.createdAt
+            createdAt = result.room.createdAt,
+            expiresAt = result.room.expiresAt
         )
     }
 }

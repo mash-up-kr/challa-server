@@ -40,7 +40,10 @@ class RoomEntity(
     var photoPrintCompletionAt: LocalDateTime?,
 
     @Column(nullable = false)
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+
+    @Column(nullable = false)
+    val expiresAt: LocalDateTime
 ) {
     fun toDomain() = Room(
         id = id,
@@ -50,7 +53,8 @@ class RoomEntity(
         invitationCode = invitationCode,
         roomStatus = roomStatus,
         photoPrintCompletionAt = photoPrintCompletionAt,
-        createdAt = createdAt
+        createdAt = createdAt,
+        expiresAt = expiresAt
     )
 
     fun updateStatus(newStatus: RoomStatus) {
@@ -71,7 +75,8 @@ class RoomEntity(
             invitationCode = room.invitationCode,
             roomStatus = room.roomStatus,
             photoPrintCompletionAt = room.photoPrintCompletionAt,
-            createdAt = room.createdAt
+            createdAt = room.createdAt,
+            expiresAt = room.expiresAt
         )
     }
 }

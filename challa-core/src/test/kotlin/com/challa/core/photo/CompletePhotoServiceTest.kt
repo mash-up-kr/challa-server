@@ -129,7 +129,8 @@ class CompletePhotoServiceTest {
         invitationCode = "123456",
         roomStatus = RoomStatus.SHOOTING,
         photoPrintCompletionAt = null,
-        createdAt = LocalDateTime.of(2026, 8, 1, 12, 0)
+        createdAt = LocalDateTime.of(2026, 8, 1, 12, 0),
+        expiresAt = LocalDateTime.of(2026, 8, 31, 12, 0)
     )
 
     private fun roomUser() = RoomUser(

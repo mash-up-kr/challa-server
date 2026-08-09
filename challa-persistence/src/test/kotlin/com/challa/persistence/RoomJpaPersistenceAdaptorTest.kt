@@ -45,7 +45,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "123456",
                 roomStatus = RoomStatus.PHOTO_PRINT_PENDING,
                 photoPrintCompletionAt = LocalDateTime.now(),
-                createdAt = LocalDateTime.now()
+                createdAt = LocalDateTime.now(),
+                expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
         )
         entityManager.clear()
@@ -71,7 +72,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "654321",
                 roomStatus = RoomStatus.SHOOTING,
                 photoPrintCompletionAt = null,
-                createdAt = LocalDateTime.now()
+                createdAt = LocalDateTime.now(),
+                expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
         )
         entityManager.clear()
@@ -96,7 +98,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "112233",
                 roomStatus = RoomStatus.SHOOTING,
                 photoPrintCompletionAt = null,
-                createdAt = LocalDateTime.now()
+                createdAt = LocalDateTime.now(),
+                expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
         )
         entityManager.clear()
@@ -123,7 +126,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "777777",
                 roomStatus = RoomStatus.SHOOTING,
                 photoPrintCompletionAt = null,
-                createdAt = LocalDateTime.now()
+                createdAt = LocalDateTime.now(),
+                expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
         )
         val roomId = requireNotNull(room.id)
