@@ -48,8 +48,8 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
         }.map { it.toDomain() }
 
     @Transactional
-    override fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletionAt: LocalDateTime) {
-        roomJpaRepository.findById(roomId).orElse(null)?.markPhotoPrintPending(photoPrintCompletionAt)
+    override fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletedAt: LocalDateTime) {
+        roomJpaRepository.findById(roomId).orElse(null)?.markPhotoPrintPending(photoPrintCompletedAt)
     }
 
     override fun findByRoomId(roomId: RoomId): Room? = roomJpaRepository.findById(roomId).orElse(null)?.toDomain()

@@ -23,7 +23,7 @@ class GetRoomService(private val roomUserRepository: RoomUserRepository, private
             ?: throw NoMatchingRoomException()
         val shouldCompletePrinting =
             room.roomStatus == RoomStatus.PHOTO_PRINT_PENDING &&
-                room.photoPrintCompletionAt?.isBefore(LocalDateTime.now()) == true
+                room.photoPrintCompletedAt?.isBefore(LocalDateTime.now()) == true
 
         if (!shouldCompletePrinting) {
             return GetRoomResult(room = room)

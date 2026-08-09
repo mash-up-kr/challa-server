@@ -25,7 +25,7 @@ data class ListRoomResponse(
             totalPhotoCount = result.totalPhotoCount,
             remainedPhotoCount = result.remainedPhotoCount,
             thumbnailImageUrls = result.thumbnailImageUrls,
-            photoPrintCompletedAt = result.photoPrintCompletionAt,
+            photoPrintCompletedAt = result.photoPrintCompletedAt,
             createdAt = result.createdAt,
             expiresAt = result.expiresAt
         )

@@ -101,7 +101,7 @@ class RoomControllerTest {
                         "https://bucket/photo/11/7/first",
                         "https://bucket/photo/11/8/second"
                     ),
-                    photoPrintCompletionAt = null,
+                    photoPrintCompletedAt = null,
                     createdAt = LocalDateTime.of(2026, 8, 1, 12, 0),
                     expiresAt = LocalDateTime.of(2026, 8, 31, 12, 0)
                 )
@@ -163,7 +163,7 @@ class RoomControllerTest {
             remainedPhotoCount = 24L,
             invitationCode = "123456",
             roomStatus = RoomStatus.SHOOTING,
-            photoPrintCompletionAt = null,
+            photoPrintCompletedAt = null,
             createdAt = LocalDateTime.of(2026, 8, 1, 12, 0),
             expiresAt = LocalDateTime.of(2026, 8, 31, 12, 0)
         )

@@ -44,7 +44,7 @@ class RoomJpaPersistenceAdaptorTest {
                 remainedPhotoCount = 0,
                 invitationCode = "123456",
                 roomStatus = RoomStatus.PHOTO_PRINT_PENDING,
-                photoPrintCompletionAt = LocalDateTime.now(),
+                photoPrintCompletedAt = LocalDateTime.now(),
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
@@ -71,7 +71,7 @@ class RoomJpaPersistenceAdaptorTest {
                 remainedPhotoCount = 1,
                 invitationCode = "654321",
                 roomStatus = RoomStatus.SHOOTING,
-                photoPrintCompletionAt = null,
+                photoPrintCompletedAt = null,
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
@@ -89,7 +89,7 @@ class RoomJpaPersistenceAdaptorTest {
 
     @Test
     fun `markPhotoPrintPending persists status and completion time through dirty checking`() {
-        val photoPrintCompletionAt = LocalDateTime.now().plusHours(24)
+        val photoPrintCompletedAt = LocalDateTime.now().plusHours(24)
         val entity = repository.saveAndFlush(
             RoomEntity(
                 title = "Trip",
@@ -97,7 +97,7 @@ class RoomJpaPersistenceAdaptorTest {
                 remainedPhotoCount = 1,
                 invitationCode = "112233",
                 roomStatus = RoomStatus.SHOOTING,
-                photoPrintCompletionAt = null,
+                photoPrintCompletedAt = null,
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
@@ -105,14 +105,14 @@ class RoomJpaPersistenceAdaptorTest {
         entityManager.clear()
         adaptor.markPhotoPrintPending(
             roomId = requireNotNull(entity.id),
-            photoPrintCompletionAt = photoPrintCompletionAt
+            photoPrintCompletedAt = photoPrintCompletedAt
         )
         entityManager.flush()
         entityManager.clear()
 
         val updatedRoom = repository.findById(requireNotNull(entity.id)).get()
         assertEquals(RoomStatus.PHOTO_PRINT_PENDING, updatedRoom.roomStatus)
-        assertThat(updatedRoom.photoPrintCompletionAt).isCloseTo(photoPrintCompletionAt, within(1, ChronoUnit.MILLIS))
+        assertThat(updatedRoom.photoPrintCompletedAt).isCloseTo(photoPrintCompletedAt, within(1, ChronoUnit.MILLIS))
     }
 
     @Test
@@ -125,7 +125,7 @@ class RoomJpaPersistenceAdaptorTest {
                 remainedPhotoCount = 1,
                 invitationCode = "777777",
                 roomStatus = RoomStatus.SHOOTING,
-                photoPrintCompletionAt = null,
+                photoPrintCompletedAt = null,
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
