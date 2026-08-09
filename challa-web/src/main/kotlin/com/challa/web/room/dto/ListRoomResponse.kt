@@ -12,7 +12,9 @@ data class ListRoomResponse(
     val totalPhotoCount: Long,
     val remainedPhotoCount: Long,
     val thumbnailImageUrls: List<String?>,
-    val photoPrintCompletedAt: LocalDateTime?
+    val photoPrintCompletedAt: LocalDateTime?,
+    val createdAt: LocalDateTime,
+    val expiresAt: LocalDateTime
 ) {
     companion object {
         fun fromResult(result: ListRoomsResult.RoomProjection) = ListRoomResponse(
@@ -23,7 +25,9 @@ data class ListRoomResponse(
             totalPhotoCount = result.totalPhotoCount,
             remainedPhotoCount = result.remainedPhotoCount,
             thumbnailImageUrls = result.thumbnailImageUrls,
-            photoPrintCompletedAt = result.photoPrintCompletionAt
+            photoPrintCompletedAt = result.photoPrintCompletionAt,
+            createdAt = result.createdAt,
+            expiresAt = result.expiresAt
         )
     }
 }

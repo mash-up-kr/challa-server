@@ -57,7 +57,9 @@ class ListRoomsService(
                 totalPhotoCount = room.totalPhotoCount,
                 remainedPhotoCount = room.remainedPhotoCount,
                 thumbnailImageUrls = photosByRoomId[room.id].orEmpty().map { it.imageUrl },
-                photoPrintCompletionAt = room.photoPrintCompletionAt
+                photoPrintCompletionAt = room.photoPrintCompletionAt,
+                createdAt = room.createdAt,
+                expiresAt = room.expiresAt
             )
         }
 
