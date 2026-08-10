@@ -13,7 +13,7 @@ data class Room(
     val remainedPhotoCount: Long,
     val invitationCode: String,
     val roomStatus: RoomStatus,
-    val photoPrintCompletionAt: LocalDateTime?,
+    val photoPrintCompletedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime
 ) {
@@ -25,7 +25,7 @@ data class Room(
             remainedPhotoCount = totalPhotoCount,
             invitationCode = invitationCode,
             roomStatus = RoomStatus.SHOOTING,
-            photoPrintCompletionAt = null, // remainedPhotoCount 가 0 이 되는 시점 + N 시간으로 설정될 예정
+            photoPrintCompletedAt = null, // remainedPhotoCount 가 0 이 되는 시점 + N 시간으로 설정될 예정
             createdAt = LocalDateTime.now(),
             expiresAt = LocalDateTime.now().plusDays(EXPIRATION_DAYS)
         )

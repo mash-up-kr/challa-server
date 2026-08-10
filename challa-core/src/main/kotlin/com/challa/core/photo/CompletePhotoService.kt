@@ -33,11 +33,11 @@ class CompletePhotoService(
 
         val remainedPhotoCount =
             roomRepository.findByRoomId(command.roomId)?.remainedPhotoCount ?: throw NoMatchingRoomException()
-        // 필름 사용 완료 : RoomStatus.SHOOTING -> RoomStatus.PHOTO_PRINT_PENDING, photoPrintCompletionAt 을 24시간 뒤로 설정
+        // 필름 사용 완료 : RoomStatus.SHOOTING -> RoomStatus.PHOTO_PRINT_PENDING, photoPrintCompletedAt 을 24시간 뒤로 설정
         if (remainedPhotoCount == 0L) {
             roomRepository.markPhotoPrintPending(
                 roomId = command.roomId,
-                photoPrintCompletionAt = LocalDateTime.now().plusHours(PHOTO_PRINT_COMPLETION_HOURS)
+                photoPrintCompletedAt = LocalDateTime.now().plusHours(PHOTO_PRINT_COMPLETION_HOURS)
             )
         }
 

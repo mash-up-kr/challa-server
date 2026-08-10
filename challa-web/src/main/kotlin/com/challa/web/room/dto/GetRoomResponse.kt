@@ -11,7 +11,7 @@ data class GetRoomResponse(
     val remainedPhotoCount: Long,
     val invitationCode: String,
     val status: RoomStatus,
-    val photoPrintCompletionAt: LocalDateTime?,
+    val photoPrintCompletedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime
 ) {
@@ -23,7 +23,7 @@ data class GetRoomResponse(
             remainedPhotoCount = result.room.remainedPhotoCount,
             invitationCode = result.room.invitationCode,
             status = result.room.roomStatus,
-            photoPrintCompletionAt = result.room.photoPrintCompletionAt,
+            photoPrintCompletedAt = result.room.photoPrintCompletedAt,
             createdAt = result.room.createdAt,
             expiresAt = result.room.expiresAt
         )

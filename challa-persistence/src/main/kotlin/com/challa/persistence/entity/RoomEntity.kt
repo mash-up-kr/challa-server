@@ -37,7 +37,7 @@ class RoomEntity(
     val invitationCode: String,
 
     @Column(nullable = true)
-    var photoPrintCompletionAt: LocalDateTime?,
+    var photoPrintCompletedAt: LocalDateTime?,
 
     @Column(nullable = false)
     val createdAt: LocalDateTime,
@@ -52,7 +52,7 @@ class RoomEntity(
         remainedPhotoCount = remainedPhotoCount,
         invitationCode = invitationCode,
         roomStatus = roomStatus,
-        photoPrintCompletionAt = photoPrintCompletionAt,
+        photoPrintCompletedAt = photoPrintCompletedAt,
         createdAt = createdAt,
         expiresAt = expiresAt
     )
@@ -61,9 +61,9 @@ class RoomEntity(
         roomStatus = newStatus
     }
 
-    fun markPhotoPrintPending(newPhotoPrintCompletionAt: LocalDateTime) {
+    fun markPhotoPrintPending(newPhotoPrintCompletedAt: LocalDateTime) {
         roomStatus = RoomStatus.PHOTO_PRINT_PENDING
-        photoPrintCompletionAt = newPhotoPrintCompletionAt
+        photoPrintCompletedAt = newPhotoPrintCompletedAt
     }
 
     companion object {
@@ -74,7 +74,7 @@ class RoomEntity(
             remainedPhotoCount = room.remainedPhotoCount,
             invitationCode = room.invitationCode,
             roomStatus = room.roomStatus,
-            photoPrintCompletionAt = room.photoPrintCompletionAt,
+            photoPrintCompletedAt = room.photoPrintCompletedAt,
             createdAt = room.createdAt,
             expiresAt = room.expiresAt
         )

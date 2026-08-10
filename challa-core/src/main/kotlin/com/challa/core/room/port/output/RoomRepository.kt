@@ -16,7 +16,7 @@ interface RoomRepository {
 
     fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room>
 
-    fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletionAt: LocalDateTime)
+    fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletedAt: LocalDateTime)
 
     fun findByRoomId(roomId: RoomId): Room?
 

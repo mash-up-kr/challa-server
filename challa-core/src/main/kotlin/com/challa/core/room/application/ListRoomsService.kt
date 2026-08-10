@@ -23,7 +23,7 @@ class ListRoomsService(
         val newlyCompletedRoomIds = rooms
             .filter { room ->
                 room.roomStatus == RoomStatus.PHOTO_PRINT_PENDING &&
-                    room.photoPrintCompletionAt?.isBefore(now) == true
+                    room.photoPrintCompletedAt?.isBefore(now) == true
             }
             .map { it.id!! }
         if (newlyCompletedRoomIds.isNotEmpty()) {
@@ -57,7 +57,7 @@ class ListRoomsService(
                 totalPhotoCount = room.totalPhotoCount,
                 remainedPhotoCount = room.remainedPhotoCount,
                 thumbnailImageUrls = photosByRoomId[room.id].orEmpty().map { it.imageUrl },
-                photoPrintCompletionAt = room.photoPrintCompletionAt,
+                photoPrintCompletedAt = room.photoPrintCompletedAt,
                 createdAt = room.createdAt,
                 expiresAt = room.expiresAt
             )
