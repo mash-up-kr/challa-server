@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 
 @DataJpaTest
 @Import(PhotoAdapter::class)
@@ -37,9 +38,11 @@ class PhotoAdapterTest {
         val secondPhoto = adapter.save(photo(roomId = 11, userId = 8, filterId = "filter-two"))
         adapter.save(photo(roomId = 12, userId = 7, filterId = "filter-three"))
 
-        val foundIds = adapter.findAllByRoomId(11).map { it.id }.toSet()
+        val found = adapter.findSliceByRoomId(11, PageRequest.of(0, 10))
+        val foundIds = found.photos.map { it.id }.toSet()
 
         assertEquals(setOf(firstPhoto.id, secondPhoto.id), foundIds)
+        assertEquals(false, found.hasNext)
     }
 
     @Test

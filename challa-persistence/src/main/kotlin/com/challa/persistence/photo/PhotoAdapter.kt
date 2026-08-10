@@ -2,6 +2,8 @@ package com.challa.persistence.photo
 
 import com.challa.core.photo.Photo
 import com.challa.core.photo.PhotoRepository
+import com.challa.core.photo.PhotoSlice
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,7 +23,14 @@ class PhotoAdapter(private val repository: PhotoJpaRepository) : PhotoRepository
         it.toDomain()
     }
 
-    override fun findAllByRoomId(roomId: Long): List<Photo> = repository.findAllByRoomId(roomId).map { it.toDomain() }
+    override fun findSliceByRoomId(roomId: Long, pageable: Pageable): PhotoSlice {
+        val photoSlice = repository.findSliceByRoomId(roomId, pageable)
+
+        return PhotoSlice(
+            photos = photoSlice.content.map { it.toDomain() },
+            hasNext = photoSlice.hasNext()
+        )
+    }
 
     override fun findLatestFourByRoomIdsIn(roomIds: List<Long>): List<Photo> =
         repository.findLatestFourByRoomIds(roomIds).map { it.toDomain() }

@@ -5,7 +5,12 @@ import com.challa.persistence.common.BaseEntity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "photos")
+@Table(
+    name = "photos",
+    indexes = [
+        Index(name = "idx_photos_room_created_at", columnList = "room_id, created_at")
+    ]
+)
 class PhotoEntity(
 
     @Id
@@ -30,7 +35,8 @@ class PhotoEntity(
         imageUrl = this.imageUrl,
         filterId = this.filterId,
         roomId = this.roomId,
-        userId = this.userId
+        userId = this.userId,
+        createdAt = this.createdAt!!
     )
 
     companion object {
