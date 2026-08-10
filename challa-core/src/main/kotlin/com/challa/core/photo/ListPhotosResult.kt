@@ -1,5 +1,13 @@
 package com.challa.core.photo
 
-data class ListPhotosResult(val photoProjections: List<PhotoProjection>) {
-    data class PhotoProjection(val id: Long, val imageUrl: String?)
+import java.time.LocalDateTime
+
+data class ListPhotosResult(val photoProjections: List<PhotoProjection>, val hasNext: Boolean) {
+    data class PhotoProjection(
+        val id: Long,
+        val imageUrl: String?,
+        val userNickname: String?,
+        val userProfileImageUrl: String?,
+        val createdAt: LocalDateTime
+    )
 }

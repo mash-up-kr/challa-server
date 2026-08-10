@@ -2,12 +2,16 @@ package com.challa.core.photo
 
 import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.output.RoomUserRepository
+import com.challa.core.user.UserRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
 class ListPhotosService(
     private val roomUserRepository: RoomUserRepository,
-    private val photoRepository: PhotoRepository
+    private val photoRepository: PhotoRepository,
+    private val userRepository: UserRepository
 ) : ListPhotosUseCase {
     override fun listPhotos(command: ListPhotosCommand): ListPhotosResult {
         roomUserRepository.findByUserIdAndRoomId(
@@ -15,13 +19,28 @@ class ListPhotosService(
             roomId = command.roomId
         ) ?: throw NoMatchingRoomException()
 
-        val photoProjections = photoRepository.findAllByRoomId(command.roomId).map { photo ->
+        val pageable = PageRequest.of(
+            command.page,
+            command.size,
+            Sort.by(Sort.Direction.DESC, "createdAt")
+        )
+        val photoSlice = photoRepository.findSliceByRoomId(command.roomId, pageable)
+        val photos = photoSlice.photos
+        val usersById = userRepository.findAllByIds(photos.map { it.userId }.distinct()).associateBy { it.id }
+        val photoProjections = photos.map { photo ->
+            val user = usersById[photo.userId]
             ListPhotosResult.PhotoProjection(
                 id = requireNotNull(photo.id),
-                imageUrl = photo.imageUrl
+                imageUrl = photo.imageUrl,
+                userNickname = user?.nickname,
+                userProfileImageUrl = user?.profileImageUrl,
+                createdAt = photo.createdAt!!
             )
         }
 
-        return ListPhotosResult(photoProjections = photoProjections)
+        return ListPhotosResult(
+            photoProjections = photoProjections,
+            hasNext = photoSlice.hasNext
+        )
     }
 }

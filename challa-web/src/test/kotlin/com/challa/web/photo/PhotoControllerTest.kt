@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class PhotoControllerTest {
     private val completePhotoUseCase = mockk<CompletePhotoUseCase>()
@@ -66,17 +68,30 @@ class PhotoControllerTest {
 
     @Test
     fun `returns all photos from a room the user participates in`() {
-        val command = ListPhotosCommand(userId = USER_ID, roomId = ROOM_ID)
+        val command = ListPhotosCommand(userId = USER_ID, roomId = ROOM_ID, page = PAGE, size = SIZE)
         every { listPhotosUseCase.listPhotos(command) } returns ListPhotosResult(
             photoProjections = listOf(
-                ListPhotosResult.PhotoProjection(id = PHOTO_ID, imageUrl = IMAGE_URL)
-            )
+                ListPhotosResult.PhotoProjection(
+                    id = PHOTO_ID,
+                    imageUrl = IMAGE_URL,
+                    userNickname = USER_NICKNAME,
+                    userProfileImageUrl = USER_PROFILE_IMAGE_URL,
+                    createdAt = CREATED_AT
+                )
+            ),
+            hasNext = true
         )
 
         mockMvc.perform(get("/api/v1/photos").param("roomId", ROOM_ID.toString()).authenticated())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.photos[0].id").value(PHOTO_ID))
             .andExpect(jsonPath("$.data.photos[0].imageUrl").value(IMAGE_URL))
+            .andExpect(jsonPath("$.data.photos[0].userNickname").value(USER_NICKNAME))
+            .andExpect(jsonPath("$.data.photos[0].userProfileImageUrl").value(USER_PROFILE_IMAGE_URL))
+            .andExpect(
+                jsonPath("$.data.photos[0].createdAt").value(CREATED_AT.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            )
+            .andExpect(jsonPath("$.data.hasNext").value(true))
             .andExpect(jsonPath("$.data.photo").doesNotExist())
 
         verify { listPhotosUseCase.listPhotos(command) }
@@ -142,7 +157,12 @@ class PhotoControllerTest {
         const val USER_ID = 7L
         const val ROOM_ID = 11L
         const val PHOTO_ID = 31L
+        const val PAGE = 0
+        const val SIZE = 24
         const val CAMERA_FILTER_NAME = "filter-original"
         const val IMAGE_URL = "https://bucket/photo/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
+        const val USER_NICKNAME = "nickname"
+        const val USER_PROFILE_IMAGE_URL = "https://bucket/profile-7"
+        val CREATED_AT: LocalDateTime = LocalDateTime.of(2026, 8, 11, 12, 0)
     }
 }

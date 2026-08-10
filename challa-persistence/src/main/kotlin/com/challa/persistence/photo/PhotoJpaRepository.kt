@@ -1,12 +1,14 @@
 package com.challa.persistence.photo
 
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface PhotoJpaRepository : JpaRepository<PhotoEntity, Long> {
     fun findByIdAndUserId(id: Long, userId: Long): PhotoEntity?
-    fun findAllByRoomId(roomId: Long): List<PhotoEntity>
+    fun findSliceByRoomId(roomId: Long, pageable: Pageable): Slice<PhotoEntity>
 
     @Query(
         value = """

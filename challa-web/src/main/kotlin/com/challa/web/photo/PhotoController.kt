@@ -2,12 +2,7 @@ package com.challa.web.photo
 
 import com.challa.core.photo.*
 import com.challa.web.common.response.ApiResponse
-import com.challa.web.photo.dto.CompletePhotoRequest
-import com.challa.web.photo.dto.CompletePhotoResponse
-import com.challa.web.photo.dto.GetPhotoDetailResponse
-import com.challa.web.photo.dto.ListPhotosResponse
-import com.challa.web.photo.dto.PhotoEnvelope
-import com.challa.web.photo.dto.PhotosEnvelope
+import com.challa.web.photo.dto.*
 import com.challa.web.security.AuthUserId
 import org.springframework.web.bind.annotation.*
 
@@ -29,11 +24,25 @@ class PhotoController(
     @GetMapping
     fun listPhotos(
         @AuthUserId userId: Long,
-        @RequestParam roomId: Long
-    ): ApiResponse<PhotosEnvelope<ListPhotosResponse>> {
-        val result = listPhotosUseCase.listPhotos(ListPhotosCommand(userId = userId, roomId = roomId))
+        @RequestParam roomId: Long,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "24") size: Int
+    ): ApiResponse<ListPhotosSliceResponse> {
+        val result = listPhotosUseCase.listPhotos(
+            ListPhotosCommand(
+                userId = userId,
+                roomId = roomId,
+                page = page,
+                size = size
+            )
+        )
 
-        return ApiResponse.ok(PhotosEnvelope(result.photoProjections.map(ListPhotosResponse::fromResult)))
+        return ApiResponse.ok(
+            ListPhotosSliceResponse(
+                photos = result.photoProjections.map { ListPhotosResponse.fromResult(it) },
+                hasNext = result.hasNext
+            )
+        )
     }
 
     @GetMapping("/{photoId}")
