@@ -13,6 +13,12 @@ class RoomUserPersistenceAdaptor(private val roomUserJpaRepository: RoomUserJpaR
     override fun save(roomUser: RoomUser): RoomUser =
         roomUserJpaRepository.save(RoomUserEntity.from(roomUser)).toDomain()
 
+    override fun insertIfAbsent(roomUser: RoomUser): Boolean = roomUserJpaRepository.insertIfAbsent(
+        roomId = roomUser.roomId,
+        userId = roomUser.userId,
+        createdAt = roomUser.createdAt
+    ) == 1
+
     override fun findAllByUserId(userId: Long): List<RoomUser> =
         roomUserJpaRepository.findAllByUserId(userId).map { it.toDomain() }
 

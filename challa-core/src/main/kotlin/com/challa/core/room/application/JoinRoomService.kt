@@ -28,7 +28,13 @@ class JoinRoomService(
             userId = joinRoomCommand.userId
         )
 
-        roomUserRepository.save(newMember)
+        val existingRoomUser = roomUserRepository.insertIfAbsent(newMember)
+        // 이미 참여 중인 사용자의 재요청은 저장 및 참여 이벤트 발행 없이 기존 방 ID를 반환
+        if (!existingRoomUser) {
+            return JoinRoomResult(
+                id = room.id
+            )
+        }
 
         applicationEventPublisher.publishEvent(
             MemberJoinedEvent(
