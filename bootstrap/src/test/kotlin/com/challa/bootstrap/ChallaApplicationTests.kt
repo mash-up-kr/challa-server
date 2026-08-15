@@ -3,6 +3,8 @@ package com.challa.bootstrap
 import com.challa.core.auth.LoginUseCase
 import com.challa.core.auth.RefreshTokenUseCase
 import com.challa.core.photo.CompletePhotoUseCase
+import com.challa.core.room.domain.RoomCoverSticker
+import com.challa.core.room.port.output.RoomCoverStickerProvider
 import com.challa.core.shoot.CameraFiltersStorage
 import com.challa.core.shoot.domain.CameraFilter
 import com.challa.core.upload.IssueUploadUrlUseCase
@@ -52,5 +54,10 @@ class TestStorageConfig {
     @Bean
     fun cameraFiltersStorage(): CameraFiltersStorage = object : CameraFiltersStorage {
         override fun getAll() = emptyList<CameraFilter>()
+    }
+
+    @Bean
+    fun roomCoverStickerProvider(): RoomCoverStickerProvider = object : RoomCoverStickerProvider {
+        override fun getAll() = emptyList<RoomCoverSticker>()
     }
 }

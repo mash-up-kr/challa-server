@@ -11,6 +11,8 @@ data class GetRoomResponse(
     val remainedPhotoCount: Long,
     val invitationCode: String,
     val status: RoomStatus,
+    val coverImageUrl: String?,
+    val coverStickerUrl: String,
     val photoPrintCompletedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime
@@ -23,6 +25,8 @@ data class GetRoomResponse(
             remainedPhotoCount = result.room.remainedPhotoCount,
             invitationCode = result.room.invitationCode,
             status = result.room.roomStatus,
+            coverImageUrl = result.room.coverImageUrl,
+            coverStickerUrl = result.room.coverStickerUrl,
             photoPrintCompletedAt = result.room.photoPrintCompletedAt,
             createdAt = result.room.createdAt,
             expiresAt = result.room.expiresAt

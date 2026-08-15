@@ -29,12 +29,18 @@ class RoomEntity(
     @Column(nullable = false)
     val remainedPhotoCount: Long,
 
+    @Column(nullable = false, length = 6)
+    val invitationCode: String,
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var roomStatus: RoomStatus,
 
-    @Column(nullable = false, length = 6)
-    val invitationCode: String,
+    @Column(nullable = true)
+    val coverImageUrl: String?,
+
+    @Column(nullable = false)
+    val coverStickerUrl: String,
 
     @Column(nullable = true)
     var photoPrintCompletedAt: LocalDateTime?,
@@ -52,6 +58,8 @@ class RoomEntity(
         remainedPhotoCount = remainedPhotoCount,
         invitationCode = invitationCode,
         roomStatus = roomStatus,
+        coverImageUrl = coverImageUrl,
+        coverStickerUrl = coverStickerUrl,
         photoPrintCompletedAt = photoPrintCompletedAt,
         createdAt = createdAt,
         expiresAt = expiresAt
@@ -74,6 +82,8 @@ class RoomEntity(
             remainedPhotoCount = room.remainedPhotoCount,
             invitationCode = room.invitationCode,
             roomStatus = room.roomStatus,
+            coverImageUrl = room.coverImageUrl,
+            coverStickerUrl = room.coverStickerUrl,
             photoPrintCompletedAt = room.photoPrintCompletedAt,
             createdAt = room.createdAt,
             expiresAt = room.expiresAt

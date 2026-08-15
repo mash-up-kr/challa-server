@@ -12,6 +12,8 @@ data class ListRoomResponse(
     val totalPhotoCount: Long,
     val remainedPhotoCount: Long,
     val thumbnailImageUrls: List<String?>,
+    val coverImageUrl: String?,
+    val coverStickerUrl: String,
     val photoPrintCompletedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime
@@ -25,6 +27,8 @@ data class ListRoomResponse(
             totalPhotoCount = result.totalPhotoCount,
             remainedPhotoCount = result.remainedPhotoCount,
             thumbnailImageUrls = result.thumbnailImageUrls,
+            coverImageUrl = result.coverImageUrl,
+            coverStickerUrl = result.coverStickerUrl,
             photoPrintCompletedAt = result.photoPrintCompletedAt,
             createdAt = result.createdAt,
             expiresAt = result.expiresAt

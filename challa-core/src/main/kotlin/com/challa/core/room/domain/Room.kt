@@ -13,18 +13,22 @@ data class Room(
     val remainedPhotoCount: Long,
     val invitationCode: String,
     val roomStatus: RoomStatus,
+    val coverImageUrl: String? = null,
+    val coverStickerUrl: String,
     val photoPrintCompletedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime
 ) {
     companion object {
-        fun create(title: String, totalPhotoCount: Long, invitationCode: String) = Room(
+        fun create(title: String, totalPhotoCount: Long, invitationCode: String, coverStickerUrl: String) = Room(
             id = null,
             title = title,
             totalPhotoCount = totalPhotoCount,
             remainedPhotoCount = totalPhotoCount,
             invitationCode = invitationCode,
             roomStatus = RoomStatus.SHOOTING,
+            coverImageUrl = null,
+            coverStickerUrl = coverStickerUrl,
             photoPrintCompletedAt = null, // remainedPhotoCount 가 0 이 되는 시점 + N 시간으로 설정될 예정
             createdAt = LocalDateTime.now(),
             expiresAt = LocalDateTime.now().plusDays(EXPIRATION_DAYS)

@@ -3,7 +3,9 @@ package com.challa.bootstrap
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
+import org.springframework.scheduling.annotation.EnableScheduling
 
+@EnableScheduling
 @SpringBootApplication(scanBasePackages = ["com.challa"])
 @ConfigurationPropertiesScan(basePackages = ["com.challa"])
 class ChallaApplication
