@@ -6,3 +6,4 @@ s3:
   secret-key: ${AWS_SECRET_ACCESS_KEY:}
   file-path:
     camera-filters: challa/camera-filters.json
+    room-cover-stickers: challa/room-cover-stickers.json

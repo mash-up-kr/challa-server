@@ -1,11 +1,13 @@
 package com.challa.core.room.application
 
 import com.challa.core.room.domain.Room
+import com.challa.core.room.domain.RoomCoverSticker
 import com.challa.core.room.domain.RoomUser
 import com.challa.core.room.port.input.CreateRoomCommand
 import com.challa.core.room.port.input.CreateRoomResult
 import com.challa.core.room.port.input.CreateRoomUsecase
 import com.challa.core.room.port.output.InvitationCodeConflictException
+import com.challa.core.room.port.output.RoomCoverStickerProvider
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.room.port.output.RoomUserRepository
 import org.slf4j.LoggerFactory
@@ -22,7 +24,8 @@ private const val CHARACTERS = "0123456789"
 class CreateRoomService(
     private val roomRepository: RoomRepository,
     private val roomUserRepository: RoomUserRepository,
-    private val transactionManager: PlatformTransactionManager
+    private val transactionManager: PlatformTransactionManager,
+    private val roomCoverStickerProvider: RoomCoverStickerProvider
 ) : CreateRoomUsecase {
     private val transactionTemplate = TransactionTemplate(transactionManager)
     private val secureRandom = SecureRandom()
@@ -49,7 +52,8 @@ class CreateRoomService(
         val room = Room.create(
             title = input.roomTitle,
             totalPhotoCount = input.totalPhotoCount,
-            invitationCode = generateInvitationCode()
+            invitationCode = generateInvitationCode(),
+            coverStickerUrl = getRandomCoverSticker().fileUrl
         )
         val savedRoom = roomRepository.save(room)
 
@@ -70,6 +74,12 @@ class CreateRoomService(
                 ]
             )
         }
+    }
+
+    private fun getRandomCoverSticker(): RoomCoverSticker {
+        val coverStickers = roomCoverStickerProvider.getAll()
+
+        return coverStickers.random()
     }
 
     private val logger = LoggerFactory.getLogger(CreateRoomService::class.java)

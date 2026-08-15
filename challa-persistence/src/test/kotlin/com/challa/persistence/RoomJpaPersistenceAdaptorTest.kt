@@ -44,6 +44,8 @@ class RoomJpaPersistenceAdaptorTest {
                 remainedPhotoCount = 0,
                 invitationCode = "123456",
                 roomStatus = RoomStatus.PHOTO_PRINT_PENDING,
+                coverImageUrl = "https://bucket/photo/11/7/first",
+                coverStickerUrl = "https://bucket/photo/11/8/second",
                 photoPrintCompletedAt = LocalDateTime.now(),
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
@@ -72,6 +74,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "654321",
                 roomStatus = RoomStatus.SHOOTING,
                 photoPrintCompletedAt = null,
+                coverImageUrl = "https://bucket/photo/11/7/first",
+                coverStickerUrl = "https://bucket/photo/11/8/second",
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
@@ -97,6 +101,8 @@ class RoomJpaPersistenceAdaptorTest {
                 remainedPhotoCount = 1,
                 invitationCode = "112233",
                 roomStatus = RoomStatus.SHOOTING,
+                coverImageUrl = "https://bucket/photo/11/7/first",
+                coverStickerUrl = "https://bucket/photo/11/8/second",
                 photoPrintCompletedAt = null,
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
@@ -126,6 +132,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "777777",
                 roomStatus = RoomStatus.SHOOTING,
                 photoPrintCompletedAt = null,
+                coverImageUrl = "https://bucket/photo/11/7/first",
+                coverStickerUrl = "https://bucket/photo/11/8/second",
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )

@@ -17,6 +17,7 @@ s3:
   region: ap-northeast-2
   file-path:
     camera-filters: test-challa/camera-filters.json
+    room-cover-stickers: test-challa/cover-stickers.json
 
 oidc:
   kakao:
