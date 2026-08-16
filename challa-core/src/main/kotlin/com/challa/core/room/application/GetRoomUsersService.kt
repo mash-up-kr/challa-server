@@ -21,7 +21,7 @@ class GetRoomUsersService(
 
         val roomUsers = roomUserRepository.findAllByRoomId(getRoomUsersCommand.roomId)
         val userIds = roomUsers.map { it.userId }
-        val users = userRepository.findAllByIds(userIds).filterNot { it.id == getRoomUsersCommand.userId }
+        val users = userRepository.findAllByIds(userIds)
         val userProjections = users.map { user ->
             GetRoomUsersResult.UserProjection(
                 id = user.id!!,

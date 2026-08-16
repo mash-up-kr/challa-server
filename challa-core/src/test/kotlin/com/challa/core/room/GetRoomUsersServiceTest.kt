@@ -42,6 +42,7 @@ class GetRoomUsersServiceTest {
 
         assertEquals(
             listOf(
+                GetRoomUsersResult.UserProjection(id = REQUEST_USER_ID, nickname = "요청자", profileImageUrl = null),
                 GetRoomUsersResult.UserProjection(
                     id = 8L,
                     nickname = "라이언",
