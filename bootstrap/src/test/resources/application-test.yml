@@ -19,6 +19,7 @@ s3:
     camera-filters: test-challa/camera-filters.json
     room-cover-stickers: test-challa/cover-stickers.json
     room-sticker-colors: test-challa/sticker-colors.json
+    app-version: test-challa/version.json
 
 oidc:
   kakao:

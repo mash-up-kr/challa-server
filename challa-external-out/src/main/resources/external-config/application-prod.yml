@@ -8,3 +8,4 @@ s3:
     camera-filters: challa/camera-filters.json
     room-cover-stickers: challa/room-cover-stickers.json
     room-sticker-colors: challa/room-sticker-colors.json
+    app-version: challa/app-version.json
