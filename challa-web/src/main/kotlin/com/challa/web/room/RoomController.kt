@@ -16,6 +16,7 @@ class RoomController(
     private val getRoomUsecase: GetRoomUsecase,
     private val getShootableRoomsUsecase: GetShootableRoomsUsecase,
     private val getRoomUsersUsecase: GetRoomUsersUsecase,
+    private val getRoomCoverOptionsUsecase: GetRoomCoverOptionsUsecase,
     private val updateCoverUsecase: UpdateCoverUsecase
 ) {
     @PostMapping
@@ -71,6 +72,13 @@ class RoomController(
         val result = getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = userId))
 
         return ApiResponse.ok(RoomsEnvelope(result.rooms.map(GetShootableRoomResponse::fromResult)))
+    }
+
+    @GetMapping("/cover-options")
+    fun getRoomCoverOptions(): ApiResponse<RoomEnvelope<GetRoomCoverOptionsResponse>> {
+        val result = getRoomCoverOptionsUsecase.getRoomCoverOptions()
+
+        return ApiResponse.ok(RoomEnvelope(GetRoomCoverOptionsResponse.fromResult(result)))
     }
 
     @GetMapping("/{roomId}/users")
