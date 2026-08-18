@@ -45,7 +45,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "123456",
                 roomStatus = RoomStatus.PHOTO_PRINT_PENDING,
                 coverImageUrl = "https://bucket/photo/11/7/first",
-                coverStickerUrl = "https://bucket/photo/11/8/second",
+                coverStickerId = 1L,
+                coverStickerColorId = 2L,
                 photoPrintCompletedAt = LocalDateTime.now(),
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
@@ -75,7 +76,8 @@ class RoomJpaPersistenceAdaptorTest {
                 roomStatus = RoomStatus.SHOOTING,
                 photoPrintCompletedAt = null,
                 coverImageUrl = "https://bucket/photo/11/7/first",
-                coverStickerUrl = "https://bucket/photo/11/8/second",
+                coverStickerId = 1L,
+                coverStickerColorId = 2L,
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )
@@ -102,7 +104,8 @@ class RoomJpaPersistenceAdaptorTest {
                 invitationCode = "112233",
                 roomStatus = RoomStatus.SHOOTING,
                 coverImageUrl = "https://bucket/photo/11/7/first",
-                coverStickerUrl = "https://bucket/photo/11/8/second",
+                coverStickerId = 1L,
+                coverStickerColorId = 2L,
                 photoPrintCompletedAt = null,
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
@@ -133,7 +136,8 @@ class RoomJpaPersistenceAdaptorTest {
                 roomStatus = RoomStatus.SHOOTING,
                 photoPrintCompletedAt = null,
                 coverImageUrl = "https://bucket/photo/11/7/first",
-                coverStickerUrl = "https://bucket/photo/11/8/second",
+                coverStickerId = 1L,
+                coverStickerColorId = 2L,
                 createdAt = LocalDateTime.now(),
                 expiresAt = LocalDateTime.now().plus(30, ChronoUnit.DAYS)
             )

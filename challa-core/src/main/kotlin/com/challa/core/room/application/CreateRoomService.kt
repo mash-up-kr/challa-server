@@ -1,7 +1,6 @@
 package com.challa.core.room.application
 
 import com.challa.core.room.domain.Room
-import com.challa.core.room.domain.RoomCoverSticker
 import com.challa.core.room.domain.RoomUser
 import com.challa.core.room.port.input.CreateRoomCommand
 import com.challa.core.room.port.input.CreateRoomResult
@@ -49,11 +48,15 @@ class CreateRoomService(
     }
 
     private fun createRoomWithOwner(input: CreateRoomCommand): Room {
+        val coverStickerId = roomCoverStickerProvider.getAllStickers().random().id
+        val coverStickerColorId = roomCoverStickerProvider.getAllColors().random().id
         val room = Room.create(
             title = input.roomTitle,
             totalPhotoCount = input.totalPhotoCount,
             invitationCode = generateInvitationCode(),
-            coverStickerUrl = getRandomCoverSticker().fileUrl
+            coverImageUrl = null,
+            coverStickerId = coverStickerId,
+            coverStickerColorId = coverStickerColorId
         )
         val savedRoom = roomRepository.save(room)
 
@@ -74,12 +77,6 @@ class CreateRoomService(
                 ]
             )
         }
-    }
-
-    private fun getRandomCoverSticker(): RoomCoverSticker {
-        val coverStickers = roomCoverStickerProvider.getAll()
-
-        return coverStickers.random()
     }
 
     private val logger = LoggerFactory.getLogger(CreateRoomService::class.java)

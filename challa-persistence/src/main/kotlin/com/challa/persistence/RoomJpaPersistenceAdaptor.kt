@@ -42,10 +42,12 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
     override fun findAllById(roomIds: List<RoomId>): List<Room> =
         roomJpaRepository.findAllById(roomIds).map { it.toDomain() }
 
-    override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room> =
+    @Transactional
+    override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus) {
         roomJpaRepository.findAllById(roomIds).onEach { room ->
             room.updateStatus(newStatus = roomStatus)
-        }.map { it.toDomain() }
+        }
+    }
 
     @Transactional
     override fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletedAt: LocalDateTime) {

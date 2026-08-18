@@ -14,7 +14,7 @@ interface RoomRepository {
 
     fun findAllById(roomIds: List<RoomId>): List<Room>
 
-    fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus): List<Room>
+    fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus)
 
     fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletedAt: LocalDateTime)
 

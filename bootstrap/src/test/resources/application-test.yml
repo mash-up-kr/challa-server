@@ -18,6 +18,7 @@ s3:
   file-path:
     camera-filters: test-challa/camera-filters.json
     room-cover-stickers: test-challa/cover-stickers.json
+    room-sticker-colors: test-challa/sticker-colors.json
 
 oidc:
   kakao:

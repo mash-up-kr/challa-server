@@ -129,7 +129,8 @@ class CompletePhotoServiceTest {
         invitationCode = "123456",
         roomStatus = RoomStatus.SHOOTING,
         coverImageUrl = "https://bucket/photo/11/7/first",
-        coverStickerUrl = "https://bucket/photo/11/8/second",
+        coverStickerId = 1L,
+        coverStickerColorId = 2L,
         photoPrintCompletedAt = null,
         createdAt = LocalDateTime.of(2026, 8, 1, 12, 0),
         expiresAt = LocalDateTime.of(2026, 8, 31, 12, 0)
