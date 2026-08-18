@@ -21,6 +21,8 @@ interface RoomRepository {
     fun findByRoomId(roomId: RoomId): Room?
 
     fun decrementRemainedPhotoCount(roomId: RoomId): Boolean
+
+    fun updateCover(roomId: RoomId, coverImageUrl: String?, coverStickerId: Long?, coverStickerColorId: Long?)
 }
 
 class InvitationCodeConflictException : RuntimeException()

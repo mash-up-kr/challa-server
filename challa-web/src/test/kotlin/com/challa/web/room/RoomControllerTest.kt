@@ -32,6 +32,7 @@ class RoomControllerTest {
     private val getRoomUsecase = mockk<GetRoomUsecase>()
     private val getShootableRoomsUsecase = mockk<GetShootableRoomsUsecase>()
     private val getRoomUsersUsecase = mockk<GetRoomUsersUsecase>()
+    private val updateCoverUsecase = mockk<UpdateCoverUsecase>()
 
     private val mockMvc: MockMvc = MockMvcBuilders
         .standaloneSetup(
@@ -41,7 +42,8 @@ class RoomControllerTest {
                 listRoomsUsecase = listRoomsUsecase,
                 getRoomUsecase = getRoomUsecase,
                 getShootableRoomsUsecase = getShootableRoomsUsecase,
-                getRoomUsersUsecase = getRoomUsersUsecase
+                getRoomUsersUsecase = getRoomUsersUsecase,
+                updateCoverUsecase = updateCoverUsecase
             )
         )
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())

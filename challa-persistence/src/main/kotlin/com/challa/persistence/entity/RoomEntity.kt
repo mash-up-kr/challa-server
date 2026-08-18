@@ -37,13 +37,13 @@ class RoomEntity(
     var roomStatus: RoomStatus,
 
     @Column(nullable = true)
-    val coverImageUrl: String?,
+    var coverImageUrl: String?,
 
     @Column(nullable = true)
-    val coverStickerId: Long?,
+    var coverStickerId: Long?,
 
     @Column(nullable = true)
-    val coverStickerColorId: Long?,
+    var coverStickerColorId: Long?,
 
     @Column(nullable = true)
     var photoPrintCompletedAt: LocalDateTime?,
@@ -76,6 +76,12 @@ class RoomEntity(
     fun markPhotoPrintPending(newPhotoPrintCompletedAt: LocalDateTime) {
         roomStatus = RoomStatus.PHOTO_PRINT_PENDING
         photoPrintCompletedAt = newPhotoPrintCompletedAt
+    }
+
+    fun updateCover(coverImageUrl: String?, coverStickerId: Long?, coverStickerColorId: Long?) {
+        this.coverImageUrl = coverImageUrl
+        this.coverStickerId = coverStickerId
+        this.coverStickerColorId = coverStickerColorId
     }
 
     companion object {

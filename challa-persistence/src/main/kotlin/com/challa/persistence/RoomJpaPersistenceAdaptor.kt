@@ -58,4 +58,18 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
 
     override fun decrementRemainedPhotoCount(roomId: RoomId): Boolean =
         roomJpaRepository.decrementRemainedPhotoCount(roomId) == 1
+
+    @Transactional
+    override fun updateCover(
+        roomId: RoomId,
+        coverImageUrl: String?,
+        coverStickerId: Long?,
+        coverStickerColorId: Long?
+    ) {
+        roomJpaRepository.findById(roomId).get().updateCover(
+            coverImageUrl = coverImageUrl,
+            coverStickerId = coverStickerId,
+            coverStickerColorId = coverStickerColorId
+        )
+    }
 }
