@@ -30,11 +30,10 @@ class ListRoomsService(
             }
             .map { it.id!! }
         if (newlyCompletedRoomIds.isNotEmpty()) {
-            val newlyCompletedRooms = roomRepository.updateRoomsStatus(
+            roomRepository.updateRoomsStatus(
                 roomIds = newlyCompletedRoomIds,
                 roomStatus = RoomStatus.PHOTO_PRINT_COMPLETED
             )
-            roomRepository.saveAll(newlyCompletedRooms)
         }
 
         val newlyCompletedRoomIdSet = newlyCompletedRoomIds.toSet()
