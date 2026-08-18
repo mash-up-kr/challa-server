@@ -1,5 +1,8 @@
 package com.challa.bootstrap
 
+import com.challa.core.app.domain.AppVersion
+import com.challa.core.app.port.input.GetAppVersionUsecase
+import com.challa.core.app.port.output.AppVersionProvider
 import com.challa.core.auth.LoginUseCase
 import com.challa.core.auth.RefreshTokenUseCase
 import com.challa.core.photo.CompletePhotoUseCase
@@ -39,6 +42,9 @@ class ChallaApplicationTests {
     @Autowired
     private lateinit var completePhotoUseCase: CompletePhotoUseCase
 
+    @Autowired
+    private lateinit var getAppVersionUsecase: GetAppVersionUsecase
+
     @Test
     fun `context loads and wires the core use cases with their adapters`() {
         assertNotNull(loginUseCase)
@@ -46,6 +52,7 @@ class ChallaApplicationTests {
         assertNotNull(deleteAccountUseCase)
         assertNotNull(issueUploadUrlUseCase)
         assertNotNull(completePhotoUseCase)
+        assertNotNull(getAppVersionUsecase)
     }
 }
 
@@ -61,5 +68,19 @@ class TestStorageConfig {
     fun roomCoverStickerProvider(): RoomCoverStickerProvider = object : RoomCoverStickerProvider {
         override fun getAllStickers() = emptyList<RoomCoverSticker>()
         override fun getAllColors() = emptyList<RoomStickerColor>()
+    }
+
+    @Bean
+    fun appVersionProvider(): AppVersionProvider = object : AppVersionProvider {
+        override fun getAppVersion() = AppVersion(
+            android = appVersionPlatform(),
+            ios = appVersionPlatform()
+        )
+
+        private fun appVersionPlatform() = AppVersion.Version(
+            minimumVersion = "1.0.0",
+            latestVersion = "1.0.0",
+            storeUrl = "https://example.com"
+        )
     }
 }
