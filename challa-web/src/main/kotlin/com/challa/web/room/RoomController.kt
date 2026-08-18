@@ -15,7 +15,8 @@ class RoomController(
     private val listRoomsUsecase: ListRoomsUsecase,
     private val getRoomUsecase: GetRoomUsecase,
     private val getShootableRoomsUsecase: GetShootableRoomsUsecase,
-    private val getRoomUsersUsecase: GetRoomUsersUsecase
+    private val getRoomUsersUsecase: GetRoomUsersUsecase,
+    private val updateCoverUsecase: UpdateCoverUsecase
 ) {
     @PostMapping
     fun createRoom(
@@ -52,6 +53,17 @@ class RoomController(
         val result = getRoomUsecase.getRoom(GetRoomCommand(userId = userId, roomId = roomId))
 
         return ApiResponse.ok(RoomEnvelope(GetRoomResponse.fromResult(result)))
+    }
+
+    @PutMapping("/{roomId}/cover")
+    fun updateCover(
+        @AuthUserId userId: Long,
+        @PathVariable roomId: Long,
+        @RequestBody request: RoomEnvelope<UpdateCoverRequest>
+    ): ApiResponse<Unit?> {
+        updateCoverUsecase.updateCover(request.room.toCommand(userId = userId, roomId = roomId))
+
+        return ApiResponse.empty()
     }
 
     @GetMapping("/shootable")

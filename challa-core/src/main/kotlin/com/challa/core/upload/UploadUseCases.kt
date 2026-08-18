@@ -6,7 +6,8 @@ interface IssueUploadUrlUseCase {
 
 enum class UploadPurpose(val keyPrefix: String) {
     PROFILE_IMAGE("profile"),
-    PHOTO("photo")
+    PHOTO("photo"),
+    ROOM_COVER_IMAGE("cover-image")
 }
 
 data class IssueUploadUrlCommand(val purpose: UploadPurpose, val contentType: String)
