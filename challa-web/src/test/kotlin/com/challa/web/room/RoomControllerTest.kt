@@ -32,6 +32,7 @@ class RoomControllerTest {
     private val getRoomUsecase = mockk<GetRoomUsecase>()
     private val getShootableRoomsUsecase = mockk<GetShootableRoomsUsecase>()
     private val getRoomUsersUsecase = mockk<GetRoomUsersUsecase>()
+    private val getRoomCoverOptionsUsecase = mockk<GetRoomCoverOptionsUsecase>()
     private val updateCoverUsecase = mockk<UpdateCoverUsecase>()
 
     private val mockMvc: MockMvc = MockMvcBuilders
@@ -43,6 +44,7 @@ class RoomControllerTest {
                 getRoomUsecase = getRoomUsecase,
                 getShootableRoomsUsecase = getShootableRoomsUsecase,
                 getRoomUsersUsecase = getRoomUsersUsecase,
+                getRoomCoverOptionsUsecase = getRoomCoverOptionsUsecase,
                 updateCoverUsecase = updateCoverUsecase
             )
         )
@@ -155,6 +157,62 @@ class RoomControllerTest {
         verify {
             getShootableRoomsUsecase.getShootableRooms(GetShootableRoomsCommand(userId = AUTH_USER_ID))
         }
+    }
+
+    @Test
+    fun `GET room cover options returns stickers and colors`() {
+        every { getRoomCoverOptionsUsecase.getRoomCoverOptions() } returns GetRoomCoverOptionsResult(
+            stickers = listOf(
+                GetRoomCoverOptionsResult.Sticker(
+                    id = 1L,
+                    imageUrl = "https://bucket/stickers/1.png"
+                )
+            ),
+            colors = listOf(
+                GetRoomCoverOptionsResult.Color(
+                    id = 2L,
+                    name = "yellow",
+                    hex = "#FFD54F"
+                )
+            )
+        )
+
+        mockMvc.perform(get("/api/v1/rooms/cover-options").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.room.stickers[0].id").value(1))
+            .andExpect(jsonPath("$.data.room.stickers[0].imageUrl").value("https://bucket/stickers/1.png"))
+            .andExpect(jsonPath("$.data.room.stickers[0].fileUrl").doesNotExist())
+            .andExpect(jsonPath("$.data.room.colors[0].id").value(2))
+            .andExpect(jsonPath("$.data.room.colors[0].name").value("yellow"))
+            .andExpect(jsonPath("$.data.room.colors[0].hex").value("#FFD54F"))
+
+        verify { getRoomCoverOptionsUsecase.getRoomCoverOptions() }
+    }
+
+    @Test
+    fun `GET room cover options returns empty arrays when options are empty`() {
+        every { getRoomCoverOptionsUsecase.getRoomCoverOptions() } returns GetRoomCoverOptionsResult(
+            stickers = emptyList(),
+            colors = emptyList()
+        )
+
+        mockMvc.perform(get("/api/v1/rooms/cover-options").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.room.stickers").isArray)
+            .andExpect(jsonPath("$.data.room.stickers").isEmpty)
+            .andExpect(jsonPath("$.data.room.colors").isArray)
+            .andExpect(jsonPath("$.data.room.colors").isEmpty)
+
+        verify { getRoomCoverOptionsUsecase.getRoomCoverOptions() }
+    }
+
+    @Test
+    fun `GET room cover options requires authentication`() {
+        mockMvc.perform(get("/api/v1/rooms/cover-options"))
+            .andExpect(status().isUnauthorized)
+            .andExpect(jsonPath("$.message").value("Authentication required"))
+
+        verify(exactly = 0) { getRoomCoverOptionsUsecase.getRoomCoverOptions() }
     }
 
     @Test
