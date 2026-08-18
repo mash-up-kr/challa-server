@@ -36,11 +36,13 @@ class JoinRoomService(
             )
         }
 
+        val user = userRepository.findById(joinRoomCommand.userId)!!
         applicationEventPublisher.publishEvent(
             MemberJoinedEvent(
                 roomId = room.id,
                 roomTitle = room.title,
-                userNickname = userRepository.findById(joinRoomCommand.userId)!!.nickname ?: "Unknown"
+                userNickname = user.nickname ?: "(알 수 없는 사용자)",
+                userProfileImageUrl = user.profileImageUrl
             )
         )
 
