@@ -1,6 +1,7 @@
 package com.challa.externalout.s3
 
 import com.challa.core.room.domain.RoomCoverSticker
+import com.challa.core.room.domain.RoomStickerColor
 import com.challa.core.room.port.output.RoomCoverStickerProvider
 import com.challa.externalout.s3.properties.S3FilePathProperties
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -20,12 +21,20 @@ class S3RoomCoverStickerStore(
     @Volatile
     private var roomCoverStickers: List<RoomCoverSticker> = emptyList()
 
+    @Volatile
+    private var roomStickerColors: List<RoomStickerColor> = emptyList()
+
     @EventListener(ApplicationReadyEvent::class)
     fun initialize() {
         roomCoverStickers = s3PreLoader.load(
             filePathProperties.roomCoverStickers,
             typeReference = object : TypeReference<RoomCoverStickersResponse>() {}
         ).roomCoverStickers
+
+        roomStickerColors = s3PreLoader.load(
+            filePathProperties.roomStickerColors,
+            typeReference = object : TypeReference<RoomStickerColorsResponse>() {}
+        ).roomStickerColors
     }
 
     @Scheduled(initialDelay = 10 * 60 * 1000, fixedDelay = 10 * 60 * 1000)
@@ -33,10 +42,16 @@ class S3RoomCoverStickerStore(
         initialize()
     }
 
-    override fun getAll(): List<RoomCoverSticker> = roomCoverStickers
+    override fun getAllStickers(): List<RoomCoverSticker> = roomCoverStickers
+    override fun getAllColors(): List<RoomStickerColor> = roomStickerColors
 }
 
 data class RoomCoverStickersResponse(
     @param:JsonProperty("room-cover-stickers")
     val roomCoverStickers: List<RoomCoverSticker>
+)
+
+data class RoomStickerColorsResponse(
+    @param:JsonProperty("room-sticker-colors")
+    val roomStickerColors: List<RoomStickerColor>
 )

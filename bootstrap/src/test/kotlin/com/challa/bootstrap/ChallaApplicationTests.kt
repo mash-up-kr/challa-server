@@ -4,6 +4,7 @@ import com.challa.core.auth.LoginUseCase
 import com.challa.core.auth.RefreshTokenUseCase
 import com.challa.core.photo.CompletePhotoUseCase
 import com.challa.core.room.domain.RoomCoverSticker
+import com.challa.core.room.domain.RoomStickerColor
 import com.challa.core.room.port.output.RoomCoverStickerProvider
 import com.challa.core.shoot.CameraFiltersStorage
 import com.challa.core.shoot.domain.CameraFilter
@@ -58,6 +59,7 @@ class TestStorageConfig {
 
     @Bean
     fun roomCoverStickerProvider(): RoomCoverStickerProvider = object : RoomCoverStickerProvider {
-        override fun getAll() = emptyList<RoomCoverSticker>()
+        override fun getAllStickers() = emptyList<RoomCoverSticker>()
+        override fun getAllColors() = emptyList<RoomStickerColor>()
     }
 }

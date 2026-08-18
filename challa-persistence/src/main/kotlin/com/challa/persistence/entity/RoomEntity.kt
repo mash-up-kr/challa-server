@@ -39,8 +39,11 @@ class RoomEntity(
     @Column(nullable = true)
     val coverImageUrl: String?,
 
-    @Column(nullable = false)
-    val coverStickerUrl: String,
+    @Column(nullable = true)
+    val coverStickerId: Long?,
+
+    @Column(nullable = true)
+    val coverStickerColorId: Long?,
 
     @Column(nullable = true)
     var photoPrintCompletedAt: LocalDateTime?,
@@ -59,7 +62,8 @@ class RoomEntity(
         invitationCode = invitationCode,
         roomStatus = roomStatus,
         coverImageUrl = coverImageUrl,
-        coverStickerUrl = coverStickerUrl,
+        coverStickerId = coverStickerId,
+        coverStickerColorId = coverStickerColorId,
         photoPrintCompletedAt = photoPrintCompletedAt,
         createdAt = createdAt,
         expiresAt = expiresAt
@@ -83,7 +87,8 @@ class RoomEntity(
             invitationCode = room.invitationCode,
             roomStatus = room.roomStatus,
             coverImageUrl = room.coverImageUrl,
-            coverStickerUrl = room.coverStickerUrl,
+            coverStickerId = room.coverStickerId,
+            coverStickerColorId = room.coverStickerColorId,
             photoPrintCompletedAt = room.photoPrintCompletedAt,
             createdAt = room.createdAt,
             expiresAt = room.expiresAt

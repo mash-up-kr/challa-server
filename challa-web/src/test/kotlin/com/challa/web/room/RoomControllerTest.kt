@@ -2,7 +2,7 @@ package com.challa.web.room
 
 import com.challa.core.room.application.InvitationCodeAllocationFailedException
 import com.challa.core.room.application.InvitationCodeNotFoundException
-import com.challa.core.room.domain.Room
+import com.challa.core.room.domain.RoomCover
 import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.input.*
@@ -101,8 +101,7 @@ class RoomControllerTest {
                         "https://bucket/photo/11/7/first",
                         "https://bucket/photo/11/8/second"
                     ),
-                    coverImageUrl = "https://bucket/photo/11/7/first",
-                    coverStickerUrl = "https://bucket/photo/11/8/second",
+                    cover = roomCover(),
                     photoPrintCompletedAt = null,
                     createdAt = LocalDateTime.of(2026, 8, 1, 12, 0),
                     expiresAt = LocalDateTime.of(2026, 8, 31, 12, 0)
@@ -158,22 +157,21 @@ class RoomControllerTest {
 
     @Test
     fun `GET room uses the authenticated user ID`() {
-        val room = Room(
-            id = 11L,
+        val result = GetRoomResult(
+            roomId = 11L,
             title = "Trip",
             totalPhotoCount = 24L,
             remainedPhotoCount = 24L,
             invitationCode = "123456",
             roomStatus = RoomStatus.SHOOTING,
-            coverImageUrl = "https://bucket/photo/11/7/first",
-            coverStickerUrl = "https://bucket/photo/11/8/second",
+            cover = roomCover(),
             photoPrintCompletedAt = null,
             createdAt = LocalDateTime.of(2026, 8, 1, 12, 0),
             expiresAt = LocalDateTime.of(2026, 8, 31, 12, 0)
         )
         every {
             getRoomUsecase.getRoom(GetRoomCommand(userId = AUTH_USER_ID, roomId = 11L))
-        } returns GetRoomResult(room)
+        } returns result
 
         mockMvc.perform(get("/api/v1/rooms/11").authenticated())
             .andExpect(status().isOk)
@@ -182,6 +180,8 @@ class RoomControllerTest {
             .andExpect(jsonPath("$.data.room.status").value("SHOOTING"))
             .andExpect(jsonPath("$.data.room.totalPhotoCount").value(24))
             .andExpect(jsonPath("$.data.room.remainedPhotoCount").value(24))
+            .andExpect(jsonPath("$.data.room.cover.sticker.id").value(1))
+            .andExpect(jsonPath("$.data.room.cover.sticker.color.id").value(2))
 
         verify { getRoomUsecase.getRoom(GetRoomCommand(userId = AUTH_USER_ID, roomId = 11L)) }
     }
@@ -310,6 +310,19 @@ class RoomControllerTest {
     private fun <B : MockHttpServletRequestBuilder> B.authenticated(): B = apply {
         requestAttr(JwtAuthenticationFilter.AUTH_USER_ID_ATTRIBUTE, AUTH_USER_ID)
     }
+
+    private fun roomCover() = RoomCover(
+        coverImageUrl = "https://bucket/photo/11/7/first",
+        sticker = RoomCover.Sticker(
+            id = 1L,
+            imageUrl = "https://bucket/photo/11/8/second",
+            color = RoomCover.Sticker.Color(
+                id = 2L,
+                name = "yellow",
+                hex = "#FFD54F"
+            )
+        )
+    )
 
     companion object {
         private const val AUTH_USER_ID = 7L

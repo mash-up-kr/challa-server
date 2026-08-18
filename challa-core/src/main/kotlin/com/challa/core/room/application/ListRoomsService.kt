@@ -1,10 +1,12 @@
 package com.challa.core.room.application
 
 import com.challa.core.photo.PhotoRepository
+import com.challa.core.room.domain.RoomCover
 import com.challa.core.room.domain.RoomStatus
 import com.challa.core.room.port.input.ListRoomsCommand
 import com.challa.core.room.port.input.ListRoomsResult
 import com.challa.core.room.port.input.ListRoomsUsecase
+import com.challa.core.room.port.output.RoomCoverStickerProvider
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.room.port.output.RoomUserRepository
 import org.springframework.stereotype.Service
@@ -14,7 +16,8 @@ import java.time.LocalDateTime
 class ListRoomsService(
     private val roomRepository: RoomRepository,
     private val roomUserRepository: RoomUserRepository,
-    private val photoRepository: PhotoRepository
+    private val photoRepository: PhotoRepository,
+    private val roomCoverStickerProvider: RoomCoverStickerProvider
 ) : ListRoomsUsecase {
     override fun listRooms(listRoomsCommand: ListRoomsCommand): ListRoomsResult {
         val roomIds = roomUserRepository.findAllByUserId(listRoomsCommand.userId).map { it.roomId }
@@ -49,6 +52,21 @@ class ListRoomsService(
             .associate { it.roomId to it.memberCount }
         val photosByRoomId = photoRepository.findLatestFourByRoomIdsIn(roomIds).groupBy { it.roomId }
         val roomProjections = filteredRooms.map { room ->
+            val coverSticker = room.coverStickerId?.let {
+                val sticker = roomCoverStickerProvider.findStickerById(it)!!
+                val color = roomCoverStickerProvider.findColorById(room.coverStickerColorId!!)!!
+
+                RoomCover.Sticker(
+                    id = sticker.id,
+                    imageUrl = sticker.fileUrl,
+                    color = RoomCover.Sticker.Color(
+                        id = color.id,
+                        name = color.name,
+                        hex = color.hex
+                    )
+                )
+            }
+
             ListRoomsResult.RoomProjection(
                 roomId = room.id!!,
                 roomStatus = room.roomStatus,
@@ -57,8 +75,10 @@ class ListRoomsService(
                 totalPhotoCount = room.totalPhotoCount,
                 remainedPhotoCount = room.remainedPhotoCount,
                 thumbnailImageUrls = photosByRoomId[room.id].orEmpty().map { it.imageUrl },
-                coverImageUrl = room.coverImageUrl,
-                coverStickerUrl = room.coverStickerUrl,
+                cover = RoomCover(
+                    coverImageUrl = room.coverImageUrl,
+                    sticker = coverSticker
+                ),
                 photoPrintCompletedAt = room.photoPrintCompletedAt,
                 createdAt = room.createdAt,
                 expiresAt = room.expiresAt
