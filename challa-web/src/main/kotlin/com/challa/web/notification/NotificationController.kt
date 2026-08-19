@@ -1,12 +1,15 @@
 package com.challa.web.notification
 
 import com.challa.core.notification.DeleteDeviceTokenUseCase
+import com.challa.core.notification.GetMarketingPushAgreementUseCase
 import com.challa.core.notification.RegisterDeviceTokenUseCase
 import com.challa.core.notification.SendTestPushUseCase
+import com.challa.core.notification.UpdateMarketingPushAgreementUseCase
 import com.challa.web.common.response.ApiResponse
 import com.challa.web.security.AuthUserId
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController
 class NotificationController(
     private val registerDeviceTokenUseCase: RegisterDeviceTokenUseCase,
     private val deleteDeviceTokenUseCase: DeleteDeviceTokenUseCase,
-    private val sendTestPushUseCase: SendTestPushUseCase
+    private val sendTestPushUseCase: SendTestPushUseCase,
+    private val getMarketingPushAgreementUseCase: GetMarketingPushAgreementUseCase,
+    private val updateMarketingPushAgreementUseCase: UpdateMarketingPushAgreementUseCase
 ) {
     @PostMapping("/tokens")
     fun registerToken(
@@ -56,5 +61,23 @@ class NotificationController(
     ): ApiResponse<NotificationEnvelope<SendTestPushResponse>> {
         val result = sendTestPushUseCase.sendTest(request.notification.toCommand(userId))
         return ApiResponse.ok(NotificationEnvelope(SendTestPushResponse.fromResult(result)))
+    }
+
+    @Operation(summary = "광고성 푸시 수신 동의 조회")
+    @GetMapping("/marketing")
+    fun getMarketingAgreement(
+        @AuthUserId userId: Long
+    ): ApiResponse<NotificationEnvelope<MarketingPushAgreementResponse>> = ApiResponse.ok(
+        NotificationEnvelope(MarketingPushAgreementResponse(getMarketingPushAgreementUseCase.get(userId)))
+    )
+
+    @Operation(summary = "광고성 푸시 수신 동의 변경")
+    @PostMapping("/marketing")
+    fun updateMarketingAgreement(
+        @AuthUserId userId: Long,
+        @RequestBody request: NotificationEnvelope<UpdateMarketingPushAgreementRequest>
+    ): ApiResponse<Unit?> {
+        updateMarketingPushAgreementUseCase.update(request.notification.toCommand(userId))
+        return ApiResponse.empty()
     }
 }
