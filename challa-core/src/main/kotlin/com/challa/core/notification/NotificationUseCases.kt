@@ -19,3 +19,13 @@ data class DeleteDeviceTokenCommand(val userId: Long, val token: String)
 data class SendTestPushCommand(val userId: Long, val title: String, val body: String)
 
 data class SendTestPushResult(val sentCount: Int)
+
+interface GetMarketingPushAgreementUseCase {
+    fun get(userId: Long): Boolean
+}
+
+interface UpdateMarketingPushAgreementUseCase {
+    fun update(command: UpdateMarketingPushAgreementCommand)
+}
+
+data class UpdateMarketingPushAgreementCommand(val userId: Long, val agreed: Boolean)

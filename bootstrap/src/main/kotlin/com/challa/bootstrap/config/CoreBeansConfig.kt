@@ -12,6 +12,8 @@ import com.challa.core.auth.RefreshTokenService
 import com.challa.core.auth.RefreshTokenUseCase
 import com.challa.core.auth.SocialAccountRevoker
 import com.challa.core.notification.DeviceTokenRepository
+import com.challa.core.notification.MarketingPushAgreementRepository
+import com.challa.core.notification.MarketingPushAgreementService
 import com.challa.core.notification.NotificationService
 import com.challa.core.notification.PushSender
 import com.challa.core.upload.IssueUploadUrlService
@@ -101,4 +103,9 @@ class CoreBeansConfig {
     @Bean
     fun notificationService(deviceTokenRepository: DeviceTokenRepository, pushSender: PushSender): NotificationService =
         NotificationService(deviceTokenRepository, pushSender)
+
+    @Bean
+    fun marketingPushAgreementService(
+        marketingPushAgreementRepository: MarketingPushAgreementRepository
+    ): MarketingPushAgreementService = MarketingPushAgreementService(marketingPushAgreementRepository)
 }

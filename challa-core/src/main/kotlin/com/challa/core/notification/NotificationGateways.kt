@@ -12,3 +12,9 @@ interface PushSender {
     /** 전송에 성공한 토큰 수를 돌려준다. */
     fun send(tokens: List<String>, title: String, body: String): Int
 }
+
+interface MarketingPushAgreementRepository {
+    fun findAgreedByUserId(userId: Long): Boolean?
+
+    fun save(userId: Long, agreed: Boolean)
+}
