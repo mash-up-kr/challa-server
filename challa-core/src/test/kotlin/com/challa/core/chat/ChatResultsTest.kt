@@ -28,7 +28,7 @@ class ChatResultsTest {
         )
 
         val chat = result.chats.single()
-        assertEquals("알 수 없는 사용자", chat.user?.name)
+        assertEquals("탈퇴한 사용자", chat.user?.name)
         assertNull(chat.user?.profileImageUrl)
     }
 

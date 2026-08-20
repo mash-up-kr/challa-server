@@ -35,6 +35,6 @@ class UserTest {
     )
 
     private companion object {
-        const val FALLBACK_DISPLAY_NICKNAME = "알 수 없는 사용자"
+        const val FALLBACK_DISPLAY_NICKNAME = "탈퇴한 사용자"
     }
 }

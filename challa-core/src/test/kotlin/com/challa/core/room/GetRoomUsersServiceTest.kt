@@ -49,7 +49,7 @@ class GetRoomUsersServiceTest {
                 ),
                 GetRoomUsersResult.UserProjection(
                     id = 9L,
-                    nickname = "알 수 없는 사용자",
+                    nickname = "탈퇴한 사용자",
                     profileImageUrl = null
                 )
             ),
