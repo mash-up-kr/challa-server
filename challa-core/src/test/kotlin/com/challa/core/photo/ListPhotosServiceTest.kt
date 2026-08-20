@@ -92,7 +92,7 @@ class ListPhotosServiceTest {
 
         val result = service.listPhotos(command)
 
-        assertEquals("알 수 없는 사용자", result.photoProjections.single().userNickname)
+        assertEquals("탈퇴한 사용자", result.photoProjections.single().userNickname)
     }
 
     private fun photo(id: Long, imageUrl: String?) = Photo(

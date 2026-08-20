@@ -3,7 +3,7 @@ package com.challa.core.user
 import com.challa.core.auth.Provider
 import java.time.Instant
 
-private const val FALLBACK_NICKNAME = "알 수 없는 사용자"
+private const val FALLBACK_NICKNAME = "탈퇴한 사용자"
 
 data class User(
     val id: Long? = null,
