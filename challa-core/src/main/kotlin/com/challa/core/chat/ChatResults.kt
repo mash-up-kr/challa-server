@@ -13,10 +13,8 @@ data class GetChatsResult(val room: RoomResultForChat, val chats: List<ChatResul
             GetChatsResult(
                 room = RoomResultForChat.from(room),
                 chats = chats.mapNotNull { chat ->
-                    users[chat.userId]?.let { user ->
-                        val photo = chat.photoId?.let { photos[it] }
-                        ChatResult.from(chat, photo, user)
-                    }
+                    val photo = chat.photoId?.let { photos[it] }
+                    ChatResult.from(chat, photo, users[chat.userId])
                 }
             )
     }
@@ -38,7 +36,7 @@ data class ChatResult(
     val user: UserResultForChat? = null
 ) {
     companion object {
-        fun from(chat: Chat, photo: Photo?, user: User): ChatResult? {
+        fun from(chat: Chat, photo: Photo?, user: User?): ChatResult? {
             val createdAt = chat.createdAt ?: return null
 
             return ChatResult(
@@ -58,11 +56,11 @@ data class ChatResult(
     }
 }
 
-data class UserResultForChat(val name: String? = "닉네임 없음", val profileImageUrl: String? = null) {
+data class UserResultForChat(val name: String, val profileImageUrl: String? = null) {
     companion object {
-        fun from(user: User): UserResultForChat = UserResultForChat(
-            name = user.nickname,
-            profileImageUrl = user.profileImageUrl
+        fun from(user: User?): UserResultForChat = UserResultForChat(
+            name = User.displayNicknameOf(user),
+            profileImageUrl = user?.profileImageUrl
         )
     }
 }

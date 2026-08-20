@@ -78,6 +78,23 @@ class ListPhotosServiceTest {
         verify(exactly = 0) { userRepository.findAllByIds(any()) }
     }
 
+    @Test
+    fun `returns the fallback nickname when a photo user no longer exists`() {
+        val command = ListPhotosCommand(userId = USER_ID, roomId = ROOM_ID, page = PAGE, size = SIZE)
+        val pageable = PageRequest.of(PAGE, SIZE, Sort.by(Sort.Direction.DESC, "createdAt"))
+        every { roomUserRepository.findByUserIdAndRoomId(USER_ID, ROOM_ID) } returns
+            RoomUser.createMember(roomId = ROOM_ID, userId = USER_ID)
+        every { photoRepository.findSliceByRoomId(ROOM_ID, pageable) } returns PhotoSlice(
+            photos = listOf(photo(id = 31, imageUrl = "https://bucket/photo-31")),
+            hasNext = false
+        )
+        every { userRepository.findAllByIds(listOf(USER_ID)) } returns emptyList()
+
+        val result = service.listPhotos(command)
+
+        assertEquals("알 수 없는 사용자", result.photoProjections.single().userNickname)
+    }
+
     private fun photo(id: Long, imageUrl: String?) = Photo(
         id = id,
         roomId = ROOM_ID,
@@ -87,11 +104,11 @@ class ListPhotosServiceTest {
         createdAt = CREATED_AT
     )
 
-    private fun user() = User(
+    private fun user(nickname: String? = USER_NICKNAME) = User(
         id = USER_ID,
         provider = Provider.KAKAO,
         providerId = "provider-id",
-        nickname = USER_NICKNAME,
+        nickname = nickname,
         profileImageUrl = USER_PROFILE_IMAGE_URL
     )
 

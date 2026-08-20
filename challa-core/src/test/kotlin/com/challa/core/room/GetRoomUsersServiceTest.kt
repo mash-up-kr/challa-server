@@ -34,8 +34,7 @@ class GetRoomUsersServiceTest {
         )
         every { userRepository.findAllByIds(listOf(REQUEST_USER_ID, 8L, 9L)) } returns listOf(
             user(id = REQUEST_USER_ID, nickname = "요청자", profileImageUrl = null),
-            user(id = 8L, nickname = "라이언", profileImageUrl = "https://img.example/ryan.png"),
-            user(id = 9L, nickname = null, profileImageUrl = null)
+            user(id = 8L, nickname = "라이언", profileImageUrl = "https://img.example/ryan.png")
         )
 
         val result = service.getRoomUsers(command)
@@ -48,7 +47,11 @@ class GetRoomUsersServiceTest {
                     nickname = "라이언",
                     profileImageUrl = "https://img.example/ryan.png"
                 ),
-                GetRoomUsersResult.UserProjection(id = 9L, nickname = null, profileImageUrl = null)
+                GetRoomUsersResult.UserProjection(
+                    id = 9L,
+                    nickname = "알 수 없는 사용자",
+                    profileImageUrl = null
+                )
             ),
             result.userProjections
         )

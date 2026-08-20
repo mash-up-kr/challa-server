@@ -2,6 +2,7 @@ package com.challa.core.photo
 
 import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.output.RoomUserRepository
+import com.challa.core.user.User
 import com.challa.core.user.UserRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -32,7 +33,7 @@ class ListPhotosService(
             ListPhotosResult.PhotoProjection(
                 id = requireNotNull(photo.id),
                 imageUrl = photo.imageUrl,
-                userNickname = user?.nickname,
+                userNickname = User.displayNicknameOf(user),
                 userProfileImageUrl = user?.profileImageUrl,
                 createdAt = photo.createdAt!!
             )
