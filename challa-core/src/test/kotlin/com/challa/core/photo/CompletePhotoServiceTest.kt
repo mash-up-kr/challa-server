@@ -77,8 +77,8 @@ class CompletePhotoServiceTest {
         val result = service.complete(command())
 
         assertEquals(0, result.remainedPhotoCount)
-        assertTrue(!completionAt.captured.isBefore(requestedAt.plusHours(24)))
-        assertTrue(!completionAt.captured.isAfter(LocalDateTime.now().plusHours(24)))
+        assertTrue(!completionAt.captured.isBefore(requestedAt.plusHours(3)))
+        assertTrue(!completionAt.captured.isAfter(LocalDateTime.now().plusHours(3)))
         verify { roomRepository.markPhotoPrintPending(ROOM_ID, any()) }
     }
 
