@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
-private const val PHOTO_PRINT_COMPLETION_HOURS = 24L
+private const val PHOTO_PRINT_COMPLETION_HOURS = 3L
 
 @Service
 class CompletePhotoService(
