@@ -5,6 +5,7 @@ import com.challa.core.room.port.input.GetRoomUsersCommand
 import com.challa.core.room.port.input.GetRoomUsersResult
 import com.challa.core.room.port.input.GetRoomUsersUsecase
 import com.challa.core.room.port.output.RoomUserRepository
+import com.challa.core.user.User
 import com.challa.core.user.UserRepository
 import org.springframework.stereotype.Service
 
@@ -21,12 +22,13 @@ class GetRoomUsersService(
 
         val roomUsers = roomUserRepository.findAllByRoomId(getRoomUsersCommand.roomId)
         val userIds = roomUsers.map { it.userId }
-        val users = userRepository.findAllByIds(userIds)
-        val userProjections = users.map { user ->
+        val usersById = userRepository.findAllByIds(userIds).associateBy { it.id }
+        val userProjections = roomUsers.map { roomUser ->
+            val user = usersById[roomUser.userId]
             GetRoomUsersResult.UserProjection(
-                id = user.id!!,
-                nickname = user.nickname,
-                profileImageUrl = user.profileImageUrl
+                id = roomUser.userId,
+                nickname = User.displayNicknameOf(user),
+                profileImageUrl = user?.profileImageUrl
             )
         }
 

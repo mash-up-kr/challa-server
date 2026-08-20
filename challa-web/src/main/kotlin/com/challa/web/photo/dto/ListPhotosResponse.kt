@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class ListPhotosResponse(
     val id: Long,
     val imageUrl: String?,
-    val userNickname: String?,
+    val userNickname: String,
     val userProfileImageUrl: String?,
     val createdAt: LocalDateTime
 ) {

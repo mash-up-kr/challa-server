@@ -7,6 +7,7 @@ import com.challa.core.room.port.input.JoinRoomResult
 import com.challa.core.room.port.input.JoinRoomUsecase
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.room.port.output.RoomUserRepository
+import com.challa.core.user.User
 import com.challa.core.user.UserRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -41,7 +42,7 @@ class JoinRoomService(
             MemberJoinedEvent(
                 roomId = room.id,
                 roomTitle = room.title,
-                userNickname = user.nickname ?: "(알 수 없는 사용자)",
+                userNickname = User.displayNicknameOf(user),
                 userProfileImageUrl = user.profileImageUrl
             )
         )

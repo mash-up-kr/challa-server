@@ -268,7 +268,7 @@ class RoomControllerTest {
                     nickname = "라이언",
                     profileImageUrl = "https://img.example/ryan.png"
                 ),
-                GetRoomUsersResult.UserProjection(id = 9L, nickname = null, profileImageUrl = null)
+                GetRoomUsersResult.UserProjection(id = 9L, nickname = "알 수 없는 사용자", profileImageUrl = null)
             )
         )
 
@@ -278,7 +278,7 @@ class RoomControllerTest {
             .andExpect(jsonPath("$.data.users[0].nickname").value("라이언"))
             .andExpect(jsonPath("$.data.users[0].profileImageUrl").value("https://img.example/ryan.png"))
             .andExpect(jsonPath("$.data.users[1].id").value(9))
-            .andExpect(jsonPath("$.data.users[1].nickname").isEmpty)
+            .andExpect(jsonPath("$.data.users[1].nickname").value("알 수 없는 사용자"))
             .andExpect(jsonPath("$.data.users[1].profileImageUrl").isEmpty)
             .andExpect(jsonPath("$.data.room").doesNotExist())
 
