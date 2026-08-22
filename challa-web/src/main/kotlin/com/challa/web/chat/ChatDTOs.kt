@@ -41,6 +41,7 @@ data class CreateChatRequest(
 }
 
 data class CreateChatResponse(
+    val chatId: Long,
     val type: ChatType,
     val content: String,
     val photoImageUrl: String? = null,
@@ -50,12 +51,21 @@ data class CreateChatResponse(
 ) {
     companion object {
         fun from(result: ChatResult) = CreateChatResponse(
+            chatId = result.chatId,
             type = result.type,
             content = result.content,
             photoImageUrl = result.photoImageUrl,
             createdAt = result.createdAt,
             userName = result.user?.name,
             userProfileImageUrl = result.user?.profileImageUrl
+        )
+    }
+}
+
+data class DeleteChatResponse(val chatId: Long) {
+    companion object {
+        fun from(chatId: Long) = DeleteChatResponse(
+            chatId = chatId
         )
     }
 }

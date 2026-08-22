@@ -29,6 +29,7 @@ data class RoomResultForChat(val title: String) {
 }
 
 data class ChatResult(
+    val chatId: Long,
     val type: ChatType,
     val content: String,
     val photoImageUrl: String? = null,
@@ -40,6 +41,7 @@ data class ChatResult(
             val createdAt = chat.createdAt ?: return null
 
             return ChatResult(
+                chatId = chat.id ?: 0L,
                 type = chat.type,
                 content = chat.content,
                 photoImageUrl = photo?.imageUrl,
@@ -49,6 +51,7 @@ data class ChatResult(
         }
 
         fun from(chat: Chat) = ChatResult(
+            chatId = chat.id ?: 0L,
             type = chat.type,
             content = chat.content,
             createdAt = chat.createdAt ?: LocalDateTime.now()

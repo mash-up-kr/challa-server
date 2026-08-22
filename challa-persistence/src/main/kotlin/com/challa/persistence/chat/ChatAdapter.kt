@@ -13,6 +13,13 @@ class ChatAdapter(private val repository: ChatJpaRepository) : ChatRepository {
     @Transactional
     override fun save(chat: Chat): Chat = repository.save(ChatEntity.from(chat)).toDomain()
 
+    override fun findById(chatId: Long): Chat? = repository.findById(chatId).orElse(null)?.toDomain()
+
+    @Transactional
+    override fun delete(chatId: Long) {
+        repository.deleteById(chatId)
+    }
+
     override fun getChatsByRoomId(roomId: Long, pageable: Pageable): List<Chat> =
         repository.findAllByRoomId(roomId, pageable)
             .filter { it.createdAt != null }

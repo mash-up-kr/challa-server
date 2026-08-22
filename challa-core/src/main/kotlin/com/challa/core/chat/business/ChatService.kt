@@ -73,6 +73,16 @@ class ChatService(
         return ChatResult.from(savedChat)
     }
 
+    override fun removeChat(userId: Long, chatId: Long): Long {
+        val chat = chatRepository.findById(chatId)
+
+        require(chat != null) { "Chat with id $chatId does not exist" }
+        require(chat.userId == userId) { "User with id $userId does not exist in chat $chatId" }
+
+        chatRepository.delete(chatId)
+        return chatId
+    }
+
     private companion object {
         val REACTION_TYPES = setOf(
             ChatType.EMOJI,
