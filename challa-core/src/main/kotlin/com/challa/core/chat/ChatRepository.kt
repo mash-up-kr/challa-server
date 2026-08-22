@@ -7,4 +7,6 @@ interface ChatRepository {
     fun getChatsByRoomId(roomId: Long, pageable: Pageable): List<Chat>
     fun findAllByPhotoId(photoId: Long): List<Chat>
     fun save(chat: Chat): Chat
+    fun findById(chatId: Long): Chat?
+    fun delete(chatId: Long)
 }

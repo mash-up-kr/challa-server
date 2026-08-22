@@ -45,4 +45,16 @@ class ChatController(private val chatUseCase: ChatUseCase) {
         val result = chatUseCase.reactForPhoto(request.chat.toCommand(userId))
         return ApiResponse.ok(ChatEnvelope(CreateChatResponse.from(result)))
     }
+
+    @Operation(
+        summary = "사진 반응 삭제"
+    )
+    @DeleteMapping("/reaction/{chatId}")
+    fun deleteChat(
+        @AuthUserId userId: Long,
+        @PathVariable chatId: Long
+    ): ApiResponse<ChatEnvelope<DeleteChatResponse>> {
+        val result = chatUseCase.removeChat(userId, chatId)
+        return ApiResponse.ok(ChatEnvelope(DeleteChatResponse.from(result)))
+    }
 }
