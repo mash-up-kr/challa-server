@@ -104,7 +104,7 @@ class RoomController(
         return ApiResponse.empty()
     }
 
-    @PostMapping("/{roomId}/check")
+    @PutMapping("/{roomId}/photo-print-completion/check")
     fun checkRoom(@AuthUserId userId: Long, @PathVariable roomId: Long): ApiResponse<Unit?> {
         checkPhotoPrintCompletionUsecase.checkPhotoPrintCompletion(
             CheckPhotoPrintCompletionCommand(userId = userId, roomId = roomId)
