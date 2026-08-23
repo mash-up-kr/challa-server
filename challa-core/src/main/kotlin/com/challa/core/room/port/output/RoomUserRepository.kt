@@ -2,6 +2,7 @@ package com.challa.core.room.port.output
 
 import com.challa.core.room.domain.RoomId
 import com.challa.core.room.domain.RoomUser
+import java.time.LocalDateTime
 
 interface RoomUserRepository {
     fun save(roomUser: RoomUser): RoomUser
@@ -15,4 +16,6 @@ interface RoomUserRepository {
     fun findByUserIdAndRoomId(userId: Long, roomId: Long): RoomUser?
 
     fun findAllByRoomId(roomId: Long): List<RoomUser>
+
+    fun markPhotoPrintCompletionChecked(userId: Long, roomId: Long, checkedAt: LocalDateTime)
 }
