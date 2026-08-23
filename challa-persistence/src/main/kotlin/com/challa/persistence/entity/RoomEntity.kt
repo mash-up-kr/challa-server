@@ -21,7 +21,7 @@ class RoomEntity(
     val id: Long? = null,
 
     @Column(nullable = false, length = 20)
-    val title: String,
+    var title: String,
 
     @Column(nullable = false)
     val totalPhotoCount: Long,
@@ -82,6 +82,10 @@ class RoomEntity(
         this.coverImageUrl = coverImageUrl
         this.coverStickerId = coverStickerId
         this.coverStickerColorId = coverStickerColorId
+    }
+
+    fun updateTitle(title: String) {
+        this.title = title
     }
 
     companion object {

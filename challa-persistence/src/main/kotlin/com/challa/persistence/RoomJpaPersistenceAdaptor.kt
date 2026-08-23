@@ -72,4 +72,9 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
             coverStickerColorId = coverStickerColorId
         )
     }
+
+    @Transactional
+    override fun updateTitle(roomId: RoomId, title: String) {
+        roomJpaRepository.findById(roomId).get().updateTitle(title)
+    }
 }
