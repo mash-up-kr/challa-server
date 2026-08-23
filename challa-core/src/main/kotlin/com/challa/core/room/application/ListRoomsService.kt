@@ -22,7 +22,9 @@ class ListRoomsService(
     private val roomCoverStickerProvider: RoomCoverStickerProvider
 ) : ListRoomsUsecase {
     override fun listRooms(listRoomsCommand: ListRoomsCommand): ListRoomsResult {
-        val roomIds = roomUserRepository.findAllByUserId(listRoomsCommand.userId).map { it.roomId }
+        val roomUsers = roomUserRepository.findAllByUserId(listRoomsCommand.userId)
+        val roomUsersByRoomId = roomUsers.associateBy { it.roomId }
+        val roomIds = roomUsers.map { it.roomId }
         val rooms = roomRepository.findAllById(roomIds)
         val now = LocalDateTime.now()
         val newlyCompletedRoomIds = rooms
@@ -111,7 +113,12 @@ class ListRoomsService(
                 ),
                 photoPrintCompletedAt = room.photoPrintCompletedAt,
                 createdAt = room.createdAt,
-                expiresAt = room.expiresAt
+                expiresAt = room.expiresAt,
+                photoPrintCompletionCheckedAt = if (room.roomStatus == RoomStatus.PHOTO_PRINT_COMPLETED) {
+                    roomUsersByRoomId.getValue(room.id).photoPrintCompletionCheckedAt
+                } else {
+                    null
+                }
             )
         }
 

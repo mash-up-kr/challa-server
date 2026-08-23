@@ -35,6 +35,7 @@ class RoomControllerTest {
     private val getRoomCoverOptionsUsecase = mockk<GetRoomCoverOptionsUsecase>()
     private val updateCoverUsecase = mockk<UpdateCoverUsecase>()
     private val updateTitleUsecase = mockk<UpdateTitleUsecase>()
+    private val checkPhotoPrintCompletionUsecase = mockk<CheckPhotoPrintCompletionUsecase>()
     private val mockMvc: MockMvc = MockMvcBuilders
         .standaloneSetup(
             RoomController(
@@ -46,7 +47,8 @@ class RoomControllerTest {
                 getRoomUsersUsecase = getRoomUsersUsecase,
                 getRoomCoverOptionsUsecase = getRoomCoverOptionsUsecase,
                 updateCoverUsecase = updateCoverUsecase,
-                updateTitleUsecase = updateTitleUsecase
+                updateTitleUsecase = updateTitleUsecase,
+                checkPhotoPrintCompletionUsecase = checkPhotoPrintCompletionUsecase
             )
         )
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())

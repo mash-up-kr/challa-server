@@ -26,13 +26,17 @@ class RoomUserEntity(
     val userId: Long,
 
     @Column(nullable = false)
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+
+    @Column(nullable = true)
+    var photoPrintCompletionCheckedAt: LocalDateTime? = null
 ) {
     fun toDomain() = RoomUser(
         id = id,
         roomId = roomId,
         userId = userId,
-        createdAt = createdAt
+        createdAt = createdAt,
+        photoPrintCompletionCheckedAt = photoPrintCompletionCheckedAt
     )
 
     companion object {
@@ -40,7 +44,8 @@ class RoomUserEntity(
             id = roomUser.id,
             roomId = roomUser.roomId,
             userId = roomUser.userId,
-            createdAt = roomUser.createdAt
+            createdAt = roomUser.createdAt,
+            photoPrintCompletionCheckedAt = roomUser.photoPrintCompletionCheckedAt
         )
     }
 }

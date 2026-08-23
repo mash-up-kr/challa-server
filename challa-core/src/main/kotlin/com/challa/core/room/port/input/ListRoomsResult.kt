@@ -16,6 +16,7 @@ data class ListRoomsResult(val roomProjections: List<RoomProjection>) {
         val cover: RoomCover,
         val photoPrintCompletedAt: LocalDateTime?,
         val createdAt: LocalDateTime,
-        val expiresAt: LocalDateTime
+        val expiresAt: LocalDateTime,
+        val photoPrintCompletionCheckedAt: LocalDateTime? = null
     )
 }

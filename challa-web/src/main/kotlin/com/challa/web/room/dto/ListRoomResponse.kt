@@ -15,6 +15,7 @@ data class ListRoomResponse(
     val thumbnailImageUrls: List<String?>,
     val cover: RoomCover,
     val photoPrintCompletedAt: LocalDateTime?,
+    val photoPrintCompletionCheckedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime
 ) {
@@ -29,6 +30,7 @@ data class ListRoomResponse(
             thumbnailImageUrls = result.thumbnailImageUrls,
             cover = result.cover,
             photoPrintCompletedAt = result.photoPrintCompletedAt,
+            photoPrintCompletionCheckedAt = result.photoPrintCompletionCheckedAt,
             createdAt = result.createdAt,
             expiresAt = result.expiresAt
         )

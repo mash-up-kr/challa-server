@@ -7,6 +7,8 @@ import com.challa.core.room.port.output.RoomUserRepository
 import com.challa.persistence.entity.RoomUserEntity
 import com.challa.persistence.repository.RoomUserJpaRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Component
 class RoomUserPersistenceAdaptor(private val roomUserJpaRepository: RoomUserJpaRepository) : RoomUserRepository {
@@ -30,4 +32,13 @@ class RoomUserPersistenceAdaptor(private val roomUserJpaRepository: RoomUserJpaR
 
     override fun findAllByRoomId(roomId: Long): List<RoomUser> =
         roomUserJpaRepository.findAllByRoomId(roomId).map { it.toDomain() }
+
+    @Transactional
+    override fun markPhotoPrintCompletionChecked(userId: Long, roomId: Long, checkedAt: LocalDateTime) {
+        roomUserJpaRepository.markPhotoPrintCompletionChecked(
+            userId = userId,
+            roomId = roomId,
+            checkedAt = checkedAt
+        )
+    }
 }

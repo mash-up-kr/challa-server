@@ -18,7 +18,8 @@ class RoomController(
     private val getRoomUsersUsecase: GetRoomUsersUsecase,
     private val getRoomCoverOptionsUsecase: GetRoomCoverOptionsUsecase,
     private val updateCoverUsecase: UpdateCoverUsecase,
-    private val updateTitleUsecase: UpdateTitleUsecase
+    private val updateTitleUsecase: UpdateTitleUsecase,
+    private val checkPhotoPrintCompletionUsecase: CheckPhotoPrintCompletionUsecase
 ) {
     @PostMapping
     fun createRoom(
@@ -99,6 +100,15 @@ class RoomController(
         @RequestBody request: RoomEnvelope<UpdateTitleRequest>
     ): ApiResponse<Unit?> {
         updateTitleUsecase.updateTitle(request.room.toCommand(userId = userId, roomId = roomId))
+
+        return ApiResponse.empty()
+    }
+
+    @PostMapping("/{roomId}/check")
+    fun checkRoom(@AuthUserId userId: Long, @PathVariable roomId: Long): ApiResponse<Unit?> {
+        checkPhotoPrintCompletionUsecase.checkPhotoPrintCompletion(
+            CheckPhotoPrintCompletionCommand(userId = userId, roomId = roomId)
+        )
 
         return ApiResponse.empty()
     }

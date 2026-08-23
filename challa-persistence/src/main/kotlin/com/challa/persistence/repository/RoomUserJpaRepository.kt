@@ -40,4 +40,21 @@ interface RoomUserJpaRepository : JpaRepository<RoomUserEntity, RoomUserId> {
     fun findByUserIdAndRoomId(userId: Long, roomId: Long): RoomUserEntity?
 
     fun findAllByRoomId(roomId: Long): List<RoomUserEntity>
+
+    // 동시 요청에서도 최초 확인 시각만 원자적으로 저장하기 위해 null 조건의 UPDATE 쿼리로 처리한다.
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(
+        """
+        UPDATE RoomUserEntity roomUser
+        SET roomUser.photoPrintCompletionCheckedAt = :checkedAt
+        WHERE roomUser.userId = :userId
+          AND roomUser.roomId = :roomId
+          AND roomUser.photoPrintCompletionCheckedAt IS NULL
+        """
+    )
+    fun markPhotoPrintCompletionChecked(
+        @Param("userId") userId: Long,
+        @Param("roomId") roomId: Long,
+        @Param("checkedAt") checkedAt: LocalDateTime
+    ): Int
 }
