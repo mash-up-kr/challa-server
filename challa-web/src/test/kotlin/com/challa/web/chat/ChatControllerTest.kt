@@ -35,6 +35,7 @@ class ChatControllerTest {
             room = RoomResultForChat(title = "Trip"),
             chats = listOf(
                 ChatResult(
+                    chatId = 1L,
                     type = ChatType.DEFAULT,
                     content = "안녕하세요",
                     createdAt = LocalDateTime.of(2026, 8, 7, 12, 0)
