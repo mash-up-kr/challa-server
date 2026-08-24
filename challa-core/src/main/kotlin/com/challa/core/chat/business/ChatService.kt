@@ -3,20 +3,24 @@ package com.challa.core.chat.business
 import com.challa.core.chat.*
 import com.challa.core.chat.domain.Chat
 import com.challa.core.chat.domain.ChatType
+import com.challa.core.chat.event.ChatCreatedEvent
 import com.challa.core.photo.PhotoRepository
 import com.challa.core.room.exception.NoMatchingRoomException
 import com.challa.core.room.port.output.RoomRepository
 import com.challa.core.user.UserRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChatService(
     private val chatRepository: ChatRepository,
     private val roomRepository: RoomRepository,
     private val userRepository: UserRepository,
-    private val photoRepository: PhotoRepository
+    private val photoRepository: PhotoRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) : ChatUseCase {
 
     override fun getChatsByRoomId(roomId: Long, page: Int, size: Int): GetChatsResult {
@@ -51,15 +55,22 @@ class ChatService(
         )
     }
 
+    @Transactional
     override fun chat(input: CreateChatCommand): ChatResult {
         require(input.type == ChatType.DEFAULT) {
             "It's for DEFAULT chat request"
         }
 
         val savedChat = chatRepository.save(input.createWithoutPhoto())
-        return ChatResult.from(savedChat)
+        val user = userRepository.findById(input.userId)
+        val result = checkNotNull(ChatResult.from(savedChat, photo = null, user = user))
+
+        publishChatCreated(input.roomId, result)
+
+        return result
     }
 
+    @Transactional
     override fun reactForPhoto(input: CreateChatCommand): ChatResult {
         require(input.photoId != null) {
             "photoId is required"
@@ -70,7 +81,13 @@ class ChatService(
         }
 
         val savedChat = chatRepository.save(input.createWithPhoto())
-        return ChatResult.from(savedChat)
+        val user = userRepository.findById(input.userId)
+        val photo = photoRepository.findById(input.photoId)
+        val result = checkNotNull(ChatResult.from(savedChat, photo = photo, user = user))
+
+        publishChatCreated(input.roomId, result)
+
+        return result
     }
 
     override fun removeChat(userId: Long, chatId: Long): Long {
@@ -81,6 +98,15 @@ class ChatService(
 
         chatRepository.delete(chatId)
         return chatId
+    }
+
+    private fun publishChatCreated(roomId: Long, result: ChatResult) {
+        applicationEventPublisher.publishEvent(
+            ChatCreatedEvent(
+                roomId = roomId,
+                chat = result
+            )
+        )
     }
 
     private companion object {

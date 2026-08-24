@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 data class GetChatsResponse(
     val type: ChatType,
     val content: String,
+    val photoId: Long? = null,
     val photoImageUrl: String? = null,
     val createdAt: LocalDateTime,
     val userName: String? = null,
@@ -17,6 +18,7 @@ data class GetChatsResponse(
         fun from(result: ChatResult) = GetChatsResponse(
             type = result.type,
             content = result.content,
+            photoId = result.photoId,
             photoImageUrl = result.photoImageUrl,
             createdAt = result.createdAt,
             userName = result.user?.name,
@@ -44,6 +46,7 @@ data class CreateChatResponse(
     val chatId: Long,
     val type: ChatType,
     val content: String,
+    val photoId: Long? = null,
     val photoImageUrl: String? = null,
     val createdAt: LocalDateTime,
     val userName: String? = null,
@@ -54,6 +57,7 @@ data class CreateChatResponse(
             chatId = result.chatId,
             type = result.type,
             content = result.content,
+            photoId = result.photoId,
             photoImageUrl = result.photoImageUrl,
             createdAt = result.createdAt,
             userName = result.user?.name,
