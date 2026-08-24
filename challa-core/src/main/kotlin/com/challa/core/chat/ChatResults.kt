@@ -32,6 +32,7 @@ data class ChatResult(
     val chatId: Long,
     val type: ChatType,
     val content: String,
+    val photoId: Long? = null,
     val photoImageUrl: String? = null,
     val createdAt: LocalDateTime,
     val user: UserResultForChat? = null
@@ -44,6 +45,7 @@ data class ChatResult(
                 chatId = chat.id ?: 0L,
                 type = chat.type,
                 content = chat.content,
+                photoId = chat.photoId,
                 photoImageUrl = photo?.imageUrl,
                 createdAt = createdAt,
                 user = UserResultForChat.from(user)
@@ -54,6 +56,7 @@ data class ChatResult(
             chatId = chat.id ?: 0L,
             type = chat.type,
             content = chat.content,
+            photoId = chat.photoId,
             createdAt = chat.createdAt ?: LocalDateTime.now()
         )
     }
