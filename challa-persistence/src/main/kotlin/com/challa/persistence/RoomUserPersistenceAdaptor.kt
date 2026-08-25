@@ -41,4 +41,9 @@ class RoomUserPersistenceAdaptor(private val roomUserJpaRepository: RoomUserJpaR
             checkedAt = checkedAt
         )
     }
+
+    @Transactional
+    override fun deleteAllByRoomId(roomId: RoomId) {
+        roomUserJpaRepository.deleteAllByRoomId(roomId)
+    }
 }

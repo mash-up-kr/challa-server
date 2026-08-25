@@ -19,7 +19,8 @@ class RoomController(
     private val getRoomCoverOptionsUsecase: GetRoomCoverOptionsUsecase,
     private val updateCoverUsecase: UpdateCoverUsecase,
     private val updateTitleUsecase: UpdateTitleUsecase,
-    private val checkPhotoPrintCompletionUsecase: CheckPhotoPrintCompletionUsecase
+    private val checkPhotoPrintCompletionUsecase: CheckPhotoPrintCompletionUsecase,
+    private val deleteRoomUsecase: DeleteRoomUsecase
 ) {
     @PostMapping
     fun createRoom(
@@ -56,6 +57,13 @@ class RoomController(
         val result = getRoomUsecase.getRoom(GetRoomCommand(userId = userId, roomId = roomId))
 
         return ApiResponse.ok(RoomEnvelope(GetRoomResponse.fromResult(result)))
+    }
+
+    @DeleteMapping("/{roomId}")
+    fun deleteRoom(@AuthUserId userId: Long, @PathVariable roomId: Long): ApiResponse<Unit?> {
+        deleteRoomUsecase.deleteRoom(DeleteRoomCommand(userId = userId, roomId = roomId))
+
+        return ApiResponse.empty()
     }
 
     @PutMapping("/{roomId}/cover")

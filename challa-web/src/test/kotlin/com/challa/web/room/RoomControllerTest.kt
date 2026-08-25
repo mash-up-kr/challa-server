@@ -18,8 +18,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -36,6 +35,7 @@ class RoomControllerTest {
     private val updateCoverUsecase = mockk<UpdateCoverUsecase>()
     private val updateTitleUsecase = mockk<UpdateTitleUsecase>()
     private val checkPhotoPrintCompletionUsecase = mockk<CheckPhotoPrintCompletionUsecase>()
+    private val deleteRoomUsecase = mockk<DeleteRoomUsecase>()
     private val mockMvc: MockMvc = MockMvcBuilders
         .standaloneSetup(
             RoomController(
@@ -48,7 +48,8 @@ class RoomControllerTest {
                 getRoomCoverOptionsUsecase = getRoomCoverOptionsUsecase,
                 updateCoverUsecase = updateCoverUsecase,
                 updateTitleUsecase = updateTitleUsecase,
-                checkPhotoPrintCompletionUsecase = checkPhotoPrintCompletionUsecase
+                checkPhotoPrintCompletionUsecase = checkPhotoPrintCompletionUsecase,
+                deleteRoomUsecase = deleteRoomUsecase
             )
         )
         .setCustomArgumentResolvers(AuthUserIdArgumentResolver())
@@ -258,6 +259,43 @@ class RoomControllerTest {
         mockMvc.perform(get("/api/v1/rooms/11").authenticated())
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.message").value("Room not found"))
+    }
+
+    @Test
+    fun `DELETE room uses the authenticated user ID`() {
+        every {
+            deleteRoomUsecase.deleteRoom(DeleteRoomCommand(userId = AUTH_USER_ID, roomId = 11L))
+        } returns Unit
+
+        mockMvc.perform(delete("/api/v1/rooms/11").authenticated())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.message").value("OK"))
+            .andExpect(jsonPath("$.data").isEmpty)
+
+        verify {
+            deleteRoomUsecase.deleteRoom(DeleteRoomCommand(userId = AUTH_USER_ID, roomId = 11L))
+        }
+    }
+
+    @Test
+    fun `DELETE room returns 404 when the room is not visible to the user`() {
+        every {
+            deleteRoomUsecase.deleteRoom(DeleteRoomCommand(userId = AUTH_USER_ID, roomId = 11L))
+        } throws NoMatchingRoomException()
+
+        mockMvc.perform(delete("/api/v1/rooms/11").authenticated())
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Room not found"))
+    }
+
+    @Test
+    fun `DELETE room requires authentication`() {
+        mockMvc.perform(delete("/api/v1/rooms/11"))
+            .andExpect(status().isUnauthorized)
+            .andExpect(jsonPath("$.message").value("Authentication required"))
+
+        verify(exactly = 0) { deleteRoomUsecase.deleteRoom(any()) }
     }
 
     @Test

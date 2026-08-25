@@ -18,7 +18,8 @@ data class Room(
     val coverStickerColorId: Long?,
     val photoPrintCompletedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
-    val expiresAt: LocalDateTime
+    val expiresAt: LocalDateTime,
+    val deletedAt: LocalDateTime? = null
 ) {
     companion object {
         fun create(
