@@ -37,7 +37,21 @@ interface RoomUserJpaRepository : JpaRepository<RoomUserEntity, RoomUserId> {
     )
     fun countMembersByRoomIds(@Param("roomIds") roomIds: Collection<Long>): List<RoomMemberCount>
 
-    fun findByUserIdAndRoomId(userId: Long, roomId: Long): RoomUserEntity?
+    @Query(
+        """
+        SELECT roomUser
+        FROM RoomUserEntity roomUser
+        WHERE roomUser.userId = :userId
+          AND roomUser.roomId = :roomId
+          AND EXISTS (
+              SELECT room.id
+              FROM RoomEntity room
+              WHERE room.id = roomUser.roomId
+                AND room.deletedAt IS NULL
+          )
+        """
+    )
+    fun findByUserIdAndRoomId(@Param("userId") userId: Long, @Param("roomId") roomId: Long): RoomUserEntity?
 
     fun findAllByRoomId(roomId: Long): List<RoomUserEntity>
 
@@ -57,4 +71,13 @@ interface RoomUserJpaRepository : JpaRepository<RoomUserEntity, RoomUserId> {
         @Param("roomId") roomId: Long,
         @Param("checkedAt") checkedAt: LocalDateTime
     ): Int
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(
+        """
+        DELETE FROM RoomUserEntity roomUser
+        WHERE roomUser.roomId = :roomId
+        """
+    )
+    fun deleteAllByRoomId(@Param("roomId") roomId: Long): Int
 }

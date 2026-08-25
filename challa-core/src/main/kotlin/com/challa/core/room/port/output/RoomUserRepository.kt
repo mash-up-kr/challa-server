@@ -18,4 +18,6 @@ interface RoomUserRepository {
     fun findAllByRoomId(roomId: Long): List<RoomUser>
 
     fun markPhotoPrintCompletionChecked(userId: Long, roomId: Long, checkedAt: LocalDateTime)
+
+    fun deleteAllByRoomId(roomId: RoomId)
 }

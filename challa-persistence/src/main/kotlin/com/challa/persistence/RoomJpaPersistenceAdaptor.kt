@@ -37,24 +37,24 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
         roomJpaRepository.saveAll(rooms.map { RoomEntity.from(it) }).map { it.toDomain() }
 
     override fun findByInvitationCode(invitationCode: String): Room? =
-        roomJpaRepository.findByInvitationCode(invitationCode)?.toDomain()
+        roomJpaRepository.findByInvitationCodeAndDeletedAtIsNull(invitationCode)?.toDomain()
 
     override fun findAllById(roomIds: List<RoomId>): List<Room> =
-        roomJpaRepository.findAllById(roomIds).map { it.toDomain() }
+        roomJpaRepository.findAllByIdInAndDeletedAtIsNull(roomIds).map { it.toDomain() }
 
     @Transactional
     override fun updateRoomsStatus(roomIds: List<RoomId>, roomStatus: RoomStatus) {
-        roomJpaRepository.findAllById(roomIds).onEach { room ->
+        roomJpaRepository.findAllByIdInAndDeletedAtIsNull(roomIds).onEach { room ->
             room.updateStatus(newStatus = roomStatus)
         }
     }
 
     @Transactional
     override fun markPhotoPrintPending(roomId: RoomId, photoPrintCompletedAt: LocalDateTime) {
-        roomJpaRepository.findById(roomId).orElse(null)?.markPhotoPrintPending(photoPrintCompletedAt)
+        roomJpaRepository.findByIdAndDeletedAtIsNull(roomId)?.markPhotoPrintPending(photoPrintCompletedAt)
     }
 
-    override fun findByRoomId(roomId: RoomId): Room? = roomJpaRepository.findById(roomId).orElse(null)?.toDomain()
+    override fun findByRoomId(roomId: RoomId): Room? = roomJpaRepository.findByIdAndDeletedAtIsNull(roomId)?.toDomain()
 
     override fun decrementRemainedPhotoCount(roomId: RoomId): Boolean =
         roomJpaRepository.decrementRemainedPhotoCount(roomId) == 1
@@ -66,7 +66,7 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
         coverStickerId: Long?,
         coverStickerColorId: Long?
     ) {
-        roomJpaRepository.findById(roomId).get().updateCover(
+        roomJpaRepository.findByIdAndDeletedAtIsNull(roomId)?.updateCover(
             coverImageUrl = coverImageUrl,
             coverStickerId = coverStickerId,
             coverStickerColorId = coverStickerColorId
@@ -75,6 +75,10 @@ class RoomJpaPersistenceAdaptor(private val roomJpaRepository: RoomJpaRepository
 
     @Transactional
     override fun updateTitle(roomId: RoomId, title: String) {
-        roomJpaRepository.findById(roomId).get().updateTitle(title)
+        roomJpaRepository.findByIdAndDeletedAtIsNull(roomId)?.updateTitle(title)
     }
+
+    @Transactional
+    override fun softDelete(roomId: RoomId, deletedAt: LocalDateTime): Boolean =
+        roomJpaRepository.softDelete(roomId = roomId, deletedAt = deletedAt) == 1
 }

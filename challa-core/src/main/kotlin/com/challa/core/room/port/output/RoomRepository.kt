@@ -25,6 +25,8 @@ interface RoomRepository {
     fun updateCover(roomId: RoomId, coverImageUrl: String?, coverStickerId: Long?, coverStickerColorId: Long?)
 
     fun updateTitle(roomId: RoomId, title: String)
+
+    fun softDelete(roomId: RoomId, deletedAt: LocalDateTime): Boolean
 }
 
 class InvitationCodeConflictException : RuntimeException()

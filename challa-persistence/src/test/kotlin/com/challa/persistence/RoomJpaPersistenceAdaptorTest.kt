@@ -5,7 +5,7 @@ import com.challa.persistence.entity.RoomEntity
 import com.challa.persistence.repository.RoomJpaRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
@@ -168,4 +168,68 @@ class RoomJpaPersistenceAdaptorTest {
             executor.shutdownNow()
         }
     }
+
+    @Test
+    fun `soft deleted room remains stored but is excluded from active room queries`() {
+        val deletedRoom = repository.saveAndFlush(roomEntity(invitationCode = "445566", title = "Deleted"))
+        val activeRoom = repository.saveAndFlush(roomEntity(invitationCode = "778899", title = "Active"))
+        val deletedRoomId = requireNotNull(deletedRoom.id)
+        val activeRoomId = requireNotNull(activeRoom.id)
+        val deletedAt = LocalDateTime.of(2026, 8, 26, 12, 0)
+        entityManager.clear()
+
+        assertEquals(true, adaptor.softDelete(roomId = deletedRoomId, deletedAt = deletedAt))
+        entityManager.flush()
+        entityManager.clear()
+
+        val storedRoom = repository.findById(deletedRoomId).orElseThrow()
+        assertEquals(deletedAt, storedRoom.deletedAt)
+        assertNull(adaptor.findByRoomId(deletedRoomId))
+        assertNull(adaptor.findByInvitationCode("445566"))
+        assertEquals(listOf(activeRoomId), adaptor.findAllById(listOf(deletedRoomId, activeRoomId)).map { it.id })
+        assertFalse(adaptor.softDelete(roomId = deletedRoomId, deletedAt = deletedAt.plusSeconds(1)))
+    }
+
+    @Test
+    fun `room updates ignore soft deleted rooms`() {
+        val room = repository.saveAndFlush(roomEntity(invitationCode = "334455", title = "Original"))
+        val roomId = requireNotNull(room.id)
+        val originalPhotoPrintCompletedAt = room.photoPrintCompletedAt
+        entityManager.clear()
+        adaptor.softDelete(roomId = roomId, deletedAt = LocalDateTime.of(2026, 8, 26, 12, 0))
+
+        adaptor.updateTitle(roomId = roomId, title = "Updated")
+        adaptor.updateCover(
+            roomId = roomId,
+            coverImageUrl = "https://bucket/updated",
+            coverStickerId = 3L,
+            coverStickerColorId = 4L
+        )
+        adaptor.updateRoomsStatus(listOf(roomId), RoomStatus.PHOTO_PRINT_COMPLETED)
+        adaptor.markPhotoPrintPending(roomId, LocalDateTime.of(2026, 8, 27, 12, 0))
+        entityManager.flush()
+        entityManager.clear()
+
+        val storedRoom = repository.findById(roomId).orElseThrow()
+        assertEquals("Original", storedRoom.title)
+        assertEquals("https://bucket/photo/11/7/first", storedRoom.coverImageUrl)
+        assertEquals(1L, storedRoom.coverStickerId)
+        assertEquals(2L, storedRoom.coverStickerColorId)
+        assertEquals(RoomStatus.SHOOTING, storedRoom.roomStatus)
+        assertEquals(originalPhotoPrintCompletedAt, storedRoom.photoPrintCompletedAt)
+    }
+
+    private fun roomEntity(invitationCode: String, title: String) = RoomEntity(
+        title = title,
+        totalPhotoCount = 24,
+        remainedPhotoCount = 24,
+        invitationCode = invitationCode,
+        roomStatus = RoomStatus.SHOOTING,
+        coverImageUrl = "https://bucket/photo/11/7/first",
+        coverStickerId = 1L,
+        coverStickerColorId = 2L,
+        photoPrintCompletedAt = null,
+        createdAt = LocalDateTime.of(2026, 8, 1, 12, 0),
+        expiresAt = LocalDateTime.of(2026, 8, 31, 12, 0)
+    )
 }
