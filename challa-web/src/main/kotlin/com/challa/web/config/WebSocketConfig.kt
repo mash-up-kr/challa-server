@@ -15,6 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 class WebSocketConfig(
     private val webSocketAuthenticationHandshakeInterceptor: WebSocketAuthenticationHandshakeInterceptor,
     private val webSocketChannelInterceptor: WebSocketChannelInterceptor,
+    private val webSocketSubscriptionReceiptInterceptor: WebSocketSubscriptionReceiptInterceptor,
     private val webSocketPrincipalHandshakeHandler: WebSocketPrincipalHandshakeHandler
 ) : WebSocketMessageBrokerConfigurer {
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
@@ -34,6 +35,9 @@ class WebSocketConfig(
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
-        registration.interceptors(webSocketChannelInterceptor)
+        registration.interceptors(
+            webSocketChannelInterceptor,
+            webSocketSubscriptionReceiptInterceptor
+        )
     }
 }
