@@ -6,6 +6,7 @@ import com.challa.core.chat.domain.ChatType
 import java.time.LocalDateTime
 
 data class GetChatsResponse(
+    val userId: Long,
     val type: ChatType,
     val content: String,
     val photoId: Long? = null,
@@ -16,6 +17,7 @@ data class GetChatsResponse(
 ) {
     companion object {
         fun from(result: ChatResult) = GetChatsResponse(
+            userId = result.user?.id ?: 0L,
             type = result.type,
             content = result.content,
             photoId = result.photoId,
@@ -44,6 +46,7 @@ data class CreateChatRequest(
 
 data class CreateChatResponse(
     val chatId: Long,
+    val userId: Long,
     val type: ChatType,
     val content: String,
     val photoId: Long? = null,
@@ -55,6 +58,7 @@ data class CreateChatResponse(
     companion object {
         fun from(result: ChatResult) = CreateChatResponse(
             chatId = result.chatId,
+            userId = result.user?.id ?: 0L,
             type = result.type,
             content = result.content,
             photoId = result.photoId,
