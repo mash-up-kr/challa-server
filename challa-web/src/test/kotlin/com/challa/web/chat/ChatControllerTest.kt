@@ -1,9 +1,6 @@
 package com.challa.web.chat
 
-import com.challa.core.chat.ChatResult
-import com.challa.core.chat.ChatUseCase
-import com.challa.core.chat.GetChatsResult
-import com.challa.core.chat.RoomResultForChat
+import com.challa.core.chat.*
 import com.challa.core.chat.domain.ChatType
 import com.challa.web.common.exception.GlobalExceptionHandler
 import com.challa.web.security.AuthenticationInterceptor
@@ -38,7 +35,8 @@ class ChatControllerTest {
                     chatId = 1L,
                     type = ChatType.DEFAULT,
                     content = "안녕하세요",
-                    createdAt = LocalDateTime.of(2026, 8, 7, 12, 0)
+                    createdAt = LocalDateTime.of(2026, 8, 7, 12, 0),
+                    user = UserResultForChat(id = USER_ID, name = "사용자")
                 )
             )
         )
@@ -50,6 +48,7 @@ class ChatControllerTest {
                 .requestAttr(JwtAuthenticationFilter.AUTH_USER_ID_ATTRIBUTE, USER_ID)
         )
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.chats[0].userId").value(USER_ID))
             .andExpect(jsonPath("$.data.chats[0].type").value("DEFAULT"))
             .andExpect(jsonPath("$.data.chats[0].content").value("안녕하세요"))
             .andExpect(jsonPath("$.data.chat").doesNotExist())

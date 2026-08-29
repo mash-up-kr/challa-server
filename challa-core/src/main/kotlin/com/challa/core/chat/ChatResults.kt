@@ -7,6 +7,8 @@ import com.challa.core.room.domain.Room
 import com.challa.core.user.User
 import java.time.LocalDateTime
 
+private const val DELETED_USER_ID = 0L
+
 data class GetChatsResult(val room: RoomResultForChat, val chats: List<ChatResult>) {
     companion object {
         fun from(room: Room, chats: List<Chat>, photos: Map<Long, Photo>, users: Map<Long, User>): GetChatsResult =
@@ -62,9 +64,10 @@ data class ChatResult(
     }
 }
 
-data class UserResultForChat(val name: String, val profileImageUrl: String? = null) {
+data class UserResultForChat(val id: Long, val name: String, val profileImageUrl: String? = null) {
     companion object {
         fun from(user: User?): UserResultForChat = UserResultForChat(
+            id = user?.id ?: DELETED_USER_ID,
             name = User.displayNicknameOf(user),
             profileImageUrl = user?.profileImageUrl
         )
