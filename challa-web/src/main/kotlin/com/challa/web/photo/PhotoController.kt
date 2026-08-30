@@ -48,9 +48,16 @@ class PhotoController(
     @GetMapping("/{photoId}")
     fun getPhotoDetail(
         @AuthUserId userId: Long,
+        @RequestParam roomId: Long,
         @PathVariable photoId: Long
     ): ApiResponse<PhotoEnvelope<GetPhotoDetailResponse>> {
-        val result = getPhotoDetailUseCase.getPhotoDetail(GetPhotoDetailCommand(userId = userId, photoId = photoId))
+        val result = getPhotoDetailUseCase.getPhotoDetail(
+            GetPhotoDetailCommand(
+                userId = userId,
+                roomId = roomId,
+                photoId = photoId
+            )
+        )
 
         return ApiResponse.ok(PhotoEnvelope(GetPhotoDetailResponse.fromResult(result)))
     }

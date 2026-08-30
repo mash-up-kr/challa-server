@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface PhotoJpaRepository : JpaRepository<PhotoEntity, Long> {
-    fun findByIdAndUserId(id: Long, userId: Long): PhotoEntity?
     fun findSliceByRoomId(roomId: Long, pageable: Pageable): Slice<PhotoEntity>
 
     @Query(

@@ -3,7 +3,6 @@ package com.challa.persistence
 import com.challa.core.photo.Photo
 import com.challa.persistence.photo.PhotoAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
@@ -60,15 +59,6 @@ class PhotoAdapterTest {
         assertEquals(expectedRoomElevenPhotoIds, foundRoomElevenPhotoIds)
         assertEquals(listOf(roomTwelvePhoto.id), found.filter { it.roomId == 12L }.map { it.id })
         assertEquals(setOf(11L, 12L), found.map { it.roomId }.toSet())
-    }
-
-    @Test
-    fun `findByIdAndUserId returns only an owned photo`() {
-        val saved = adapter.save(photo(roomId = 11, userId = 7, filterId = "filter-original"))
-        val photoId = requireNotNull(saved.id)
-
-        assertEquals(photoId, adapter.findByIdAndUserId(photoId, 7)?.id)
-        assertNull(adapter.findByIdAndUserId(photoId, 8))
     }
 
     private fun photo(roomId: Long, userId: Long, filterId: String) = Photo(

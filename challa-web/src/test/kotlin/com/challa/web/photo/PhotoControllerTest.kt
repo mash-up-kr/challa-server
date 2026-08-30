@@ -107,8 +107,8 @@ class PhotoControllerTest {
     }
 
     @Test
-    fun `returns an owned photo with its chats`() {
-        val command = GetPhotoDetailCommand(userId = USER_ID, photoId = PHOTO_ID)
+    fun `returns a photo from a room with its chats`() {
+        val command = GetPhotoDetailCommand(userId = USER_ID, roomId = ROOM_ID, photoId = PHOTO_ID)
         val chat = Chat(
             id = 41,
             type = ChatType.COMMENT,
@@ -121,7 +121,11 @@ class PhotoControllerTest {
             photoDetail = PhotoDetail(id = PHOTO_ID, chats = listOf(chat))
         )
 
-        mockMvc.perform(get("/api/v1/photos/$PHOTO_ID").authenticated())
+        mockMvc.perform(
+            get("/api/v1/photos/$PHOTO_ID")
+                .param("roomId", ROOM_ID.toString())
+                .authenticated()
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.photo.id").value(PHOTO_ID))
             .andExpect(jsonPath("$.data.photo.chats[0].id").value(41))
@@ -134,7 +138,11 @@ class PhotoControllerTest {
     fun `returns not found when the detailed photo does not belong to the user`() {
         every { getPhotoDetailUseCase.getPhotoDetail(any()) } throws PhotoNotFoundException()
 
-        mockMvc.perform(get("/api/v1/photos/$PHOTO_ID").authenticated())
+        mockMvc.perform(
+            get("/api/v1/photos/$PHOTO_ID")
+                .param("roomId", ROOM_ID.toString())
+                .authenticated()
+        )
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.message").value("Photo not found"))
     }
