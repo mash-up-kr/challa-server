@@ -42,6 +42,7 @@ class JoinRoomService(
             MemberJoinedEvent(
                 roomId = room.id,
                 roomTitle = room.title,
+                userId = user.id!!,
                 userNickname = User.displayNicknameOf(user),
                 userProfileImageUrl = user.profileImageUrl
             )
