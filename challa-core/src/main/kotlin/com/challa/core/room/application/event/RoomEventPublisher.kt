@@ -1,5 +1,6 @@
 package com.challa.core.room.application.event
 
 interface RoomEventPublisher {
-    fun publishMemberJoined(event: MemberJoinedEvent)
+    fun publishMemberJoinedToRoom(event: MemberJoinedEvent)
+    fun publishMemberJoinedToUser(targetUserId: Long, event: MemberJoinedEvent)
 }

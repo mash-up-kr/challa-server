@@ -12,6 +12,11 @@ class MemberJoinedEventListener(private val roomEventPublisher: RoomEventPublish
         phase = TransactionPhase.AFTER_COMMIT
     )
     fun handle(event: MemberJoinedEvent) {
-        roomEventPublisher.publishMemberJoined(event)
+        // 구버전 클라이언트와의 하위 호환성을 위해 기존 방 토픽과 신규 사용자별 구독 포인트에 함께 발송
+        roomEventPublisher.publishMemberJoinedToRoom(event)
+
+        event.targetUserIds.forEach { targetUserId ->
+            roomEventPublisher.publishMemberJoinedToUser(targetUserId, event)
+        }
     }
 }

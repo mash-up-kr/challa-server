@@ -29,22 +29,27 @@ class JoinRoomService(
             userId = joinRoomCommand.userId
         )
 
-        val existingRoomUser = roomUserRepository.insertIfAbsent(newMember)
+        val isNewMember = roomUserRepository.insertIfAbsent(newMember)
         // 이미 참여 중인 사용자의 재요청은 저장 및 참여 이벤트 발행 없이 기존 방 ID를 반환
-        if (!existingRoomUser) {
+        if (!isNewMember) {
             return JoinRoomResult(
                 id = room.id
             )
         }
 
-        val user = userRepository.findById(joinRoomCommand.userId)!!
+        val joinedUser = userRepository.findById(joinRoomCommand.userId)!!
+        val targetUserIds = roomUserRepository.findAllByRoomId(room.id)
+            .map { it.userId }
+            .filterNot { it == joinedUser.id }
+            .distinct()
         applicationEventPublisher.publishEvent(
             MemberJoinedEvent(
                 roomId = room.id,
                 roomTitle = room.title,
-                userId = user.id!!,
-                userNickname = User.displayNicknameOf(user),
-                userProfileImageUrl = user.profileImageUrl
+                userId = joinedUser.id!!,
+                userNickname = User.displayNicknameOf(joinedUser),
+                userProfileImageUrl = joinedUser.profileImageUrl,
+                targetUserIds = targetUserIds
             )
         )
 

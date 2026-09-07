@@ -9,9 +9,18 @@ import org.springframework.stereotype.Component
 
 @Component
 class WebSocketRoomEventPublisher(private val webSocketMessageSender: WebSocketMessageSender) : RoomEventPublisher {
-    override fun publishMemberJoined(event: MemberJoinedEvent) {
+    override fun publishMemberJoinedToRoom(event: MemberJoinedEvent) {
         webSocketMessageSender.sendMessage(
             destination = "/topic/room/${event.roomId}/member-joined",
+            payload = ApiResponse.ok(
+                data = WebSocketRoomEnvelope(MemberJoinedResponse.fromEvent(event))
+            )
+        )
+    }
+
+    override fun publishMemberJoinedToUser(targetUserId: Long, event: MemberJoinedEvent) {
+        webSocketMessageSender.sendMemberJoinedToUser(
+            userId = targetUserId.toString(),
             payload = ApiResponse.ok(
                 data = WebSocketRoomEnvelope(MemberJoinedResponse.fromEvent(event))
             )
