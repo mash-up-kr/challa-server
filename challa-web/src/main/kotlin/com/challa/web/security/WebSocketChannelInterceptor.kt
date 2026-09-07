@@ -124,7 +124,8 @@ private fun StompHeaderAccessor.authorizedRoomIds(): MutableSet<Long> {
 
 object PermittedDestination {
     private val destinations = listOf(
-        "/user/queue/error"
+        "/user/queue/error",
+        "/user/queue/member-joined"
     )
 
     fun isPermitted(destination: String): Boolean = destination in destinations

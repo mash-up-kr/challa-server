@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
 
+private const val MEMBER_JOINED_DESTINATION = "/queue/member-joined"
 private const val ERROR_DESTINATION = "/queue/error"
 
 @Component
@@ -20,5 +21,9 @@ class WebSocketMessageSender(@param:Lazy private val simpMessagingTemplate: Simp
         val payload = ApiResponse.error(message)
 
         simpMessagingTemplate.convertAndSendToUser(userId, ERROR_DESTINATION, payload)
+    }
+
+    fun <T> sendMemberJoinedToUser(userId: String, payload: ApiResponse<T>) {
+        simpMessagingTemplate.convertAndSendToUser(userId, MEMBER_JOINED_DESTINATION, payload)
     }
 }

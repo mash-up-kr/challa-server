@@ -7,5 +7,6 @@ data class MemberJoinedEvent(
     val roomTitle: String,
     val userId: Long,
     val userNickname: String,
-    val userProfileImageUrl: String?
+    val userProfileImageUrl: String?,
+    val targetUserIds: List<Long>
 )

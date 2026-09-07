@@ -32,6 +32,9 @@ class WebSocketConfig(
             "/topic",
             "/queue"
         )
+
+        registry.configureBrokerChannel()
+            .interceptors(webSocketSubscriptionReceiptInterceptor)
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
