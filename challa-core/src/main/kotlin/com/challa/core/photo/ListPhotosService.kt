@@ -28,7 +28,7 @@ class ListPhotosService(
         val photoSlice = photoRepository.findSliceByRoomId(command.roomId, pageable)
         val photos = photoSlice.photos
         val usersById = userRepository.findAllByIds(photos.map { it.userId }.distinct()).associateBy { it.id }
-        val photoProjections = photos.map { photo ->
+        val photoProjections = photos.sortedBy { it.createdAt }.map { photo ->
             val user = usersById[photo.userId]
             ListPhotosResult.PhotoProjection(
                 id = requireNotNull(photo.id),
