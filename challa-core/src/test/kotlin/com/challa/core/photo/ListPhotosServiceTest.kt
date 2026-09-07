@@ -26,7 +26,7 @@ class ListPhotosServiceTest {
     @Test
     fun `returns a photo slice after verifying room participation`() {
         val command = ListPhotosCommand(userId = USER_ID, roomId = ROOM_ID, page = PAGE, size = SIZE)
-        val pageable = PageRequest.of(PAGE, SIZE, Sort.by(Sort.Direction.DESC, "createdAt"))
+        val pageable = PageRequest.of(PAGE, SIZE, Sort.by(Sort.Direction.ASC, "createdAt"))
         every { roomUserRepository.findByUserIdAndRoomId(USER_ID, ROOM_ID) } returns
             RoomUser.createMember(roomId = ROOM_ID, userId = USER_ID)
         every { photoRepository.findSliceByRoomId(ROOM_ID, pageable) } returns PhotoSlice(
@@ -81,7 +81,7 @@ class ListPhotosServiceTest {
     @Test
     fun `returns the fallback nickname when a photo user no longer exists`() {
         val command = ListPhotosCommand(userId = USER_ID, roomId = ROOM_ID, page = PAGE, size = SIZE)
-        val pageable = PageRequest.of(PAGE, SIZE, Sort.by(Sort.Direction.DESC, "createdAt"))
+        val pageable = PageRequest.of(PAGE, SIZE, Sort.by(Sort.Direction.ASC, "createdAt"))
         every { roomUserRepository.findByUserIdAndRoomId(USER_ID, ROOM_ID) } returns
             RoomUser.createMember(roomId = ROOM_ID, userId = USER_ID)
         every { photoRepository.findSliceByRoomId(ROOM_ID, pageable) } returns PhotoSlice(

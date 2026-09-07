@@ -23,7 +23,7 @@ class ListPhotosService(
         val pageable = PageRequest.of(
             command.page,
             command.size,
-            Sort.by(Sort.Direction.DESC, "createdAt")
+            Sort.by(Sort.Direction.ASC, "createdAt")
         )
         val photoSlice = photoRepository.findSliceByRoomId(command.roomId, pageable)
         val photos = photoSlice.photos
