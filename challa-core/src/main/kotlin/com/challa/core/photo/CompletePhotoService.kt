@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
-private const val PHOTO_PRINT_COMPLETION_HOURS = 3L
+private const val PHOTO_PRINT_COMPLETION_MINUTES = 3L
 
 @Service
 class CompletePhotoService(
@@ -33,11 +33,11 @@ class CompletePhotoService(
 
         val remainedPhotoCount =
             roomRepository.findByRoomId(command.roomId)?.remainedPhotoCount ?: throw NoMatchingRoomException()
-        // 필름 사용 완료 : RoomStatus.SHOOTING -> RoomStatus.PHOTO_PRINT_PENDING, photoPrintCompletedAt 을 24시간 뒤로 설정
+        // 필름 사용 완료 : RoomStatus.SHOOTING -> RoomStatus.PHOTO_PRINT_PENDING, photoPrintCompletedAt 을 3분 뒤로 설정
         if (remainedPhotoCount == 0L) {
             roomRepository.markPhotoPrintPending(
                 roomId = command.roomId,
-                photoPrintCompletedAt = LocalDateTime.now().plusHours(PHOTO_PRINT_COMPLETION_HOURS)
+                photoPrintCompletedAt = LocalDateTime.now().plusMinutes(PHOTO_PRINT_COMPLETION_MINUTES)
             )
         }
 
