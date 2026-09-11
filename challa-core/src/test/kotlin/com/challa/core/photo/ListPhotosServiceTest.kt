@@ -31,7 +31,11 @@ class ListPhotosServiceTest {
             RoomUser.createMember(roomId = ROOM_ID, userId = USER_ID)
         every { photoRepository.findSliceByRoomId(ROOM_ID, pageable) } returns PhotoSlice(
             photos = listOf(
-                photo(id = 31, imageUrl = "https://bucket/photo-31"),
+                photo(
+                    id = 31,
+                    imageUrl = "https://bucket/photo-31",
+                    thumbnailImageUrl = "https://bucket/photo-31_thumbnail"
+                ),
                 photo(id = 32, imageUrl = null)
             ),
             hasNext = true
@@ -45,6 +49,7 @@ class ListPhotosServiceTest {
                 ListPhotosResult.PhotoProjection(
                     id = 31,
                     imageUrl = "https://bucket/photo-31",
+                    thumbnailImageUrl = "https://bucket/photo-31_thumbnail",
                     userNickname = USER_NICKNAME,
                     userProfileImageUrl = USER_PROFILE_IMAGE_URL,
                     createdAt = CREATED_AT
@@ -95,12 +100,13 @@ class ListPhotosServiceTest {
         assertEquals("탈퇴한 사용자", result.photoProjections.single().userNickname)
     }
 
-    private fun photo(id: Long, imageUrl: String?) = Photo(
+    private fun photo(id: Long, imageUrl: String?, thumbnailImageUrl: String? = null) = Photo(
         id = id,
         roomId = ROOM_ID,
         userId = USER_ID,
         filterId = "filter-original",
         imageUrl = imageUrl,
+        thumbnailImageUrl = thumbnailImageUrl,
         createdAt = CREATED_AT
     )
 

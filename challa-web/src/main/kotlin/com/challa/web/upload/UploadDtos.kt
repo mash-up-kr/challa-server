@@ -40,13 +40,23 @@ data class UploadUrlResponse(
     )
     val imageUrl: String,
     @field:Schema(description = "uploadUrl 의 남은 유효 시간(초)", example = "300")
-    val expiresInSeconds: Long
+    val expiresInSeconds: Long,
+    @field:Schema(
+        description = "PHOTO 용도의 리사이징 이미지 업로드용 서명 URL. 다른 용도에서는 null"
+    )
+    val thumbnailUploadUrl: String?,
+    @field:Schema(
+        description = "PHOTO 용도의 리사이징 이미지 공개 URL. 업로드 완료 요청에 전달하며 다른 용도에서는 null"
+    )
+    val thumbnailImageUrl: String?
 ) {
     companion object {
         fun from(result: UploadUrl) = UploadUrlResponse(
             uploadUrl = result.uploadUrl,
             imageUrl = result.imageUrl,
-            expiresInSeconds = result.expiresInSeconds
+            expiresInSeconds = result.expiresInSeconds,
+            thumbnailUploadUrl = result.thumbnailUploadUrl,
+            thumbnailImageUrl = result.thumbnailImageUrl
         )
     }
 }

@@ -8,5 +8,6 @@ data class Photo(
     val userId: Long,
     val filterId: String,
     val imageUrl: String? = null,
+    val thumbnailImageUrl: String? = null,
     val createdAt: LocalDateTime? = null
 )

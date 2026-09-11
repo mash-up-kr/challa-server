@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 data class ListPhotosResponse(
     val id: Long,
     val imageUrl: String?,
+    val thumbnailImageUrl: String?,
     val userNickname: String,
     val userProfileImageUrl: String?,
     val createdAt: LocalDateTime
@@ -14,6 +15,7 @@ data class ListPhotosResponse(
         fun fromResult(result: ListPhotosResult.PhotoProjection) = ListPhotosResponse(
             id = result.id,
             imageUrl = result.imageUrl,
+            thumbnailImageUrl = result.thumbnailImageUrl,
             userNickname = result.userNickname,
             userProfileImageUrl = result.userProfileImageUrl,
             createdAt = result.createdAt

@@ -39,6 +39,21 @@ class IssueUploadUrlServiceTest {
     }
 
     @Test
+    fun `PHOTO issues and returns both original and thumbnail URLs`() {
+        val result = service.issue(7, IssueUploadUrlCommand(UploadPurpose.PHOTO, "image/jpeg"))
+
+        assertEquals(2, issuer.keys.size)
+        val originalKey = issuer.keys[0]
+        val thumbnailKey = issuer.keys[1]
+        assert(originalKey.matches(Regex("^photo/7/[0-9a-f-]{36}$"))) { originalKey }
+        assertEquals("${originalKey}_thumbnail", thumbnailKey)
+        assertEquals("https://bucket/$originalKey?sig=x", result.uploadUrl)
+        assertEquals("https://bucket/$originalKey", result.imageUrl)
+        assertEquals("https://bucket/$thumbnailKey?sig=x", result.thumbnailUploadUrl)
+        assertEquals("https://bucket/$thumbnailKey", result.thumbnailImageUrl)
+    }
+
+    @Test
     fun `two requests never collide on the same key`() {
         service.issue(1, IssueUploadUrlCommand(UploadPurpose.PROFILE_IMAGE, "image/jpeg"))
         service.issue(1, IssueUploadUrlCommand(UploadPurpose.PROFILE_IMAGE, "image/jpeg"))

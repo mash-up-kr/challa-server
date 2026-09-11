@@ -28,6 +28,7 @@ class CompletePhotoService(
 
         if (!roomRepository.decrementRemainedPhotoCount(command.roomId)) {
             uploadedObjectDeleter.delete(command.imageUrl)
+            command.thumbnailImageUrl?.let(uploadedObjectDeleter::delete)
             throw NoRemainedPhotoException()
         }
 
@@ -46,7 +47,8 @@ class CompletePhotoService(
                 roomId = command.roomId,
                 userId = command.userId,
                 filterId = command.cameraFilterName,
-                imageUrl = command.imageUrl
+                imageUrl = command.imageUrl,
+                thumbnailImageUrl = command.thumbnailImageUrl
             )
         )
 
