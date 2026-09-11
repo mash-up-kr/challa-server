@@ -6,6 +6,7 @@ data class ListPhotosResult(val photoProjections: List<PhotoProjection>, val has
     data class PhotoProjection(
         val id: Long,
         val imageUrl: String?,
+        val thumbnailImageUrl: String? = null,
         val userNickname: String,
         val userProfileImageUrl: String?,
         val createdAt: LocalDateTime

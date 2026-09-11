@@ -74,6 +74,7 @@ class PhotoControllerTest {
                 ListPhotosResult.PhotoProjection(
                     id = PHOTO_ID,
                     imageUrl = IMAGE_URL,
+                    thumbnailImageUrl = THUMBNAIL_IMAGE_URL,
                     userNickname = USER_NICKNAME,
                     userProfileImageUrl = USER_PROFILE_IMAGE_URL,
                     createdAt = CREATED_AT
@@ -86,6 +87,7 @@ class PhotoControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.photos[0].id").value(PHOTO_ID))
             .andExpect(jsonPath("$.data.photos[0].imageUrl").value(IMAGE_URL))
+            .andExpect(jsonPath("$.data.photos[0].thumbnailImageUrl").value(THUMBNAIL_IMAGE_URL))
             .andExpect(jsonPath("$.data.photos[0].userNickname").value(USER_NICKNAME))
             .andExpect(jsonPath("$.data.photos[0].userProfileImageUrl").value(USER_PROFILE_IMAGE_URL))
             .andExpect(
@@ -151,11 +153,12 @@ class PhotoControllerTest {
         userId = USER_ID,
         roomId = ROOM_ID,
         cameraFilterName = CAMERA_FILTER_NAME,
-        imageUrl = IMAGE_URL
+        imageUrl = IMAGE_URL,
+        thumbnailImageUrl = THUMBNAIL_IMAGE_URL
     )
 
     private fun requestBody() =
-        """{"photo":{"roomId":11,"cameraFilterName":"$CAMERA_FILTER_NAME","imageUrl":"$IMAGE_URL"}}"""
+        """{"photo":{"roomId":11,"cameraFilterName":"$CAMERA_FILTER_NAME","imageUrl":"$IMAGE_URL","thumbnailImageUrl":"$THUMBNAIL_IMAGE_URL"}}"""
 
     private fun <B : MockHttpServletRequestBuilder> B.authenticated(): B = apply {
         requestAttr(JwtAuthenticationFilter.AUTH_USER_ID_ATTRIBUTE, USER_ID)
@@ -169,6 +172,7 @@ class PhotoControllerTest {
         const val SIZE = 24
         const val CAMERA_FILTER_NAME = "filter-original"
         const val IMAGE_URL = "https://bucket/photo/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
+        const val THUMBNAIL_IMAGE_URL = "${IMAGE_URL}_thumbnail"
         const val USER_NICKNAME = "nickname"
         const val USER_PROFILE_IMAGE_URL = "https://bucket/profile-7"
         val CREATED_AT: LocalDateTime = LocalDateTime.of(2026, 8, 11, 12, 0)

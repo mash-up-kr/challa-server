@@ -22,12 +22,14 @@ class PhotoAdapterTest {
                 roomId = 11,
                 userId = 7,
                 filterId = "filter-original",
-                imageUrl = "https://bucket/photo/7/image-id"
+                imageUrl = "https://bucket/photo/7/image-id",
+                thumbnailImageUrl = "https://bucket/photo/7/image-id_thumbnail"
             )
         )
 
         val found = adapter.findById(requireNotNull(saved.id))
         assertEquals("https://bucket/photo/7/image-id", found?.imageUrl)
+        assertEquals("https://bucket/photo/7/image-id_thumbnail", found?.thumbnailImageUrl)
         assertEquals("filter-original", found?.filterId)
     }
 

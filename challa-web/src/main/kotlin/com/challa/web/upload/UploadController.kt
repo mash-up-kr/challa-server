@@ -35,13 +35,20 @@ private const val UPLOAD_URL_GUIDE = """
 
 **1단계 — 이 API.**
 
-`uploadUrl`(업로드용 서명 URL)과 `imageUrl`(업로드 후 읽을 공개 URL)을 함께 받습니다.
+기본적으로 `uploadUrl`(원본 업로드용 서명 URL)과 `imageUrl`(원본의 공개 URL)을 함께 받습니다.
+`purpose`가 `PHOTO`이면 리사이징 이미지용 `thumbnailUploadUrl`과 `thumbnailImageUrl`도 함께 받습니다.
 
 **2단계 — S3로 직접 PUT.** 이 요청은 우리 서버가 아니라 S3로 나가므로 **Swagger로는 테스트할 수 없습니다.**
 ```
 PUT {1단계에서 받은 uploadUrl}
 Content-Type: image/jpeg      ← 1단계에서 보낸 contentType과 정확히 같아야 함
-Body: 이미지 바이너리 그대로   ← multipart/form-data 아님
+Body: 원본 이미지 바이너리 그대로 ← multipart/form-data 아님
+```
+`purpose`가 `PHOTO`이면 리사이징 이미지도 같은 방식으로 별도 PUT 합니다.
+```
+PUT {1단계에서 받은 thumbnailUploadUrl}
+Content-Type: image/jpeg      ← 원본과 동일한 contentType
+Body: 리사이징 이미지 바이너리 그대로
 ```
 - `Authorization` 헤더를 **넣지 마세요.** 넣으면 서명이 깨져 403이 납니다.
 - 응답 200이면 성공입니다.
@@ -51,19 +58,28 @@ Body: 이미지 바이너리 그대로   ← multipart/form-data 아님
 PUT /api/v1/users/me
 { "user": { "nickname": "...", "profileImageUrl": "{imageUrl}" } }
 ```
-촬영 사진은 `roomId`, `cameraFilterName`과 함께 1단계에서 받은 `imageUrl`을 완료 API에 전달합니다.
+촬영 사진은 `roomId`, `cameraFilterName`과 함께 1단계에서 받은 원본·리사이징 이미지 공개 URL을
+완료 API에 전달합니다. 리사이징 이미지를 업로드하지 못한 경우 `thumbnailImageUrl`은 생략하거나 null로 보냅니다.
 ```
 POST /api/v1/photos
-{ "photo": { "roomId": 1, "cameraFilterName": "filter-original", "imageUrl": "{imageUrl}" } }
+{
+  "photo": {
+    "roomId": 1,
+    "cameraFilterName": "filter-original",
+    "imageUrl": "{imageUrl}",
+    "thumbnailImageUrl": "{thumbnailImageUrl}"
+  }
+}
 ```
 
 ## 주의사항
 
-- `uploadUrl`은 **5분 후 만료**됩니다. 화면 진입 시점에 미리 받아두지 말고,
+- `uploadUrl`과 `thumbnailUploadUrl`은 **5분 후 만료**됩니다. 화면 진입 시점에 미리 받아두지 말고,
   사용자가 사진을 고른 직후에 발급하세요.
-- `uploadUrl`은 **1회용·1파일용**입니다. 파일마다 이 API를 다시 호출하세요.
-- `imageUrl`은 **영구 공개 URL**이라 그대로 저장하고 캐싱해도 됩니다.
-- 2단계 실패는 서버가 알지 못합니다. 실패하면 3단계를 호출하지 말고 1단계부터 재시도하세요.
+- 각 업로드 URL은 **1회용·1파일용**입니다. `PHOTO` 한 건에는 한 번의 API 호출로 원본과 썸네일 URL 쌍을 발급합니다.
+- `imageUrl`과 `thumbnailImageUrl`은 **영구 공개 URL**이라 그대로 저장하고 캐싱해도 됩니다.
+- 2단계 실패는 서버가 알지 못합니다. 원본 업로드가 실패하면 3단계를 호출하지 말고 1단계부터 재시도하세요.
+  썸네일만 실패한 경우에는 `thumbnailImageUrl`을 null로 보내 완료할 수 있습니다.
 
 ## 실패 응답
 

@@ -33,6 +33,7 @@ class ListPhotosService(
             ListPhotosResult.PhotoProjection(
                 id = requireNotNull(photo.id),
                 imageUrl = photo.imageUrl,
+                thumbnailImageUrl = photo.thumbnailImageUrl,
                 userNickname = User.displayNicknameOf(user),
                 userProfileImageUrl = user?.profileImageUrl,
                 createdAt = photo.createdAt!!

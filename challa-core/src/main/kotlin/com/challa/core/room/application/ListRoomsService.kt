@@ -106,7 +106,7 @@ class ListRoomsService(
                 memberCount = memberCountsByRoomId.getValue(room.id),
                 totalPhotoCount = room.totalPhotoCount,
                 remainedPhotoCount = room.remainedPhotoCount,
-                thumbnailImageUrls = photosByRoomId[room.id].orEmpty().map { it.imageUrl },
+                thumbnailImageUrls = photosByRoomId[room.id].orEmpty().map { it.thumbnailImageUrl ?: it.imageUrl },
                 cover = RoomCover(
                     coverImageUrl = room.coverImageUrl,
                     sticker = coverSticker

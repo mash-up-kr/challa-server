@@ -55,7 +55,8 @@ class CompletePhotoServiceTest {
                     it.roomId == ROOM_ID &&
                         it.userId == USER_ID &&
                         it.filterId == CAMERA_FILTER_NAME &&
-                        it.imageUrl == IMAGE_URL
+                        it.imageUrl == IMAGE_URL &&
+                        it.thumbnailImageUrl == THUMBNAIL_IMAGE_URL
                 }
             )
         }
@@ -88,6 +89,7 @@ class CompletePhotoServiceTest {
         every { roomRepository.findByRoomId(ROOM_ID) } returns room(remainedPhotoCount = 0)
         every { roomRepository.decrementRemainedPhotoCount(ROOM_ID) } returns false
         every { uploadedObjectDeleter.delete(IMAGE_URL) } returns Unit
+        every { uploadedObjectDeleter.delete(THUMBNAIL_IMAGE_URL) } returns Unit
 
         assertThrows(NoRemainedPhotoException::class.java) {
             service.complete(command())
@@ -96,6 +98,7 @@ class CompletePhotoServiceTest {
         verifyOrder {
             roomRepository.decrementRemainedPhotoCount(ROOM_ID)
             uploadedObjectDeleter.delete(IMAGE_URL)
+            uploadedObjectDeleter.delete(THUMBNAIL_IMAGE_URL)
         }
         verify(exactly = 0) { photoRepository.save(any()) }
         verify(exactly = 0) { roomRepository.markPhotoPrintPending(any(), any()) }
@@ -118,7 +121,8 @@ class CompletePhotoServiceTest {
         userId = USER_ID,
         roomId = ROOM_ID,
         cameraFilterName = CAMERA_FILTER_NAME,
-        imageUrl = IMAGE_URL
+        imageUrl = IMAGE_URL,
+        thumbnailImageUrl = THUMBNAIL_IMAGE_URL
     )
 
     private fun room(remainedPhotoCount: Long) = Room(
@@ -149,5 +153,6 @@ class CompletePhotoServiceTest {
         const val PHOTO_ID = 31L
         const val CAMERA_FILTER_NAME = "filter-original"
         const val IMAGE_URL = "https://bucket/photo/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
+        const val THUMBNAIL_IMAGE_URL = "${IMAGE_URL}_thumbnail"
     }
 }

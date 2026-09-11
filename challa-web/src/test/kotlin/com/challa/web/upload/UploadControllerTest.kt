@@ -51,7 +51,8 @@ class UploadControllerTest {
     @Test
     fun `PHOTO uses the common upload endpoint`() {
         val command = IssueUploadUrlCommand(UploadPurpose.PHOTO, "image/jpeg")
-        every { issueUploadUrlUseCase.issue(USER_ID, command) } returns uploadUrl(PHOTO_IMAGE_KEY)
+        every { issueUploadUrlUseCase.issue(USER_ID, command) } returns
+            uploadUrl(PHOTO_IMAGE_KEY, PHOTO_THUMBNAIL_IMAGE_KEY)
 
         mockMvc.perform(
             post("/api/v1/uploads").authenticated()
@@ -61,14 +62,23 @@ class UploadControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.upload.uploadUrl").value("https://bucket/$PHOTO_IMAGE_KEY?signature"))
             .andExpect(jsonPath("$.data.upload.imageUrl").value("https://bucket/$PHOTO_IMAGE_KEY"))
+            .andExpect(
+                jsonPath("$.data.upload.thumbnailUploadUrl")
+                    .value("https://bucket/$PHOTO_THUMBNAIL_IMAGE_KEY?signature")
+            )
+            .andExpect(
+                jsonPath("$.data.upload.thumbnailImageUrl").value("https://bucket/$PHOTO_THUMBNAIL_IMAGE_KEY")
+            )
 
         verify { issueUploadUrlUseCase.issue(USER_ID, command) }
     }
 
-    private fun uploadUrl(objectKey: String) = UploadUrl(
+    private fun uploadUrl(objectKey: String, thumbnailObjectKey: String? = null) = UploadUrl(
         uploadUrl = "https://bucket/$objectKey?signature",
         imageUrl = "https://bucket/$objectKey",
-        expiresInSeconds = 300
+        expiresInSeconds = 300,
+        thumbnailUploadUrl = thumbnailObjectKey?.let { "https://bucket/$it?signature" },
+        thumbnailImageUrl = thumbnailObjectKey?.let { "https://bucket/$it" }
     )
 
     private fun <B : MockHttpServletRequestBuilder> B.authenticated(): B = apply {
@@ -79,5 +89,6 @@ class UploadControllerTest {
         const val USER_ID = 7L
         const val PROFILE_IMAGE_KEY = "profile/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
         const val PHOTO_IMAGE_KEY = "photo/7/92f48652-0c77-4fde-bc95-f7e09669b40e"
+        const val PHOTO_THUMBNAIL_IMAGE_KEY = "${PHOTO_IMAGE_KEY}_thumbnail"
     }
 }

@@ -12,4 +12,10 @@ enum class UploadPurpose(val keyPrefix: String) {
 
 data class IssueUploadUrlCommand(val purpose: UploadPurpose, val contentType: String)
 
-data class UploadUrl(val uploadUrl: String, val imageUrl: String, val expiresInSeconds: Long)
+data class UploadUrl(
+    val uploadUrl: String,
+    val imageUrl: String,
+    val expiresInSeconds: Long,
+    val thumbnailUploadUrl: String? = null,
+    val thumbnailImageUrl: String? = null
+)

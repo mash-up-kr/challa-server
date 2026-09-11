@@ -20,6 +20,9 @@ class PhotoEntity(
     @Column(name = "image_url", unique = true)
     var imageUrl: String?,
 
+    @Column(name = "thumbnail_image_url", unique = true)
+    var thumbnailImageUrl: String?,
+
     @Column(name = "filter_id", nullable = false)
     var filterId: String,
 
@@ -33,6 +36,7 @@ class PhotoEntity(
     fun toDomain(): Photo = Photo(
         id = this.id,
         imageUrl = this.imageUrl,
+        thumbnailImageUrl = this.thumbnailImageUrl,
         filterId = this.filterId,
         roomId = this.roomId,
         userId = this.userId,
@@ -43,6 +47,7 @@ class PhotoEntity(
         fun from(photo: Photo): PhotoEntity = PhotoEntity(
             id = photo.id,
             imageUrl = photo.imageUrl,
+            thumbnailImageUrl = photo.thumbnailImageUrl,
             filterId = photo.filterId,
             roomId = photo.roomId,
             userId = photo.userId
